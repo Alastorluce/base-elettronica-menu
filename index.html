@@ -490,12 +490,10 @@ f  <script>
         </span></em>&nbsp;&nbsp;per ricevere un portfolio dettagliato con referenze e materiali visivi.
       </p>
       <p style="margin-top:1.5em;">
-    <em>
-      <span class="start-showroom" style="color:#00a6ff; cursor:pointer;">
-        Clicca qui
-      </span>
-    </em> per avviare una piccola anteprima nella showroom.
-  </p>`,
+        <em><span role="button" onclick="attivaSlideshow()" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
+          Clicca qui
+        </span></em>&nbsp;&nbsp;per avviare una piccola anteprima nella showroom.
+      </p>`,
   
       `<!-- Soluzioni -->
       <h2>Soluzioni su Misura</h2>
@@ -543,49 +541,7 @@ f  <script>
     let slideshowAttivo = false;
     let slideshowInterval = null;
     
-    (function() {
-  let showroomPending = false;
-
-  // Cattura il click su “Clicca qui” dentro il portfolio (assume l’elemento ha classe .start-showroom)
-  document.querySelectorAll('.start-showroom').forEach(el => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      // Solo su mobile
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-        showroomPending = true;
-        // Mostro un messaggio nel modal
-        const modal = document.getElementById('modal');
-        const content = document.getElementById('modal-content');
-        content.innerHTML = '<p style="text-align:center; font-size:1.2em; color:#00a6ff;">Gira il telefono in orizzontale per vedere la showroom</p>';
-        modal.classList.add('show');
-      } else {
-        // Su desktop apro subito la showroom
-        attivaSlideshow();
-      }
-    });
-  });
-
-  // Quando cambia orientamento
-  window.addEventListener('orientationchange', () => {
-    const isLandscape = window.innerWidth > window.innerHeight;
-    const modal = document.getElementById('modal');
-    const content = document.getElementById('modal-content');
-
-    if (showroomPending && isLandscape) {
-      // Ruotato in orizzontale: avvio la showroom
-      showroomPending = false;
-      content.innerHTML = '';
-      modal.classList.remove('show');
-      attivaSlideshow();
-    }
-    else if (!showroomPending && !isLandscape) {
-      // Tornato in verticale: fermo la showroom e torno alla home
-      if (window.slideshowInterval) clearInterval(window.slideshowInterval);
-      // Ripristina logo e main
-      window.location.reload();
-    }
-  });
-})();
+    
     
     function apri(index) {
       if (isTransitioning) return;
