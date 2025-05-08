@@ -51,11 +51,18 @@
 /* Solo per mobile landscape - Approccio CSS puro */
 @media (max-width: 768px) and (orientation: landscape) {
   #orientation-warning {
-  display: none;
+    display: flex !important;
+  }
+
+  body.landscape-lock {
+    overflow: hidden !important;
+  }
+
+  #sidebar, #main, #right-glow {
+    display: none !important;
+  }
 }
-body.landscape-lock {
-  overflow: hidden !important;
-}
+
 
     
     
