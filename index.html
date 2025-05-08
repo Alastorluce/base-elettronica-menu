@@ -546,46 +546,53 @@ f  <script>
     (function() {
   let showroomPending = false;
 
-  // Cattura il click su “Clicca qui” dentro il portfolio (assume l’elemento ha classe .start-showroom)
-  document.querySelectorAll('.start-showroom').forEach(el => {
-    el.addEventListener('click', e => {
+  // Event delegation: intercettiamo i click su qualunque .start-showroom futuro
+  document.body.addEventListener('click', e => {
+    if (e.target.matches('.start-showroom')) {
       e.preventDefault();
-      // Solo su mobile
       if (/Mobi|Android/i.test(navigator.userAgent)) {
         showroomPending = true;
-        // Mostro un messaggio nel modal
-        const modal = document.getElementById('modal');
-        const content = document.getElementById('modal-content');
-        content.innerHTML = '<p style="text-align:center; font-size:1.2em; color:#00a6ff;">Gira il telefono in orizzontale per vedere la showroom</p>';
+        modalContent.innerHTML =
+          '<p style="text-align:center; font-size:1.2em; color:#00a6ff;">' +
+          'Gira il telefono in orizzontale per vedere la showroom</p>';
         modal.classList.add('show');
       } else {
-        // Su desktop apro subito la showroom
         attivaSlideshow();
       }
-    });
+    }
   });
 
-  // Quando cambia orientamento
   window.addEventListener('orientationchange', () => {
     const isLandscape = window.innerWidth > window.innerHeight;
-    const modal = document.getElementById('modal');
-    const content = document.getElementById('modal-content');
-
     if (showroomPending && isLandscape) {
-      // Ruotato in orizzontale: avvio la showroom
       showroomPending = false;
-      content.innerHTML = '';
+      modalContent.innerHTML = '';
       modal.classList.remove('show');
       attivaSlideshow();
     }
     else if (!showroomPending && !isLandscape) {
-      // Tornato in verticale: fermo la showroom e torno alla home
-      if (window.slideshowInterval) clearInterval(window.slideshowInterval);
-      // Ripristina logo e main
+      if (slideshowInterval) clearInterval(slideshowInterval);
       window.location.reload();
     }
   });
 })();
+
+
+  // Quando cambia orientamento
+   window.addEventListener('orientationchange', () => {
+    const isLandscape = window.innerWidth > window.innerHeight;
+    if (showroomPending && isLandscape) {
+      showroomPending = false;
+      modalContent.innerHTML = '';
+      modal.classList.remove('show');
+      attivaSlideshow();
+    }
+    else if (!showroomPending && !isLandscape) {
+      if (slideshowInterval) clearInterval(slideshowInterval);
+      window.location.reload();
+    }
+  });
+();
     
     function apri(index) {
       if (isTransitioning) return;
