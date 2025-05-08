@@ -546,22 +546,25 @@ f  <script>
     (function() {
   let showroomPending = false;
 
-  // Event delegation: intercettiamo i click su qualunque .start-showroom futuro
-  document.body.addEventListener('click', e => {
-    if (e.target.matches('.start-showroom')) {
-      e.preventDefault();
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-        showroomPending = true;
-        modalContent.innerHTML =
-          '<p style="text-align:center; font-size:1.2em; color:#00a6ff;">' +
-          'Gira il telefono in orizzontale per vedere la showroom</p>';
-        modal.classList.add('show');
-      } else {
-        attivaSlideshow();
-      }
+  // 1) Catturo i click SOLO dentro la modal sul mio span dinamico
+  modalContent.addEventListener('click', e => {
+    const btn = e.target.closest('.start-showroom');
+    if (!btn) return;
+    e.preventDefault();
+
+    // se siamo su device mobile...
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      showroomPending = true;
+      // Mostro il messaggio nel modal
+      modalContent.innerHTML = '<p style="text-align:center; font-size:1.2em; color:#00a6ff;">Gira il telefono in orizzontale per vedere la showroom</p>';
+      modal.classList.add('show');
+    } else {
+      // su desktop apro subito la showroom
+      attivaSlideshow();
     }
   });
 
+  // 2) Al cambio d’orientamento
   window.addEventListener('orientationchange', () => {
     const isLandscape = window.innerWidth > window.innerHeight;
     if (showroomPending && isLandscape) {
@@ -578,6 +581,7 @@ f  <script>
 })();
 
 
+
   // Quando cambia orientamento
    window.addEventListener('orientationchange', () => {
     const isLandscape = window.innerWidth > window.innerHeight;
@@ -592,7 +596,7 @@ f  <script>
       window.location.reload();
     }
   });
-();
+;
     
     function apri(index) {
       if (isTransitioning) return;
