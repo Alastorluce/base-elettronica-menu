@@ -341,26 +341,6 @@ ul.custom-list li > strong {
   color: #00a6ff;
 }
 
-#orientation-warning {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 99999;
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  color: #00a6ff;
-  font-size: 1.4em;
-  font-weight: bold;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2em;
-  display: flex; /* ← questa ti manca! */
-}
-
-
 
 @media only screen and (max-width: 768px) and (orientation: landscape) {
   body {
@@ -379,38 +359,6 @@ ul.custom-list li > strong {
   }
 }
 
-
-
-#orientation-warning {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 99999;
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  color: #00a6ff;
-  font-size: 1.4em;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2em;
-}
-
-@media screen and (orientation: landscape) and (max-width: 768px) {
-  #orientation-warning {
-    display: flex;
-  }
-
-  #main,
-  #sidebar,
-  #modal {
-    display: none !important;
-  }
-}
 
 
 
