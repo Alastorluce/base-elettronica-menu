@@ -59,7 +59,7 @@
 
     #sidebar-logo {
       margin-bottom: 2em;
-      width: 160px;                /* container sempre 120px */
+      width: 120px;                /* container sempre 120px */
       height: auto;
       cursor: pointer;
       transition: transform 0.3s ease;
@@ -67,7 +67,7 @@
     }
 
     #sidebar-logo img {
-      width: 130%;
+      width: 100%;
       height: auto;
       display: block;
       filter: brightness(90%) saturate(0%) contrast(150%) invert(10%);
@@ -78,14 +78,6 @@
     #sidebar-logo:active img {transform: scale(0.83);}
 
     #sidebar-logo:hover { transform: scale(1.05); }  
-    
-
-    #sidebar.closing {
-      transform: translateX(-100%);
-      opacity: 0;
-      transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-    }
-
 
     #right-glow {
       position: absolute;
@@ -208,22 +200,21 @@
   /* Logo piccolo */
   #sidebar-logo {
     display: block !important;
-    width: 160px;
+    width: 60px;
     margin: 0.5em auto;
   }
 
   /* Menu items più grandi e tappabili */
   .menu-item {
-    font-size: 1.2em;
-    padding: 1em 1.2em;
-    margin: 0.5em auto;
-    width: 90vw;                  /* tutti della stessa larghezza */
-    max-width: none;              /* disabilita limiti */
-    box-sizing: border-box;       /* include il padding nel calcolo */
-    text-align: center;           /* centrati */
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
+  font-size: 1.2em;
+  padding: 1em 1.2em;
+  margin: 0.5em auto;
+  width: auto;
+  max-width: 90%;   /* o 80%, come preferisci */
+  text-align: left;
+  opacity: 1 !important;      /* forzi la visibilità */
+  transform: none !important; /* annulli le animazioni di entrata */
+  animation: none !important;
   }
 
   /* Main content aggiustamenti */
@@ -284,7 +275,7 @@
 /* 2) Logo piccolo */
 #sidebar-logo {
   display: block !important;
-  width: 160px;          /* leggermente più grande del mobile */
+  width: 80px;          /* leggermente più grande del mobile */
   margin: 0.5em auto;
 }
 
@@ -325,38 +316,12 @@ ul.custom-list li:last-child {
 ul.custom-list li > strong {
   color: #00a6ff;
 }
-@media (max-width: 1024px) {
-  #hamburger-toggle {
-    display: block;
-  }
-
-  #sidebar {
-    transform: translateX(-100%);
-    opacity: 0;
-    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-  }
-
-  #sidebar.open {
-    transform: translateX(0);
-    opacity: 1;
-  }
-
-  #sidebar-logo {
-    width: 100px !important;
-    margin: 1em auto;
-  }
-}
 
 
+</style>
   </style>
 </head>
 <body>
-  <!-- Bottone hamburger visibile solo su mobile -->
-  <button id="hamburger-toggle" aria-label="Apri menu" style="position: fixed; top: 15px; left: 15px; z-index: 1001; background: none; border: none; color: #00a6ff; font-size: 2rem; cursor: pointer;">
-
-☰
-</button>
-
   <div id="sidebar">
     <div id="sidebar-content">
       <div id="sidebar-logo" onclick="attivaSlideshow()">
@@ -655,17 +620,15 @@ ul.custom-list li > strong {
   let welcomeShown = false;
 
   window.addEventListener('DOMContentLoaded', () => {
-  const sidebar = document.getElementById('sidebar');
-  const hamburger = document.getElementById('hamburger-toggle');
-  const modal = document.getElementById('modal');
-  const modalContent = document.getElementById('modal-content');
-
   // 1) Avvia animazioni sidebar/menu
-  sidebar.classList.add('animated');
+  document.getElementById('sidebar').classList.add('animated');
   document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
 
   // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
   if (window.matchMedia('(max-width: 768px)').matches) {
+    const modal        = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+
     // 2a) Inietta il pulsante di chiusura, se non esiste già
     if (!modal.querySelector('.modal-close')) {
       const closeBtn = document.createElement('button');
@@ -690,10 +653,13 @@ ul.custom-list li > strong {
     // 2c) Assicura che su touch “Clicca qui” parta la showroom
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
       el.addEventListener('touchstart', e => {
-        e.preventDefault(); // evita doppio tap
+        e.preventDefault();  // evita doppio tap
         attivaSlideshow();
       }, { passive: false });
     });
+
+    // 2d) Avvia la showroom automaticamente (se lo desideri)
+    // attivaSlideshow();
   }
 
   // 3) Pianifica il pop-up di benvenuto
@@ -703,37 +669,53 @@ ul.custom-list li > strong {
     let welcomeShown = true;
 
     const hideWelcome = e => {
-      if (
-        e.target.closest('#sidebar') ||
-        e.target.closest('.menu-item') ||
-        e.target.closest('#modal') ||
-        e.target.closest('#logo-btn')
-      ) {
-        return;
-      }
-      modal.classList.remove('show');
-      document.removeEventListener('click', hideWelcome);
-    };
-
-    document.addEventListener('click', hideWelcome, { once: true });
-  }, 2000);
-
-  // 4) Gestione hamburger menu mobile con animazione di uscita
-  if (hamburger && sidebar) {
-    hamburger.addEventListener('click', () => {
-      if (sidebar.classList.contains('open')) {
-        sidebar.classList.remove('open');
-        sidebar.classList.add('closing');
-        setTimeout(() => {
-          sidebar.classList.remove('closing');
-        }, 400); // deve corrispondere al tempo della transizione CSS
-      } else {
-        sidebar.classList.add('open');
-      }
-    });
+  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
+  if (
+    e.target.closest('#sidebar') ||
+    e.target.closest('.menu-item') ||
+    e.target.closest('#modal') ||
+    e.target.closest('#logo-btn')
+  ) {
+    return;
   }
+  modal.classList.remove('show');
+  document.removeEventListener('click', hideWelcome);
+};
+document.addEventListener('click', hideWelcome, { once: true });
+
+  }, 2000);
 });
 
+// Override del clic sul logo grande (non riapre mai il welcome)
+document.getElementById('logo-btn').addEventListener('click', () => {
+  clearTimeout(welcomeTimeout);
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+  }
+  welcomeShown = true;
+});
+
+// Event delegation per il form di contatto
+document.addEventListener('submit', function(e) {
+  if (e.target.matches('#contact-form')) {
+    e.preventDefault();
+    modalContent.innerHTML = `
+      <div style="text-align:center; padding:1em;">
+        <h2>Grazie di averci contattato!</h2>
+        <p>Risponderemo entro 24 ore.</p>
+      </div>`;
+    modal.classList.remove('fade-out');
+    modal.classList.add('show');
+    setTimeout(() => {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modalContent.innerHTML = contenutoHome;
+        currentIndex = null;
+      }, 600);
+    }, 3000);
+  }
+});
 
 
  
