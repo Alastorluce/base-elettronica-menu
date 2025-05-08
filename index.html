@@ -48,16 +48,17 @@
       fill: #00a6ff;
     }
     
-    /* Nascondi tutto quando il messaggio è visibile */
-    body.landscape #sidebar,
-    body.landscape #main,
-    body.landscape #right-glow {
-      display: none;
-    }
+    body.forced-landscape #orientation-message {
+  display: flex !important;
+}
+
+body.forced-landscape #sidebar,
+body.forced-landscape #main,
+body.forced-landscape #right-glow {
+  display: none !important;
+}
     
-    body.landscape #orientation-message {
-      display: flex;
-    }
+    
 
 
     /* Layout generale */
@@ -525,18 +526,33 @@ ul.custom-list li > strong {
       </p>`
     ];
 
-    // Controllo orientamento al caricamento e al cambio orientamento
-function checkOrientation() {
-  if (window.matchMedia("(orientation: landscape)").matches && window.innerWidth <= 768) {
-    document.body.classList.add('landscape');
+    function checkOrientation() {
+  const isMobile = window.innerWidth <= 768;
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+  
+  console.log(`Debug: ${isLandscape ? 'Landscape' : 'Portrait'}, ${isMobile ? 'Mobile' : 'Desktop'}`);
+  
+  if (isLandscape && isMobile) {
+    document.body.classList.add('forced-landscape');
+    console.log('Mostro messaggio di rotazione');
   } else {
-    document.body.classList.remove('landscape');
+    document.body.classList.remove('forced-landscape');
   }
 }
 
-window.addEventListener('load', checkOrientation);
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
+// Inizializzazione
+document.addEventListener('DOMContentLoaded', function() {
+  checkOrientation();
+  
+  window.addEventListener('resize', function() {
+    setTimeout(checkOrientation, 100); // Piccolo delay per stabilizzazione
+  });
+  
+  window.addEventListener('orientationchange', function() {
+    setTimeout(checkOrientation, 100);
+  });
+});
+
     const contenutoHome = `
       <h2>Benvenuti in Base Elettronica Service</h2>
       <p>Siamo il partner ideale per progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi e installazioni professionali.<br><br>
