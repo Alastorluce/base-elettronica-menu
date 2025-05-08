@@ -568,37 +568,47 @@ ul.custom-list li > strong {
      
     
     function apri(index) {
-      if (isTransitioning) return;
-      if (currentIndex === index) {
-        isTransitioning = true;
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-          isTransitioning = false;
-        }, 600);
-      } else {
-        isTransitioning = true;
-        if (modal.classList.contains('show')) {
-          modal.classList.remove('show');
-          modal.classList.add('fade-out');
-          setTimeout(() => {
-            modalContent.innerHTML = contenuti[index];
-            modal.classList.remove('fade-out');
-            modal.classList.add('show');
-            currentIndex = index;
-            isTransitioning = false;
-          }, 600);
-        } else {
-          modalContent.innerHTML = contenuti[index];
-          modal.classList.add('show');
-          currentIndex = index;
-          isTransitioning = false;
-        }
-      }
+  if (isTransitioning) return;
+
+  // SE clicchi sulla stessa voce attiva → CHIUDI la modale
+  if (currentIndex === index) {
+    if (modal.classList.contains('show')) {
+      isTransitioning = true;
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modal.classList.remove('fade-out');
+        modalContent.innerHTML = '';
+        currentIndex = null;
+        isTransitioning = false;
+      }, 600);
+    } else {
+      modalContent.innerHTML = '';
+      currentIndex = null;
     }
+    return;
+  }
+
+  // SE clicchi su voce diversa → mostra nuovo contenuto
+  isTransitioning = true;
+
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modalContent.innerHTML = contenuti[index];
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+      currentIndex = index;
+      isTransitioning = false;
+    }, 600);
+  } else {
+    modalContent.innerHTML = contenuti[index];
+    modal.classList.add('show');
+    currentIndex = index;
+    isTransitioning = false;
+  }
+}
 
     modalContent.addEventListener('click', () => {
       if (currentIndex === null && modal.classList.contains('show') && !isTransitioning) {
