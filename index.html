@@ -316,12 +316,44 @@ ul.custom-list li:last-child {
 ul.custom-list li > strong {
   color: #00a6ff;
 }
+/* Mostra l’hamburger solo su smartphone e tablet */
+@media (max-width: 1024px) {
+  #hamburger-toggle {
+    display: block;
+  }
 
+  #sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.4s ease-in-out;
+  }
 
-</style>
+  #sidebar.open {
+    transform: translateX(0);
+  }
+
+  #sidebar-logo {
+    width: 100px !important;
+    margin: 1em auto;
+  }
+}
+
   </style>
 </head>
 <body>
+  <!-- Bottone hamburger visibile solo su mobile -->
+<button id="hamburger-toggle" aria-label="Apri menu" style="
+position: fixed;
+top: 15px;
+left: 15px;
+z-index: 1001;
+background: none;
+border: none;
+color: #00a6ff;
+font-size: 2rem;
+display: none;
+cursor: pointer;
+">☰</button>
+
   <div id="sidebar">
     <div id="sidebar-content">
       <div id="sidebar-logo" onclick="attivaSlideshow()">
@@ -717,6 +749,13 @@ document.addEventListener('submit', function(e) {
   }
 });
 
+// Controllo apertura/chiusura sidebar da mobile
+const hamburger = document.getElementById('hamburger-toggle');
+const sidebar = document.getElementById('sidebar');
+
+hamburger.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+});
 
  
 </script>
