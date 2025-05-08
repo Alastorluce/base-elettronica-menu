@@ -740,53 +740,7 @@ setInterval(checkOrientationWarning, 1000);
       }
     });
 
-    document.getElementById('sidebar-logo').addEventListener('click', () => {
-  if (isTransitioning) return;
-  const logo = document.getElementById('logo-btn');
-
-  if (slideshowInterval) clearInterval(slideshowInterval);
-
-  if (slideshowAttivo) {
-    slideshowAttivo = false;
-    // Ripristino senza inline-transform, solo pulsing
-    isTransitioning = true;
-    const preload = new Image();
-    preload.src = 'logo.png';
-    preload.onload = () => {
-      logo.src = preload.src;
-      // Rimuovo eventuali override
-      logo.style.transition = '';
-      logo.style.transform = '';
-      logo.style.top = '';
-      logo.style.left = '';
-      logo.style.opacity = '';
-      logo.style.visibility = '';
-      // Riattivo la pulsing animation dal CSS
-      logo.classList.add('pulse');
-      isTransitioning = false;
-    };
-  } else {
-    // Se non era slideshow, apro la home come prima
-    logo.src = 'logo.png';
-    logo.classList.add('pulse');
-    modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
-    slideshowAttivo = false;
-    isTransitioning = false;
-  }
-
-  // Chiudo eventuale modale aperta
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-    }, 600);
-  }
-});
-
+    
 
  
   // 1. Variabili di controllo
