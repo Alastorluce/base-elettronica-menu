@@ -341,10 +341,13 @@ ul.custom-list li > strong {
   color: #00a6ff;
 }
 
-@media screen and (orientation: landscape) and (max-width: 768px) {
-  body {
-    overflow: hidden;
-    position: relative;
+@media only screen and (orientation: landscape) and (max-width: 768px) {
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: black !important;
+    overflow: hidden !important;
   }
 
   #main,
@@ -356,17 +359,23 @@ ul.custom-list li > strong {
   body::before {
     content: "📱 Ruota il dispositivo in verticale per visualizzare il sito";
     color: #00a6ff;
-    font-size: 1.2em;
+    font-size: 1.4em;
+    font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     text-align: center;
-    padding: 2em;
+    height: 100vh;
+    width: 100vw;
     background-color: #000;
-    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    padding: 2em;
   }
 }
+
 
 
 
