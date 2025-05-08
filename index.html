@@ -24,38 +24,31 @@
 
      /* Aggiungi questo stile per il messaggio di orientamento */
     #orientation-message {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #000;
-      z-index: 9999;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: #00a6ff;
-      font-size: 1.5em;
-      text-align: center;
-      padding: 20px;
-    }
-    
-    #orientation-message svg {
-      width: 100px;
-      height: 100px;
-      margin-bottom: 20px;
-      fill: #00a6ff;
-    }
-    
-    body.forced-landscape #orientation-message {
-  display: flex !important;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 9999;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
-body.forced-landscape #sidebar,
-body.forced-landscape #main,
-body.forced-landscape #right-glow {
-  display: none !important;
+/* Solo per dispositivi mobili in landscape */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  #orientation-message {
+    display: flex;
+  }
+  body {
+    overflow: hidden !important;
+  }
+  #sidebar, #main, #right-glow {
+    display: none !important;
+  }
 }
     
     
@@ -540,19 +533,6 @@ ul.custom-list li > strong {
   }
 }
 
-// Inizializzazione
-document.addEventListener('DOMContentLoaded', function() {
-  checkOrientation();
-  
-  window.addEventListener('resize', function() {
-    setTimeout(checkOrientation, 100); // Piccolo delay per stabilizzazione
-  });
-  
-  window.addEventListener('orientationchange', function() {
-    setTimeout(checkOrientation, 100);
-  });
-});
-
     const contenutoHome = `
       <h2>Benvenuti in Base Elettronica Service</h2>
       <p>Siamo il partner ideale per progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi e installazioni professionali.<br><br>
@@ -825,11 +805,11 @@ document.addEventListener('submit', function(e) {
 </script>
 
 <div id="orientation-message">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0 4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0 12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0 12h2v-2H5v2z"/>
-    </svg>
-    <p>Ruota il telefono in verticale per visualizzare il sito</p>
-  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="120" height="120">
+    <path fill="#00a6ff" d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0 4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0 12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0 12h2v-2H5v2z"/>
+  </svg>
+  <p style="color:#00a6ff;font-size:1.2em;margin-top:15px;">Ruota il telefono in verticale</p>
+</div>
 
   <div id="right-glow"></div>
 
