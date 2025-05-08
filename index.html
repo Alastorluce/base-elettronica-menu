@@ -35,11 +35,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
-
 
 .orientation-content {
   padding: 20px;
@@ -54,15 +50,13 @@
 
 @media (max-width: 768px) and (orientation: landscape) {
   #orientation-warning {
-    visibility: visible;
-    opacity: 1;
-    display: flex;
+    display: flex !important;
   }
+
   body.landscape-lock {
     overflow: hidden !important;
   }
 }
-
 
 
     
@@ -562,12 +556,7 @@ ul.custom-list li > strong {
   const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo === true;
 
   if (isMobile && isLandscape && !showroomAttiva) {
-    if (warning) {
-  warning.style.display = "flex";
-  warning.style.visibility = "visible";
-  warning.style.opacity = "1";
-}
-
+    if (warning) warning.style.setProperty("display", "flex", "important");
     document.body.classList.add("landscape-lock");
 
     if (sidebar) {
