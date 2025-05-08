@@ -6,7 +6,7 @@
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
-     
+    
      /* disabilita selezione di testo e immagini */
     *, *::before, *::after {
       user-select: none;
@@ -21,6 +21,44 @@
     @keyframes slideIn { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
     @keyframes pulse {0%,100% { transform: translate(-50%, -50%) scale(1); }50%     { transform: translate(-50%, -50%) scale(1.1); }}
     
+
+  /* Messaggio di orientamento */
+#orientation-warning {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.orientation-content {
+  padding: 20px;
+}
+
+.orientation-content p {
+  color: #00a6ff;
+  font-size: 1.2em;
+  margin-top: 15px;
+  font-family: 'Varela Round', sans-serif;
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  /* Mostra il messaggio, ma blocca lo scroll */
+  body.landscape-lock {
+    overflow: hidden !important;
+  }
+}
+
+    
+    
+
+
     /* Layout generale */
     body {
       margin: 0;
@@ -349,7 +387,7 @@ ul.custom-list li > strong {
 <body>
   <div id="sidebar">
     <div id="sidebar-content">
-      <div id="sidebar-logo" onclick="attivaSlideshow()">
+      <div id="sidebar-logo">
         <img src="logo.png" alt="Logo">
       </div>
       <div class="menu-list">
@@ -499,41 +537,115 @@ ul.custom-list li > strong {
     let isTransitioning = false;
     let slideshowAttivo = false;
     let slideshowInterval = null;
-    
 
+    function checkOrientationWarning() {
+  const warning = document.getElementById("orientation-warning");
+  const sidebar = document.getElementById("sidebar");
+  const main = document.getElementById("main");
+  const glow = document.getElementById("right-glow");
+
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+  const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo === true;
+
+  if (isMobile && isLandscape && !showroomAttiva) {
+    if (warning) warning.style.setProperty("display", "flex", "important");
+    document.body.classList.add("landscape-lock");
+
+    if (sidebar) {
+      sidebar.dataset.originalDisplay = sidebar.style.display || "";
+      sidebar.style.display = "none";
+    }
+
+    if (main) {
+      main.dataset.originalDisplay = main.style.display || "";
+      main.style.display = "none";
+    }
+
+    if (glow) {
+      glow.dataset.originalDisplay = glow.style.display || "";
+      glow.style.display = "none";
+    }
+
+  } else {
+    if (warning) warning.style.display = "none";
+    document.body.classList.remove("landscape-lock");
+
+    if (sidebar) sidebar.style.display = sidebar.dataset.originalDisplay || "";
+    if (main) main.style.display = main.dataset.originalDisplay || "";
+    if (glow) glow.style.display = glow.dataset.originalDisplay || "";
+  }
+}
+
+// Avvio iniziale
+document.addEventListener("DOMContentLoaded", checkOrientationWarning);
+
+// Eventi classici + fallback sicuro
+window.addEventListener("resize", () => {
+  setTimeout(checkOrientationWarning, 300);
+});
+
+window.addEventListener("orientationchange", () => {
+  setTimeout(checkOrientationWarning, 300);
+});
+
+// Fallback ciclico ogni secondo (garantisce aggiornamento in ogni caso)
+setInterval(checkOrientationWarning, 1000);
+
+
+
+
+
+
+    // Esegui al caricamento e su ogni cambio di orientamento/dimensione
+  document.addEventListener("DOMContentLoaded", checkOrientationWarning);
+  window.addEventListener("resize", checkOrientationWarning);
+  window.addEventListener("orientationchange", checkOrientationWarning);
+
+     
     
     function apri(index) {
-      if (isTransitioning) return;
-      if (currentIndex === index) {
-        isTransitioning = true;
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-          isTransitioning = false;
-        }, 600);
-      } else {
-        isTransitioning = true;
-        if (modal.classList.contains('show')) {
-          modal.classList.remove('show');
-          modal.classList.add('fade-out');
-          setTimeout(() => {
-            modalContent.innerHTML = contenuti[index];
-            modal.classList.remove('fade-out');
-            modal.classList.add('show');
-            currentIndex = index;
-            isTransitioning = false;
-          }, 600);
-        } else {
-          modalContent.innerHTML = contenuti[index];
-          modal.classList.add('show');
-          currentIndex = index;
-          isTransitioning = false;
-        }
-      }
+  if (isTransitioning) return;
+
+  // SE clicchi sulla stessa voce attiva → CHIUDI la modale
+  if (currentIndex === index) {
+    if (modal.classList.contains('show')) {
+      isTransitioning = true;
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modal.classList.remove('fade-out');
+        modalContent.innerHTML = '';
+        currentIndex = null;
+        isTransitioning = false;
+      }, 600);
+    } else {
+      modalContent.innerHTML = '';
+      currentIndex = null;
     }
+    return;
+  }
+
+  // SE clicchi su voce diversa → mostra nuovo contenuto
+  isTransitioning = true;
+
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modalContent.innerHTML = contenuti[index];
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+      currentIndex = index;
+      isTransitioning = false;
+    }, 600);
+  } else {
+    modalContent.innerHTML = contenuti[index];
+    modal.classList.add('show');
+    currentIndex = index;
+    isTransitioning = false;
+  }
+}
 
     modalContent.addEventListener('click', () => {
       if (currentIndex === null && modal.classList.contains('show') && !isTransitioning) {
@@ -617,45 +729,64 @@ ul.custom-list li > strong {
     });
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
-      if (isTransitioning) return;
-      if (slideshowInterval) clearInterval(slideshowInterval);
-      slideshowAttivo = false;
-      const logo = document.getElementById('logo-btn');
-      logo.style.transition = 'none';
-      logo.style.visibility = 'hidden';
-      logo.style.opacity = '0';
-      logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
-      isTransitioning = true;
-      const preload = new Image();
-      preload.src = 'logo.png';
-      preload.onload = () => {
-        logo.src = preload.src;
-        logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
-        void logo.offsetWidth;
-        logo.style.transition = 'opacity 0.6s ease-in-out';
-        logo.style.visibility = 'visible';
-        logo.style.opacity = '1';
-        setTimeout(() => {
-          logo.classList.add('pulse');
-          isTransitioning = false;
-        },600);
-      };
-      if (modal.classList.contains('show')) {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-        },600);
-      }
-    });
+  if (isTransitioning) return;
+  const logo = document.getElementById('logo-btn');
+
+  if (slideshowInterval) clearInterval(slideshowInterval);
+
+  if (slideshowAttivo) {
+    // SE showroom attiva → fermala e ripristina logo originale
+    slideshowAttivo = false;
+    logo.style.transition = 'none';
+    logo.style.visibility = 'hidden';
+    logo.style.opacity = '0';
+    logo.classList.remove('pulse', 'loaded-img', 'fade-in-logo', 'fade-out-logo');
+    isTransitioning = true;
+    const preload = new Image();
+    preload.src = 'logo.png';
+    preload.onload = () => {
+      logo.src = preload.src;
+      logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
+      void logo.offsetWidth;
+      logo.style.transition = 'opacity 0.6s ease-in-out';
+      logo.style.visibility = 'visible';
+      logo.style.opacity = '1';
+      setTimeout(() => {
+        logo.classList.add('pulse');
+        isTransitioning = false;
+      }, 600);
+    };
+  } else {
+    // SE showroom non attiva → mostra la home
+    logo.src = 'logo.png';
+    logo.classList.add('pulse');
+    modalContent.innerHTML = contenutoHome;
+    currentIndex = null;
+    modal.classList.add('show');
+    slideshowAttivo = false;
+    isTransitioning = false;
+  }
+
+  // Chiude eventuale modale aperta
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      currentIndex = null;
+    }, 600);
+  }
+});
+
  
   // 1. Variabili di controllo
   let welcomeTimeout;
   let welcomeShown = false;
 
   window.addEventListener('DOMContentLoaded', () => {
+  checkOrientationWarning(); // per mostrare correttamente il messaggio al primo caricamento
+
   // 1) Avvia animazioni sidebar/menu
   document.getElementById('sidebar').classList.add('animated');
   document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
@@ -719,7 +850,7 @@ ul.custom-list li > strong {
 };
 document.addEventListener('click', hideWelcome, { once: true });
 
-  }, 2000);
+  }, 500);
 });
 
 // Override del clic sul logo grande (non riapre mai il welcome)
@@ -756,15 +887,15 @@ document.addEventListener('submit', function(e) {
 
  
 </script>
-
-<div id="right-glow"></div>  <!-- spostato dentro il body -->
 </body>
-</html>
+<div id="orientation-warning">
+  <div class="orientation-content">
+    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="#00a6ff">
+      <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0 4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0 12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0 12h2v-2H5v2z"/>
+    </svg>
+    <p>Ruota il telefono in verticale per visualizzare il sito</p>
+  </div>
+</div>
 
-  </script>
-</body>
-
-
-<div id="right-glow"></div>
-
+  <div id="right-glow"></div>
 </html>
