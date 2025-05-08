@@ -546,57 +546,46 @@ f  <script>
     (function() {
   let showroomPending = false;
 
-  // 1) Catturo i click SOLO dentro la modal sul mio span dinamico
-  modalContent.addEventListener('click', e => {
-    const btn = e.target.closest('.start-showroom');
-    if (!btn) return;
-    e.preventDefault();
-
-    // se siamo su device mobile...
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-      showroomPending = true;
-      // Mostro il messaggio nel modal
-      modalContent.innerHTML = '<p style="text-align:center; font-size:1.2em; color:#00a6ff;">Gira il telefono in orizzontale per vedere la showroom</p>';
-      modal.classList.add('show');
-    } else {
-      // su desktop apro subito la showroom
-      attivaSlideshow();
-    }
+  // Cattura il click su “Clicca qui” dentro il portfolio (assume l’elemento ha classe .start-showroom)
+  document.querySelectorAll('.start-showroom').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      // Solo su mobile
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        showroomPending = true;
+        // Mostro un messaggio nel modal
+        const modal = document.getElementById('modal');
+        const content = document.getElementById('modal-content');
+        content.innerHTML = '<p style="text-align:center; font-size:1.2em; color:#00a6ff;">Gira il telefono in orizzontale per vedere la showroom</p>';
+        modal.classList.add('show');
+      } else {
+        // Su desktop apro subito la showroom
+        attivaSlideshow();
+      }
+    });
   });
 
-  // 2) Al cambio d’orientamento
+  // Quando cambia orientamento
   window.addEventListener('orientationchange', () => {
     const isLandscape = window.innerWidth > window.innerHeight;
+    const modal = document.getElementById('modal');
+    const content = document.getElementById('modal-content');
+
     if (showroomPending && isLandscape) {
+      // Ruotato in orizzontale: avvio la showroom
       showroomPending = false;
-      modalContent.innerHTML = '';
+      content.innerHTML = '';
       modal.classList.remove('show');
       attivaSlideshow();
     }
     else if (!showroomPending && !isLandscape) {
-      if (slideshowInterval) clearInterval(slideshowInterval);
+      // Tornato in verticale: fermo la showroom e torno alla home
+      if (window.slideshowInterval) clearInterval(window.slideshowInterval);
+      // Ripristina logo e main
       window.location.reload();
     }
   });
 })();
-
-
-
-  // Quando cambia orientamento
-   window.addEventListener('orientationchange', () => {
-    const isLandscape = window.innerWidth > window.innerHeight;
-    if (showroomPending && isLandscape) {
-      showroomPending = false;
-      modalContent.innerHTML = '';
-      modal.classList.remove('show');
-      attivaSlideshow();
-    }
-    else if (!showroomPending && !isLandscape) {
-      if (slideshowInterval) clearInterval(slideshowInterval);
-      window.location.reload();
-    }
-  });
-;
     
     function apri(index) {
       if (isTransitioning) return;
