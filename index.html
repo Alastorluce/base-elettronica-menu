@@ -578,8 +578,12 @@ ul.custom-list li > strong {
     if (sidebar) sidebar.style.display = sidebar.dataset.originalDisplay || "";
     if (main) main.style.display = main.dataset.originalDisplay || "";
     if (glow) glow.style.display = glow.dataset.originalDisplay || "";
+
+    // 👇 questa riga è fondamentale per sbloccare il messaggio se si esce da landscape
+    slideshowAttivo = false;
   }
 }
+
 
 // Avvio iniziale
 document.addEventListener("DOMContentLoaded", checkOrientationWarning);
