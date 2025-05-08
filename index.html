@@ -22,8 +22,8 @@
     @keyframes pulse {0%,100% { transform: translate(-50%, -50%) scale(1); }50%     { transform: translate(-50%, -50%) scale(1.1); }}
     
 
-     /* Aggiungi questo stile per il messaggio di orientamento */
-    #orientation-message {
+  /* Messaggio di orientamento */
+#orientation-warning {
   display: none;
   position: fixed;
   top: 0;
@@ -31,17 +31,27 @@
   width: 100%;
   height: 100%;
   background: #000;
-  z-index: 9999;
-  flex-direction: column;
-  justify-content: center;
+  z-index: 99999;
   align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
-/* Solo per dispositivi mobili in landscape */
-@media screen and (max-width: 768px) and (orientation: landscape) {
-  #orientation-message {
-    display: flex;
+.orientation-content {
+  padding: 20px;
+}
+
+.orientation-content p {
+  color: #00a6ff;
+  font-size: 1.2em;
+  margin-top: 15px;
+  font-family: 'Varela Round', sans-serif;
+}
+
+/* Solo per mobile landscape - Approccio CSS puro */
+@media (max-width: 768px) and (orientation: landscape) {
+  #orientation-warning {
+    display: flex !important;
   }
   body {
     overflow: hidden !important;
@@ -519,20 +529,6 @@ ul.custom-list li > strong {
       </p>`
     ];
 
-    function checkOrientation() {
-  const isMobile = window.innerWidth <= 768;
-  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-  
-  console.log(`Debug: ${isLandscape ? 'Landscape' : 'Portrait'}, ${isMobile ? 'Mobile' : 'Desktop'}`);
-  
-  if (isLandscape && isMobile) {
-    document.body.classList.add('forced-landscape');
-    console.log('Mostro messaggio di rotazione');
-  } else {
-    document.body.classList.remove('forced-landscape');
-  }
-}
-
     const contenutoHome = `
       <h2>Benvenuti in Base Elettronica Service</h2>
       <p>Siamo il partner ideale per progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi e installazioni professionali.<br><br>
@@ -804,11 +800,13 @@ document.addEventListener('submit', function(e) {
  
 </script>
 
-<div id="orientation-message">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="120" height="120">
-    <path fill="#00a6ff" d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0 4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0 12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0 12h2v-2H5v2z"/>
-  </svg>
-  <p style="color:#00a6ff;font-size:1.2em;margin-top:15px;">Ruota il telefono in verticale</p>
+<div id="orientation-warning" class="orientation-message">
+  <div class="orientation-content">
+    <svg width="120" height="120" viewBox="0 0 24 24" fill="#00a6ff">
+      <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0 4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0 12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0 12h2v-2H5v2z"/>
+    </svg>
+    <p>Ruota il telefono in verticale</p>
+  </div>
 </div>
 
   <div id="right-glow"></div>
