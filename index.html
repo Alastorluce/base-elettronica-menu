@@ -341,29 +341,35 @@ ul.custom-list li > strong {
   color: #00a6ff;
 }
 
+#orientation-warning {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  color: #00a6ff;
+  font-size: 1.4em;
+  font-weight: bold;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2em;
+  display: flex; /* ← questa ti manca! */
+}
+
+
+
 @media only screen and (max-width: 768px) and (orientation: landscape) {
   body {
-    display: block !important; /* sovrascrive display: flex */
+    display: block !important;
     position: relative;
   }
 
-  body::before {
-    content: "📱 Ruota il dispositivo in verticale per visualizzare il sito";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: black;
-    color: #00a6ff;
-    font-size: 1.4em;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 2em;
-    z-index: 99999;
+  #orientation-warning {
+    display: flex !important;
   }
 
   #main,
@@ -372,6 +378,7 @@ ul.custom-list li > strong {
     display: none !important;
   }
 }
+
 
 
 #orientation-warning {
