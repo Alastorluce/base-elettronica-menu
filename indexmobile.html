@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- già presente -->
+  <title>Base Elettronica Service - Menu</title>
+  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
+  <style>
+     
+     /* disabilita selezione di testo e immagini */
+    *, *::before, *::after {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+     
+    @keyframes fadeImage {from { opacity: 0; }to   { opacity: 1; }}
+    @keyframes slideInLogo { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
+    @keyframes slideInSidebar { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
+    @keyframes slideIn { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
+    @keyframes pulse {0%,100% { transform: translate(-50%, -50%) scale(1); }50%     { transform: translate(-50%, -50%) scale(1.1); }}
+    
+    /* Layout generale */
+    body {
+      margin: 0;
+      background: #000;
+      font-family: 'Varela Round', sans-serif;
+      color: #fff;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #sidebar {
+      width: 240px;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1em;
+      box-shadow: 2px 0 10px rgba(0, 166, 255, 0.2);
+      z-index: 2;
+      height: 100vh;
+      flex-shrink: 0;
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    #sidebar.animated { animation: slideInSidebar 0.6s ease-out forwards; }
+
+    #sidebar-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+    }
+
+    #sidebar-logo {
+      margin-bottom: 2em;
+      width: 120px;                /* container sempre 120px */
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+  
+    }
+
+    #sidebar-logo img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: brightness(90%) saturate(0%) contrast(150%) invert(10%);
+      transition: transform 0.25s ease;
+    }
+
+/* quando premi, scala l'immagine al 83% e torna al rilascio */
+    #sidebar-logo:active img {transform: scale(0.83);}
+
+    #sidebar-logo:hover { transform: scale(1.05); }  
+
+    #right-glow {
+      position: absolute;
+      top: 0; right: 0;
+      width: 2px; height: 100%;
+      pointer-events: none;
+      box-shadow:
+    0 0 6px rgba(0, 166, 255, 0.2),
+    0 0 12px rgba(0, 166, 255, 0.3);
+      z-index: 1;
+    }
+
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .menu-item {
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(0, 166, 255, 0.4);
+      color: #00a6ff;
+      padding: 0.5em 0.8em;
+      margin-bottom: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-shadow: 1px 0.5px 1px #1900ff;
+      text-align: center;
+      width: 60%;
+      font-size: 0.9em;
+      opacity: 0;
+      transform: translateX(-100%);
+      animation: slideIn 0.5s ease-out forwards;
+    }
+    .menu-item.animated { animation: slideIn 0.5s ease-out forwards; }
+    .menu-list .menu-item:nth-child(1) { animation-delay: 0s; }
+    .menu-list .menu-item:nth-child(2) { animation-delay: 0.2s; }
+    .menu-list .menu-item:nth-child(3) { animation-delay: 0.4s; }
+    .menu-list .menu-item:nth-child(4) { animation-delay: 0.6s; }
+    .menu-list .menu-item:nth-child(5) { animation-delay: 0.8s; }
+    .menu-item:hover {
+      background: rgba(0, 0, 0, 0.8);
+      color: #00ffb3;
+      border-color: #00ffb3;
+    }
+
+    #main {
+      flex-grow: 1;
+      background: #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-width: 0;
+      overflow: hidden;
+      padding: 2em;
+      box-sizing: border-box;
+    }
+
+    #logo-btn {
+      width: 350px;
+      max-width: 90vw;
+      height: auto;
+      object-fit: contain;
+      animation: pulse 2s infinite ease-in-out;
+      z-index: 1;
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(2.3);
+      transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+      
+    }
+   
+    #logo-btn.loaded-img {   
+      animation: fadeImage 1s ease-in-out; 
+    }
+
+    #modal {
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 2em;
+      border-radius: 15px;
+      box-shadow: 0 0 5px rgba(0, 166, 255, 0.3);
+      opacity: 0;
+      pointer-events: none;
+      width: 60%;
+      margin: auto 10px;
+      max-width: 900px;
+      max-height: 70vh;
+      overflow-y: auto;
+      backdrop-filter: blur(10px);
+      transition: opacity 0.6s ease;
+      z-index: 3;
+      position: relative;
+    }
+    #modal.show { opacity: 1; pointer-events: auto; }
+    #modal.fade-out { opacity: 0; pointer-events: none; }
+    #modal-content { text-align: left; max-width: 800px; }
+
+    /* — Responsive — */
+@media (max-width: 768px) {
+  /* Sidebar full-screen */
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.5em 0;
+    background: #111;
+    z-index: 999;
+  }
+
+  /* Logo piccolo */
+  #sidebar-logo {
+    display: block !important;
+    width: 60px;
+    margin: 0.5em auto;
+  }
+
+  /* Menu items più grandi e tappabili */
+  .menu-item {
+  font-size: 1.2em;
+  padding: 1em 1.2em;
+  margin: 0.5em auto;
+  width: auto;
+  max-width: 90%;   /* o 80%, come preferisci */
+  text-align: left;
+  opacity: 1 !important;      /* forzi la visibilità */
+  transform: none !important; /* annulli le animazioni di entrata */
+  animation: none !important;
+  }
+
+  /* Main content aggiustamenti */
+  #main {
+    margin-bottom: 60px;
+    padding: 1em;
+    overflow-y: auto;
+  }
+
+  /* Logo principale ridefinito */
+  #logo-btn {
+    width: 50vw;
+    max-height: 20vh;
+  }
+
+  /* Modale full-screen-friendly */
+  #modal {
+    width: 90vw;
+    max-height: 80vh;
+    padding: 1em;
+    box-shadow: none;
+    z-index: 1000;  /* deve stare sopra il sidebar */
+  }
+
+  /* Mostra e posiziona la “×” di chiusura */
+  .modal-close {
+    display: block;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #fff;
+    cursor: pointer;
+    z-index: 1001;
+  }
+}
+
+
+
+/* — Tablet only: da 769px a 1024px — */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+/* 1) Sidebar full-screen come in mobile */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 1.5em 0;
+  background: #111;
+  z-index: 999;
+}
+
+/* 2) Logo piccolo */
+#sidebar-logo {
+  display: block !important;
+  width: 80px;          /* leggermente più grande del mobile */
+  margin: 0.5em auto;
+}
+
+/* 3) Bottoni menu più grandi */
+.menu-item {
+  font-size: 1.1em;
+  padding: 0.8em 1em;
+  margin: 0.5em 0;
+  width: 100%;
+  text-align: left;
+}
+
+/* 4) Mostra la “×” */
+.modal-close {
+  display: block;
+  position: absolute;
+  top: 8px; right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  z-index: 10;
+}
+}
+
+
+</style>
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <div id="sidebar-content">
+      <div id="sidebar-logo" onclick="attivaSlideshow()">
+        <img src="logo.png" alt="Logo">
+      </div>
+      <div class="menu-list">
+        <div class="menu-item" onclick="apri(0)">Chi siamo</div>
+        <div class="menu-item" onclick="apri(1)">Servizi offerti</div>
+        <div class="menu-item" onclick="apri(2)">Portfolio</div>
+        <div class="menu-item" onclick="apri(3)">Soluzioni su misura</div>
+        <div class="menu-item" onclick="apri(4)">Preventivi e Contatti</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="main">
+    <img src="logo.png" id="logo-btn" alt="Logo">
+    <div id="modal" class="modal">
+      <div id="modal-content"><h2>Caricamento...</h2></div>
+    </div>
+  </div>
+
+  <script>
+    const contenuti = [
+      `<!-- Chi siamo -->
+      <h2>Chi siamo</h2>
+      <p><strong><span style="color:#00a6ff;">Base Elettronica Service</span></strong><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;è una realtà professionale con oltre 30 anni di esperienza,<br>
+      specializzata in progettazione e gestione di impianti <em>audio, video, luci, sicurezza e antincendio</em>.<br>
+      Operiamo su tutto il territorio nazionale con tecnici qualificati e tecnologie all’avanguardia,<br>
+      al servizio di eventi, spettacoli, installazioni fisse e soluzioni su misura.<br><br>
+      Dalla consulenza tecnica all’assistenza on-site, garantiamo precisione, affidabilità e innovazione,<br>
+      valorizzando ogni progetto con un approccio ingegneristico funzionale e creativo.<br><br>
+      CEO:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00ffb3;">Fabrizio di Filippo</span><br>
+      Responsabile Tecnico:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00ffb3;">Maiolo Alessio</span></p>`,
+  
+      `<!-- Servizi -->
+      <h2>Servizi Offerti</h2>
+      <ul>
+        <li>Progettazione acustica e illuminotecnica</li>
+        <li>Allestimenti per eventi live e teatrali</li>
+        <li>Installazioni fisse audio/video/luci</li>
+        <li>Sistemi di sicurezza e antincendio</li>
+        <li>Noleggio attrezzature professionali</li>
+        <li>Supporto tecnico e assistenza onsite</li>
+      </ul>`,
+  
+      `<!-- Portfolio -->
+      <h2>Portfolio</h2>
+      <p>Ecco alcuni dei nostri progetti più rappresentativi:</p>
+      <ul>
+        <li>Festival Nazionali e Tour Musicali</li>
+        <li>Installazioni in teatri e auditorium</li>
+        <li>Soluzioni per centri congressi e showroom</li>
+        <li>Supporto tecnico per fiere e dirette streaming</li>
+      </ul>
+      <p>
+        <em><span role="button" onclick="apri(4)" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
+          Contattaci
+        </span></em>&nbsp;&nbsp;per ricevere un portfolio dettagliato con referenze e materiali visivi.
+      </p>
+      <p style="margin-top:1.5em;">
+        <em><span role="button" onclick="attivaSlideshow()" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
+          Clicca qui
+        </span></em>&nbsp;&nbsp;per avviare una piccola anteprima nella showroom.
+      </p>`,
+  
+      `<!-- Soluzioni -->
+      <h2>Soluzioni su Misura</h2>
+      <p>Ogni progetto è unico. Analizziamo le esigenze specifiche del cliente e costruiamo soluzioni scalabili,
+      integrate e sostenibili.</p>
+      <p>Che si tratti di un piccolo impianto per eventi privati o di una produzione su vasta scala,
+      mettiamo in campo l’esperienza per garantire risultati impeccabili.</p>
+      <p>Usiamo modelli digitali, rendering 3D e simulazioni acustiche, per pre-visualizzare ogni installazione prima della realizzazione.</p>`,
+  
+      `<!-- Contattaci -->
+      <h2>Contattaci</h2>
+      <p>Richiedi un preventivo gratuito o un sopralluogo tecnico al nostro CEO Fabrizio di Filippo:</p>
+      <div style="backdrop-filter: blur(10px); background:rgba(0,0,0,0.5); padding:2em; border-radius:15px; border:1px solid rgba(0,166,255,0.2); box-shadow:0 0 5px rgba(0,166,255,0.3);">
+        <form id="contact-form" style="display:flex; flex-direction:column; gap:1em;">
+          <label><span style="display:block; margin-bottom:0.3em;">Nome e Cognome</span>
+            <input type="text" placeholder="Mario Rossi" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;">
+          </label>
+          <label><span style="display:block; margin-bottom:0.3em;">Email</span>
+            <input type="email" placeholder="tu@email.it" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;">
+          </label>
+          <label><span style="display:block; margin-bottom:0.3em;">Messaggio</span>
+            <textarea rows="10" placeholder="Descrivi il tuo progetto o le tue necessità" required style="width:100%; min-height:180px; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;"></textarea>
+          </label>
+          <button type="submit" style="padding:0.8em 1.5em; background:#00a6ff; color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+            Invia Richiesta
+          </button>
+        </form>
+      </div>
+      <p style="margin-top:1em;">
+        Oppure scrivici a: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
+      </p>`
+    ];
+
+    const contenutoHome = `
+      <h2>Benvenuti in Base Elettronica Service</h2>
+      <p>Siamo il partner ideale per progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi e installazioni professionali.<br><br>
+      Scopri di più esplorando il nostro menù laterale!
+      </p>
+    `;
+
+    let modal = document.getElementById('modal');
+    let modalContent = document.getElementById('modal-content');
+    let currentIndex = null;
+    let isTransitioning = false;
+    let slideshowAttivo = false;
+    let slideshowInterval = null;
+    
+
+    
+    function apri(index) {
+      if (isTransitioning) return;
+      if (currentIndex === index) {
+        isTransitioning = true;
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+          isTransitioning = false;
+        }, 600);
+      } else {
+        isTransitioning = true;
+        if (modal.classList.contains('show')) {
+          modal.classList.remove('show');
+          modal.classList.add('fade-out');
+          setTimeout(() => {
+            modalContent.innerHTML = contenuti[index];
+            modal.classList.remove('fade-out');
+            modal.classList.add('show');
+            currentIndex = index;
+            isTransitioning = false;
+          }, 600);
+        } else {
+          modalContent.innerHTML = contenuti[index];
+          modal.classList.add('show');
+          currentIndex = index;
+          isTransitioning = false;
+        }
+      }
+    }
+
+    modalContent.addEventListener('click', () => {
+      if (currentIndex === null && modal.classList.contains('show') && !isTransitioning) {
+        isTransitioning = true;
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          isTransitioning = false;
+        }, 600);
+      }
+    });
+
+    function attivaSlideshow() {
+      if (slideshowAttivo) return;
+      slideshowAttivo = true;
+      if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+          isTransitioning = false;
+        }, 600);
+      }
+      const immagini = [
+        'image_background/img1.jpg',
+        'image_background/img2.jpg',
+        'image_background/img3.jpg',
+        'image_background/img4.jpg',
+        'image_background/img5.jpg',
+        'image_background/img6.jpg',
+        'image_background/img7.png',
+        'image_background/img8.png',
+        'image_background/img9.png',
+        'image_background/img10.png'
+      ];
+      const logo = document.getElementById('logo-btn');
+      let idx = Math.floor(Math.random() * immagini.length);
+      const changeImage = () => {
+        const img = new Image();
+        img.src = immagini[idx];
+        img.onload = () => {
+          logo.style.opacity = '0';
+          setTimeout(() => {
+            logo.src = img.src;
+            logo.classList.remove('loading','loaded-img');
+            void logo.offsetWidth;
+            logo.classList.add('loaded-img');
+            logo.style.opacity = '1';
+          },50);
+        };
+        idx = (idx + 1) % immagini.length;
+      };
+      changeImage();
+      slideshowInterval = setInterval(changeImage, 5000);
+    }
+
+    document.getElementById('logo-btn').addEventListener('click', () => {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modalContent.innerHTML = contenutoHome;
+          currentIndex = null;
+          modal.classList.remove('fade-out');
+          void modal.offsetWidth;
+          modal.classList.add('show');
+          isTransitioning = false;
+        },600);
+      } else {
+        modalContent.innerHTML = contenutoHome;
+        currentIndex = null;
+        modal.classList.add('show');
+        isTransitioning = false;
+      }
+    });
+
+    document.getElementById('sidebar-logo').addEventListener('click', () => {
+      if (isTransitioning) return;
+      if (slideshowInterval) clearInterval(slideshowInterval);
+      slideshowAttivo = false;
+      const logo = document.getElementById('logo-btn');
+      logo.style.transition = 'none';
+      logo.style.visibility = 'hidden';
+      logo.style.opacity = '0';
+      logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
+      isTransitioning = true;
+      const preload = new Image();
+      preload.src = 'logo.png';
+      preload.onload = () => {
+        logo.src = preload.src;
+        logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
+        void logo.offsetWidth;
+        logo.style.transition = 'opacity 0.6s ease-in-out';
+        logo.style.visibility = 'visible';
+        logo.style.opacity = '1';
+        setTimeout(() => {
+          logo.classList.add('pulse');
+          isTransitioning = false;
+        },600);
+      };
+      if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+        },600);
+      }
+    });
+ 
+  // 1. Variabili di controllo
+  let welcomeTimeout;
+  let welcomeShown = false;
+
+  window.addEventListener('DOMContentLoaded', () => {
+  // 1) Avvia animazioni sidebar/menu
+  document.getElementById('sidebar').classList.add('animated');
+  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+
+  // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    const modal        = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+
+    // 2a) Inietta il pulsante di chiusura, se non esiste già
+    if (!modal.querySelector('.modal-close')) {
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'modal-close';
+      closeBtn.setAttribute('aria-label', 'Chiudi');
+      closeBtn.textContent = '×';
+      modal.insertBefore(closeBtn, modalContent);
+    }
+
+    // 2b) Collega il click sulla “×” per chiudere la modale
+    modal.querySelectorAll('.modal-close').forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+        }, 600);
+      });
+    });
+
+    // 2c) Assicura che su touch “Clicca qui” parta la showroom
+    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
+      el.addEventListener('touchstart', e => {
+        e.preventDefault();  // evita doppio tap
+        attivaSlideshow();
+      }, { passive: false });
+    });
+
+    // 2d) Avvia la showroom automaticamente (se lo desideri)
+    // attivaSlideshow();
+  }
+
+  // 3) Pianifica il pop-up di benvenuto
+  let welcomeTimeout = setTimeout(() => {
+    modalContent.innerHTML = contenutoHome;
+    modal.classList.add('show');
+    let welcomeShown = true;
+
+    const hideWelcome = e => {
+  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
+  if (
+    e.target.closest('#sidebar') ||
+    e.target.closest('.menu-item') ||
+    e.target.closest('#modal') ||
+    e.target.closest('#logo-btn')
+  ) {
+    return;
+  }
+  modal.classList.remove('show');
+  document.removeEventListener('click', hideWelcome);
+};
+document.addEventListener('click', hideWelcome, { once: true });
+
+  }, 2000);
+});
+
+// Override del clic sul logo grande (non riapre mai il welcome)
+document.getElementById('logo-btn').addEventListener('click', () => {
+  clearTimeout(welcomeTimeout);
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+  }
+  welcomeShown = true;
+});
+
+// Event delegation per il form di contatto
+document.addEventListener('submit', function(e) {
+  if (e.target.matches('#contact-form')) {
+    e.preventDefault();
+    modalContent.innerHTML = `
+      <div style="text-align:center; padding:1em;">
+        <h2>Grazie di averci contattato!</h2>
+        <p>Risponderemo entro 24 ore.</p>
+      </div>`;
+    modal.classList.remove('fade-out');
+    modal.classList.add('show');
+    setTimeout(() => {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modalContent.innerHTML = contenutoHome;
+        currentIndex = null;
+      }, 600);
+    }, 3000);
+  }
+});
+
+
+ 
+</script>
+
+<div id="right-glow"></div>  <!-- spostato dentro il body -->
+</body>
+</html>
+
+  </script>
+</body>
+
+
+<div id="right-glow"></div>
+
+</html>
