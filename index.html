@@ -394,21 +394,6 @@ ul.custom-list li > strong {
 }
 
 
-
-// Disattiva slideshow se si torna in portrait
-window.addEventListener("orientationchange", () => {
-  if (window.matchMedia("(orientation: portrait)").matches) {
-    if (slideshowAttivo) {
-      clearInterval(slideshowInterval);
-      slideshowAttivo = false;
-      document.body.classList.remove('showroom-attivo');
-      const logo = document.getElementById('logo-btn');
-      logo.src = 'logo.png';
-      logo.classList.add('pulse');
-    }
-  }
-});
-
 </style>
   </style>
 </head>
@@ -841,7 +826,19 @@ document.addEventListener('submit', function(e) {
   }
 });
 
-
+// Disattiva slideshow se si torna in portrait
+window.addEventListener("orientationchange", () => {
+  if (window.matchMedia("(orientation: portrait)").matches) {
+    if (slideshowAttivo) {
+      clearInterval(slideshowInterval);
+      slideshowAttivo = false;
+      document.body.classList.remove('showroom-attivo');
+      const logo = document.getElementById('logo-btn');
+      logo.src = 'logo.png';
+      logo.classList.add('pulse');
+    }
+  }
+});
  
 </script>
 <div id="showroom-hint">📱 Ruota il telefono per visualizzare la showroom</div>
