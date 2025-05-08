@@ -524,7 +524,7 @@ ul.custom-list li > strong {
         Oppure scrivici a: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
       </p>`
     ];
-    
+
     // Controllo orientamento al caricamento e al cambio orientamento
 function checkOrientation() {
   if (window.matchMedia("(orientation: landscape)").matches && window.innerWidth <= 768) {
@@ -770,7 +770,7 @@ window.addEventListener('orientationchange', checkOrientation);
 };
 document.addEventListener('click', hideWelcome, { once: true });
 
-  }, 2000);
+  }, 500);
 });
 
 // Override del clic sul logo grande (non riapre mai il welcome)
