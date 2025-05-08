@@ -542,8 +542,30 @@ ul.custom-list li > strong {
     let isTransitioning = false;
     let slideshowAttivo = false;
     let slideshowInterval = null;
-    
 
+    function checkOrientationWarning() {
+  const warning = document.getElementById("orientation-warning");
+  const isMobile = window.innerWidth <= 768;
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo;
+
+  if (isMobile && isLandscape && !showroomAttiva) {
+    warning.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  } else {
+    warning.style.display = "none";
+    document.body.style.overflow = "";
+  }
+}
+
+
+
+    // Esegui al caricamento e su ogni cambio di orientamento/dimensione
+  document.addEventListener("DOMContentLoaded", checkOrientationWarning);
+  window.addEventListener("resize", checkOrientationWarning);
+  window.addEventListener("orientationchange", checkOrientationWarning);
+
+     
     
     function apri(index) {
       if (isTransitioning) return;
@@ -699,6 +721,8 @@ ul.custom-list li > strong {
   let welcomeShown = false;
 
   window.addEventListener('DOMContentLoaded', () => {
+  checkOrientationWarning(); // per mostrare correttamente il messaggio al primo caricamento
+
   // 1) Avvia animazioni sidebar/menu
   document.getElementById('sidebar').classList.add('animated');
   document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
@@ -808,29 +832,6 @@ document.addEventListener('submit', function(e) {
     <p>Ruota il telefono in verticale per visualizzare il sito</p>
   </div>
 </div>
-<script>
-function checkOrientationWarning() {
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-  const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo;
-
-  const warning = document.getElementById("orientation-warning");
-
-  if (isMobile && isLandscape && !showroomAttiva) {
-    warning.style.display = "flex";
-    document.body.style.overflow = "hidden";
-  } else {
-    warning.style.display = "none";
-    document.body.style.overflow = "";
-  }
-}
-
-// Controlla all'avvio
-window.addEventListener("DOMContentLoaded", checkOrientationWarning);
-// Controlla quando cambia orientamento o dimensione finestra
-window.addEventListener("orientationchange", checkOrientationWarning);
-window.addEventListener("resize", checkOrientationWarning);
-</script>
 
   <div id="right-glow"></div>
 
