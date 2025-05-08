@@ -49,11 +49,15 @@
 }
 
 @media (max-width: 768px) and (orientation: landscape) {
-  /* Mostra il messaggio, ma blocca lo scroll */
+  #orientation-warning {
+    display: flex !important;
+  }
+
   body.landscape-lock {
     overflow: hidden !important;
   }
 }
+
 
     
     
