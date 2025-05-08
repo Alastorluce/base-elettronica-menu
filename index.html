@@ -59,7 +59,7 @@
 
     #sidebar-logo {
       margin-bottom: 2em;
-      width: 250px;                /* container sempre 120px */
+      width 180px;                /* container sempre 120px */
       height: auto;
       cursor: pointer;
       transition: transform 0.3s ease;
@@ -180,6 +180,19 @@
     #modal.fade-out { opacity: 0; pointer-events: none; }
     #modal-content { text-align: left; max-width: 800px; }
 
+
+    @media (max-width: 400px) {
+  .menu-item {
+    font-size: 1em;
+    padding: 0.8em;
+  }
+
+  #sidebar-logo {
+    width: 200px;
+  }
+}
+
+
     /* — Responsive — */
 @media (max-width: 768px) {
   /* Sidebar full-screen */
@@ -201,8 +214,14 @@
   #sidebar-logo {
     display: block !important;
     width: 250px;
-    margin: 0.5em auto;
+    margin: 0.5em auto 1em auto; /* top: 0.5em, bottom: 1em */
   }
+   
+  .menu-list {
+  margin-top: 0; /* evita spazi vuoti sopra */
+  padding: 0 1em;
+  align-items: center;
+}
 
   .menu-item {
   font-size: 1.2em;
@@ -280,7 +299,7 @@
 /* 2) Logo piccolo */
 #sidebar-logo {
   display: block !important;
-  width:250px;          /* leggermente più grande del mobile */
+  width:270px;          /* leggermente più grande del mobile */
   margin: 0.5em auto;
 }
 
