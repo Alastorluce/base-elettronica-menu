@@ -194,7 +194,7 @@
 
 
     /* — Responsive — */
-@media (max-width: 768px) {
+    @media (max-width: 768px) {
   /* Sidebar full-screen */
   #sidebar {
     position: fixed;
@@ -210,60 +210,59 @@
     z-index: 999;
   }
 
-  /* Logo piccolo */
+  #sidebar-content {
+    justify-content: flex-start;
+    padding-top: 0.5em;
+  }
+
   #sidebar-logo {
     display: block !important;
     width: 250px;
-    margin: 0.5em auto 1em auto; /* top: 0.5em, bottom: 1em */
+    margin: 0.5em auto 1em auto;
   }
-   
+
   .menu-list {
-  margin-top: 0; /* evita spazi vuoti sopra */
-  padding: 0 1em;
-  align-items: center;
-}
+    margin-top: 0;
+    padding: 0 1em;
+    align-items: center;
+  }
 
   .menu-item {
-  font-size: 1.2em;
-  padding: 1em 1.2em;
-  margin: 0.5em auto;
-  width: 90vw;
-  max-width: 90vw;
-  min-height: 60px;
-  text-align: center;
-  opacity: 1 !important;
-  transform: none !important;
-  animation: none !important;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    font-size: 1.2em;
+    padding: 1em 1.2em;
+    margin: 0.5em auto;
+    width: 90vw;
+    max-width: 90vw;
+    min-height: 60px;
+    text-align: center;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-
-  /* Main content aggiustamenti */
   #main {
     margin-bottom: 60px;
     padding: 1em;
     overflow-y: auto;
   }
 
-  /* Logo principale ridefinito */
   #logo-btn {
     width: 50vw;
     max-height: 20vh;
   }
 
-  /* Modale full-screen-friendly */
   #modal {
     width: 90vw;
     max-height: 80vh;
     padding: 1em;
     box-shadow: none;
-    z-index: 1000;  /* deve stare sopra il sidebar */
+    z-index: 1000;
   }
 
-  /* Mostra e posiziona la “×” di chiusura */
   .modal-close {
     display: block;
     position: absolute;
@@ -277,6 +276,7 @@
     z-index: 1001;
   }
 }
+
 
 
 
