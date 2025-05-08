@@ -713,38 +713,34 @@ ul.custom-list li > strong {
     // 2c) Assicura che su touch “Clicca qui” parta la showroom
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
       el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tap
+        e.preventDefault();
         attivaSlideshow();
       }, { passive: false });
     });
-
-    // 2d) Avvia la showroom automaticamente (se lo desideri)
-    // attivaSlideshow();
   }
 
   // 3) Pianifica il pop-up di benvenuto
-  let welcomeTimeout = setTimeout(() => {
+  welcomeTimeout = setTimeout(() => {
     modalContent.innerHTML = contenutoHome;
     modal.classList.add('show');
-    let welcomeShown = true;
+    welcomeShown = true;
 
     const hideWelcome = e => {
-  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
-  if (
-    e.target.closest('#sidebar') ||
-    e.target.closest('.menu-item') ||
-    e.target.closest('#modal') ||
-    e.target.closest('#logo-btn')
-  ) {
-    return;
-  }
-  modal.classList.remove('show');
-  document.removeEventListener('click', hideWelcome);
-};
-document.addEventListener('click', hideWelcome, { once: true });
+      if (
+        e.target.closest('#sidebar') ||
+        e.target.closest('.menu-item') ||
+        e.target.closest('#modal') ||
+        e.target.closest('#logo-btn')
+      ) return;
 
-  }, 500);
+      modal.classList.remove('show');
+      document.removeEventListener('click', hideWelcome);
+    };
+
+    document.addEventListener('click', hideWelcome, { once: true });
+  }, 500); // mezzo secondo
 });
+
 
 // Override del clic sul logo grande (non riapre mai il welcome)
 document.getElementById('logo-btn').addEventListener('click', () => {
