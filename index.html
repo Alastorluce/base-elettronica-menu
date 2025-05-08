@@ -51,15 +51,12 @@
 /* Solo per mobile landscape - Approccio CSS puro */
 @media (max-width: 768px) and (orientation: landscape) {
   #orientation-warning {
-    display: flex !important;
-  }
-  body {
-    overflow: hidden !important;
-  }
-  #sidebar, #main, #right-glow {
-    display: none !important;
-  }
+  display: none;
 }
+body.landscape-lock {
+  overflow: hidden !important;
+}
+
     
     
 
@@ -551,12 +548,20 @@ ul.custom-list li > strong {
 
   if (isMobile && isLandscape && !showroomAttiva) {
     warning.style.display = "flex";
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("landscape-lock");
+    // opzionale: nascondi il contenuto principale
+    document.getElementById("sidebar").style.display = "none";
+    document.getElementById("main").style.display = "none";
+    document.getElementById("right-glow").style.display = "none";
   } else {
     warning.style.display = "none";
-    document.body.style.overflow = "";
+    document.body.classList.remove("landscape-lock");
+    document.getElementById("sidebar").style.display = "";
+    document.getElementById("main").style.display = "";
+    document.getElementById("right-glow").style.display = "";
   }
 }
+
 
 
 
