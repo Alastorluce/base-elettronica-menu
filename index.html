@@ -48,9 +48,11 @@
   font-family: 'Varela Round', sans-serif;
 }
 
-
-body.landscape-lock {
-  overflow: hidden !important;
+@media (max-width: 768px) and (orientation: landscape) {
+  /* Mostra il messaggio, ma blocca lo scroll */
+  body.landscape-lock {
+    overflow: hidden !important;
+  }
 }
 
     
@@ -538,41 +540,46 @@ ul.custom-list li > strong {
 
     function checkOrientationWarning() {
   const warning = document.getElementById("orientation-warning");
+  const sidebar = document.getElementById("sidebar");
+  const main = document.getElementById("main");
+  const glow = document.getElementById("right-glow");
+
   const isMobile = window.innerWidth <= 768;
   const isLandscape = window.innerWidth > window.innerHeight;
   const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo === true;
 
   if (isMobile && isLandscape && !showroomAttiva) {
-    warning.style.display = "flex";
+    if (warning) warning.style.setProperty("display", "flex", "important");
     document.body.classList.add("landscape-lock");
 
-    // Nascondi elementi solo se erano visibili
-    const sidebar = document.getElementById("sidebar");
-    const main = document.getElementById("main");
-    const glow = document.getElementById("right-glow");
+    if (sidebar) {
+      if (getComputedStyle(sidebar).display !== "none")
+        sidebar.dataset.originalDisplay = sidebar.style.display || "";
+      sidebar.style.display = "none";
+    }
 
-    if (getComputedStyle(sidebar).display !== "none") sidebar.dataset.originalDisplay = sidebar.style.display || "";
-    if (getComputedStyle(main).display !== "none") main.dataset.originalDisplay = main.style.display || "";
-    if (getComputedStyle(glow).display !== "none") glow.dataset.originalDisplay = glow.style.display || "";
+    if (main) {
+      if (getComputedStyle(main).display !== "none")
+        main.dataset.originalDisplay = main.style.display || "";
+      main.style.display = "none";
+    }
 
-    sidebar.style.display = "none";
-    main.style.display = "none";
-    glow.style.display = "none";
+    if (glow) {
+      if (getComputedStyle(glow).display !== "none")
+        glow.dataset.originalDisplay = glow.style.display || "";
+      glow.style.display = "none";
+    }
 
   } else {
-    warning.style.display = "none";
+    if (warning) warning.style.display = "none";
     document.body.classList.remove("landscape-lock");
 
-    // Ripristina SOLO se erano nascosti da noi
-    const sidebar = document.getElementById("sidebar");
-    const main = document.getElementById("main");
-    const glow = document.getElementById("right-glow");
-
-    sidebar.style.display = sidebar.dataset.originalDisplay || "";
-    main.style.display = main.dataset.originalDisplay || "";
-    glow.style.display = glow.dataset.originalDisplay || "";
+    if (sidebar) sidebar.style.display = sidebar.dataset.originalDisplay || "";
+    if (main) main.style.display = main.dataset.originalDisplay || "";
+    if (glow) glow.style.display = glow.dataset.originalDisplay || "";
   }
 }
+
 
 
 
