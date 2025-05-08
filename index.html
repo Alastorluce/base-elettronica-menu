@@ -372,6 +372,19 @@ ul.custom-list li > strong {
 </head>
 
 <body>
+<div id="right-glow"></div>
+  <div id="orientation-warning">
+    <div class="orientation-content">
+      <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"
+           viewBox="0 0 24 24" fill="#00a6ff">
+        <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
+                 4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
+                 12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
+                 12h2v-2H5v2z"/>
+      </svg>
+      <p>Ruota il telefono in verticale per vedere il sito</p>
+    </div>
+  </div>
   <div id="sidebar">
     <div id="sidebar-content">
       <div id="sidebar-logo" onclick="attivaSlideshow()">
@@ -778,39 +791,26 @@ document.addEventListener('submit', function(e) {
   }
 });
 
-// **3**: JS minimo per mostrare il warning su mobile+landscape
-function checkOrientation() {
-  const w = document.getElementById('orientation-warning');
-  // user-agent semplice per mobile
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-  const isLandscape = window.innerWidth > window.innerHeight;
-  if (isMobile && isLandscape) {
-    w.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  } else {
-    w.style.display = 'none';
-    document.body.style.overflow = '';
+
+
+(function() {
+  function checkOrientation() {
+    const w = document.getElementById('orientation-warning');
+    const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
+    const isLandscape = window.innerWidth > window.innerHeight;
+    if (isMobile && isLandscape) {
+      w.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    } else {
+      w.style.display = 'none';
+      document.body.style.overflow = '';
+    }
   }
-}
-['load','resize','orientationchange'].forEach(e =>
-  window.addEventListener(e, checkOrientation)
-);
- 
+  // Chiama subito e rilancia ad ogni resize/orientationchange
+  window.addEventListener('load',           checkOrientation);
+  window.addEventListener('resize',         checkOrientation);
+  window.addEventListener('orientationchange', checkOrientation);
+})();
 </script>
-<div id="orientation-warning">
-    <div class="orientation-content">
-      <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"
-           viewBox="0 0 24 24" fill="#00a6ff">
-        <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
-                 4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
-                 12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
-                 12h2v-2H5v2z"/>
-      </svg>
-      <p>Ruota il telefono in verticale per vedere il sito</p>
-    </div>
-  </div>
-<div id="right-glow"></div>
-
-
 </body>
 </html>
