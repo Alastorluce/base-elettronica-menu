@@ -341,13 +341,13 @@ ul.custom-list li > strong {
   color: #00a6ff;
 }
 
-@media only screen and (orientation: landscape) and (max-width: 768px) {
+@media only screen and (max-width: 768px) and (orientation: landscape) {
   html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: black !important;
     overflow: hidden !important;
+    background-color: #000 !important;
   }
 
   #main,
@@ -375,6 +375,7 @@ ul.custom-list li > strong {
     padding: 2em;
   }
 }
+
 
 
 
