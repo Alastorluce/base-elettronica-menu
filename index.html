@@ -206,15 +206,16 @@
 
   /* Menu items più grandi e tappabili */
   .menu-item {
-  font-size: 1.2em;
-  padding: 1em 1.2em;
-  margin: 0.5em auto;
-  width: auto;
-  max-width: 90%;   /* o 80%, come preferisci */
-  text-align: left;
-  opacity: 1 !important;      /* forzi la visibilità */
-  transform: none !important; /* annulli le animazioni di entrata */
-  animation: none !important;
+    font-size: 1.2em;
+    padding: 1em 1.2em;
+    margin: 0.5em auto;
+    width: 90vw;                  /* tutti della stessa larghezza */
+    max-width: none;              /* disabilita limiti */
+    box-sizing: border-box;       /* include il padding nel calcolo */
+    text-align: center;           /* centrati */
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
 
   /* Main content aggiustamenti */
