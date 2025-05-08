@@ -647,15 +647,17 @@ ul.custom-list li > strong {
   let welcomeShown = false;
 
   window.addEventListener('DOMContentLoaded', () => {
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburger-toggle');
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modal-content');
+
   // 1) Avvia animazioni sidebar/menu
-  document.getElementById('sidebar').classList.add('animated');
+  sidebar.classList.add('animated');
   document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
 
   // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
   if (window.matchMedia('(max-width: 768px)').matches) {
-    const modal        = document.getElementById('modal');
-    const modalContent = document.getElementById('modal-content');
-
     // 2a) Inietta il pulsante di chiusura, se non esiste già
     if (!modal.querySelector('.modal-close')) {
       const closeBtn = document.createElement('button');
@@ -680,13 +682,10 @@ ul.custom-list li > strong {
     // 2c) Assicura che su touch “Clicca qui” parta la showroom
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
       el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tap
+        e.preventDefault(); // evita doppio tap
         attivaSlideshow();
       }, { passive: false });
     });
-
-    // 2d) Avvia la showroom automaticamente (se lo desideri)
-    // attivaSlideshow();
   }
 
   // 3) Pianifica il pop-up di benvenuto
@@ -696,21 +695,33 @@ ul.custom-list li > strong {
     let welcomeShown = true;
 
     const hideWelcome = e => {
-  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
-  if (
-    e.target.closest('#sidebar') ||
-    e.target.closest('.menu-item') ||
-    e.target.closest('#modal') ||
-    e.target.closest('#logo-btn')
-  ) {
-    return;
-  }
-  modal.classList.remove('show');
-  document.removeEventListener('click', hideWelcome);
-};
-document.addEventListener('click', hideWelcome, { once: true });
+      if (
+        e.target.closest('#sidebar') ||
+        e.target.closest('.menu-item') ||
+        e.target.closest('#modal') ||
+        e.target.closest('#logo-btn')
+      ) {
+        return;
+      }
+      modal.classList.remove('show');
+      document.removeEventListener('click', hideWelcome);
+    };
 
+    document.addEventListener('click', hideWelcome, { once: true });
   }, 2000);
+
+  // Gestione hamburger menu mobile con animazione di uscita
+  hamburger.addEventListener('click', () => {
+    if (sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      sidebar.classList.add('closing');
+      setTimeout(() => {
+        sidebar.classList.remove('closing');
+      }, 400); // deve corrispondere al tempo della transizione
+    } else {
+      sidebar.classList.add('open');
+    }
+  });
 });
 
 // Override del clic sul logo grande (non riapre mai il welcome)
@@ -744,13 +755,6 @@ document.addEventListener('submit', function(e) {
   }
 });
 
-// Controllo apertura/chiusura sidebar da mobile
-const hamburger = document.getElementById('hamburger-toggle');
-const sidebar = document.getElementById('sidebar');
-
-hamburger.addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-});
 
  
 </script>
