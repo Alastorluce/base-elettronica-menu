@@ -342,16 +342,18 @@ ul.custom-list li > strong {
 }
 
 @media screen and (orientation: landscape) {
-  body {
+  body:not(.showroom-attivo) {
     overflow: hidden;
     position: relative;
   }
 
-  #main, #sidebar, #modal {
+  body:not(.showroom-attivo) #main,
+  body:not(.showroom-attivo) #sidebar,
+  body:not(.showroom-attivo) #modal {
     display: none !important;
   }
 
-  body::before {
+  body:not(.showroom-attivo)::before {
     content: "📱 Ruota il dispositivo in verticale per visualizzare il sito";
     color: #00a6ff;
     font-size: 1.2em;
@@ -362,11 +364,15 @@ ul.custom-list li > strong {
     text-align: center;
     padding: 2em;
     background-color: #000;
+    z-index: 9999;
   }
 }
 
+
 #showroom-hint {
   display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
   position: fixed;
   top: 20%;
   left: 50%;
@@ -380,14 +386,27 @@ ul.custom-list li > strong {
   z-index: 2000;
   box-shadow: 0 0 10px rgba(0, 166, 255, 0.4);
 }
-#showroom-hint {
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
 
 #showroom-hint.show {
+  display: block;
   opacity: 1;
 }
+
+
+
+// Disattiva slideshow se si torna in portrait
+window.addEventListener("orientationchange", () => {
+  if (window.matchMedia("(orientation: portrait)").matches) {
+    if (slideshowAttivo) {
+      clearInterval(slideshowInterval);
+      slideshowAttivo = false;
+      document.body.classList.remove('showroom-attivo');
+      const logo = document.getElementById('logo-btn');
+      logo.src = 'logo.png';
+      logo.classList.add('pulse');
+    }
+  }
+});
 
 </style>
   </style>
