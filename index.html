@@ -48,15 +48,17 @@
   font-family: 'Varela Round', sans-serif;
 }
 
-@media (max-width: 768px) and (orientation: landscape) {
+@media only screen 
+  and (orientation: landscape) 
+  and (max-height: 768px) {
   #orientation-warning {
     display: flex !important;
   }
-
   body.landscape-lock {
     overflow: hidden !important;
   }
 }
+
 
 
     
@@ -386,7 +388,6 @@ ul.custom-list li > strong {
 
 
 </style>
-  </style>
 </head>
 <body>
   <div id="sidebar">
