@@ -204,18 +204,23 @@
     margin: 0.5em auto;
   }
 
-  /* Menu items più grandi e tappabili */
   .menu-item {
   font-size: 1.2em;
   padding: 1em 1.2em;
   margin: 0.5em auto;
-  width: auto;
-  max-width: 90%;   /* o 80%, come preferisci */
-  text-align: left;
-  opacity: 1 !important;      /* forzi la visibilità */
-  transform: none !important; /* annulli le animazioni di entrata */
+  width: 90vw;
+  max-width: 90vw;
+  min-height: 60px;
+  text-align: center;
+  opacity: 1 !important;
+  transform: none !important;
   animation: none !important;
-  }
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 
   /* Main content aggiustamenti */
   #main {
