@@ -48,16 +48,7 @@
   font-family: 'Varela Round', sans-serif;
 }
 
-@media only screen 
-  and (orientation: landscape) 
-  and (max-height: 768px) {
-  #orientation-warning {
-    display: flex !important;
-  }
-  body.landscape-lock {
-    overflow: hidden !important;
-  }
-}
+
 
 
 
@@ -552,7 +543,9 @@ ul.custom-list li > strong {
   const main = document.getElementById("main");
   const glow = document.getElementById("right-glow");
 
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const isMobileTouch = 'ontouchstart' in window 
+                     && window.matchMedia("(max-width: 768px)").matches;
+
   const isLandscape = window.matchMedia("(orientation: landscape)").matches;
   const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo === true;
 
