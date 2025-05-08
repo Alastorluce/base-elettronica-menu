@@ -341,19 +341,8 @@ ul.custom-list li > strong {
   color: #00a6ff;
 }
 
-@media screen and (orientation: landscape) and (max-width: 768px) {
-  body:not(.showroom-attivo):not(.showroom-forzata) {
-    overflow: hidden;
-    position: relative;
-  }
-
-  body:not(.showroom-attivo):not(.showroom-forzata) #main,
-  body:not(.showroom-attivo):not(.showroom-forzata) #sidebar,
-  body:not(.showroom-attivo):not(.showroom-forzata) #modal {
-    display: none !important;
-  }
-
-  body:not(.showroom-attivo):not(.showroom-forzata)::before {
+  @media screen and (orientation: landscape) and (max-width: 768px) and (pointer: coarse) {
+  body:not(.showroom-attivo)::before {
     content: "📱 Ruota il dispositivo in verticale per visualizzare il sito";
     color: #00a6ff;
     font-size: 1.2em;
@@ -368,6 +357,16 @@ ul.custom-list li > strong {
   }
 }
 
+body:not(.showroom-attivo):not(.showroom-forzata) {
+    overflow: hidden;
+    position: relative;
+  }
+
+  body:not(.showroom-attivo):not(.showroom-forzata) #main,
+  body:not(.showroom-attivo):not(.showroom-forzata) #sidebar,
+  body:not(.showroom-attivo):not(.showroom-forzata) #modal {
+    display: none !important;
+  }
 
 
 
