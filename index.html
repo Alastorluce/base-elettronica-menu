@@ -380,6 +380,14 @@ ul.custom-list li > strong {
   z-index: 2000;
   box-shadow: 0 0 10px rgba(0, 166, 255, 0.4);
 }
+#showroom-hint {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#showroom-hint.show {
+  opacity: 1;
+}
 
 </style>
   </style>
@@ -595,7 +603,9 @@ ul.custom-list li > strong {
   // Mostra il messaggio
   const hint = document.getElementById('showroom-hint');
   if (hint) {
+    hint.classList.add('show');
     hint.style.display = 'block';
+
 
     const hideHint = () => {
       hint.style.display = 'none';
@@ -814,15 +824,13 @@ document.addEventListener('submit', function(e) {
 
  
 </script>
-
+<div id="showroom-hint">📱 Ruota il telefono per visualizzare la showroom</div>
 <div id="right-glow"></div>  <!-- spostato dentro il body -->
 </body>
 </html>
 
   </script>
 </body>
-
-<div id="showroom-hint">📱 Ruota il telefono per visualizzare la showroom</div>
 
 <div id="right-glow"></div>
 
