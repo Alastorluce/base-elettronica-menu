@@ -51,18 +51,11 @@
 /* Solo per mobile landscape - Approccio CSS puro */
 @media (max-width: 768px) and (orientation: landscape) {
   #orientation-warning {
-    display: flex !important;
-  }
-
-  body.landscape-lock {
-    overflow: hidden !important;
-  }
-
-  #sidebar, #main, #right-glow {
-    display: none !important;
-  }
+  display: none;
 }
-
+body.landscape-lock {
+  overflow: hidden !important;
+}
 
     
     
@@ -551,23 +544,40 @@ ul.custom-list li > strong {
   const warning = document.getElementById("orientation-warning");
   const isMobile = window.innerWidth <= 768;
   const isLandscape = window.innerWidth > window.innerHeight;
-  const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo;
+  const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo === true;
 
   if (isMobile && isLandscape && !showroomAttiva) {
     warning.style.display = "flex";
     document.body.classList.add("landscape-lock");
-    // opzionale: nascondi il contenuto principale
-    document.getElementById("sidebar").style.display = "none";
-    document.getElementById("main").style.display = "none";
-    document.getElementById("right-glow").style.display = "none";
+
+    // Nascondi elementi solo se erano visibili
+    const sidebar = document.getElementById("sidebar");
+    const main = document.getElementById("main");
+    const glow = document.getElementById("right-glow");
+
+    if (getComputedStyle(sidebar).display !== "none") sidebar.dataset.originalDisplay = sidebar.style.display || "";
+    if (getComputedStyle(main).display !== "none") main.dataset.originalDisplay = main.style.display || "";
+    if (getComputedStyle(glow).display !== "none") glow.dataset.originalDisplay = glow.style.display || "";
+
+    sidebar.style.display = "none";
+    main.style.display = "none";
+    glow.style.display = "none";
+
   } else {
     warning.style.display = "none";
     document.body.classList.remove("landscape-lock");
-    document.getElementById("sidebar").style.display = "";
-    document.getElementById("main").style.display = "";
-    document.getElementById("right-glow").style.display = "";
+
+    // Ripristina SOLO se erano nascosti da noi
+    const sidebar = document.getElementById("sidebar");
+    const main = document.getElementById("main");
+    const glow = document.getElementById("right-glow");
+
+    sidebar.style.display = sidebar.dataset.originalDisplay || "";
+    main.style.display = main.dataset.originalDisplay || "";
+    glow.style.display = glow.dataset.originalDisplay || "";
   }
 }
+
 
 
 
