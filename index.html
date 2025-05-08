@@ -808,6 +808,29 @@ document.addEventListener('submit', function(e) {
     <p>Ruota il telefono in verticale per visualizzare il sito</p>
   </div>
 </div>
+<script>
+function checkOrientationWarning() {
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+  const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo;
+
+  const warning = document.getElementById("orientation-warning");
+
+  if (isMobile && isLandscape && !showroomAttiva) {
+    warning.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  } else {
+    warning.style.display = "none";
+    document.body.style.overflow = "";
+  }
+}
+
+// Controlla all'avvio
+window.addEventListener("DOMContentLoaded", checkOrientationWarning);
+// Controlla quando cambia orientamento o dimensione finestra
+window.addEventListener("orientationchange", checkOrientationWarning);
+window.addEventListener("resize", checkOrientationWarning);
+</script>
 
   <div id="right-glow"></div>
 
