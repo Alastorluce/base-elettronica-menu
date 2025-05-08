@@ -544,8 +544,8 @@ ul.custom-list li > strong {
   const main = document.getElementById("main");
   const glow = document.getElementById("right-glow");
 
-  const isMobile = window.innerWidth <= 768;
-  const isLandscape = window.innerWidth > window.innerHeight;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
   const showroomAttiva = typeof slideshowAttivo !== "undefined" && slideshowAttivo === true;
 
   if (isMobile && isLandscape && !showroomAttiva) {
@@ -553,20 +553,17 @@ ul.custom-list li > strong {
     document.body.classList.add("landscape-lock");
 
     if (sidebar) {
-      if (getComputedStyle(sidebar).display !== "none")
-        sidebar.dataset.originalDisplay = sidebar.style.display || "";
+      sidebar.dataset.originalDisplay = sidebar.style.display || "";
       sidebar.style.display = "none";
     }
 
     if (main) {
-      if (getComputedStyle(main).display !== "none")
-        main.dataset.originalDisplay = main.style.display || "";
+      main.dataset.originalDisplay = main.style.display || "";
       main.style.display = "none";
     }
 
     if (glow) {
-      if (getComputedStyle(glow).display !== "none")
-        glow.dataset.originalDisplay = glow.style.display || "";
+      glow.dataset.originalDisplay = glow.style.display || "";
       glow.style.display = "none";
     }
 
@@ -579,6 +576,21 @@ ul.custom-list li > strong {
     if (glow) glow.style.display = glow.dataset.originalDisplay || "";
   }
 }
+
+// Avvio iniziale
+document.addEventListener("DOMContentLoaded", checkOrientationWarning);
+
+// Eventi classici + fallback sicuro
+window.addEventListener("resize", () => {
+  setTimeout(checkOrientationWarning, 300);
+});
+
+window.addEventListener("orientationchange", () => {
+  setTimeout(checkOrientationWarning, 300);
+});
+
+// Fallback ciclico ogni secondo (garantisce aggiornamento in ogni caso)
+setInterval(checkOrientationWarning, 1000);
 
 
 
