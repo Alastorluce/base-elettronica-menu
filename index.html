@@ -59,7 +59,7 @@
 
     #sidebar-logo {
       margin-bottom: 2em;
-      width: 180px;                /* container sempre 120px */
+      width 180px;                /* container sempre 120px */
       height: auto;
       cursor: pointer;
       transition: transform 0.3s ease;
@@ -341,44 +341,34 @@ ul.custom-list li > strong {
   color: #00a6ff;
 }
 
-/* Avviso invisibile di default */
-#orientation-warning {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 99999;
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  color: #00a6ff;
-  font-size: 1.4em;
-  font-weight: bold;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2em;
-}
-
-/* SOLO su dispositivi mobili reali in orizzontale */
-@media only screen and (max-width: 768px) and (orientation: landscape) and (pointer: coarse) and (hover: none) {
-  #orientation-warning {
-    display: flex !important;
+@media screen and (orientation: landscape) {
+  body {
+    overflow: hidden;
+    position: relative;
   }
 
-  #main,
-  #sidebar,
-  #modal {
+  #main, #sidebar, #modal {
     display: none !important;
   }
+
+  body::before {
+    content: "📱 Ruota il dispositivo in verticale per visualizzare il sito";
+    color: #00a6ff;
+    font-size: 1.2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    padding: 2em;
+    background-color: #000;
+  }
 }
 
-
 </style>
+  </style>
 </head>
 <body>
-  <div id="orientation-warning">📱 Ruota il dispositivo in verticale per visualizzare il sito</div>
-
   <div id="sidebar">
     <div id="sidebar-content">
       <div id="sidebar-logo" onclick="attivaSlideshow()">
@@ -450,7 +440,7 @@ ul.custom-list li > strong {
   <br>
 
   <li><strong>Dotazione professionale</strong>:</p>
-    Disponiamo di un’ampia gamma di strutture ed americane e di vari sistemi audio/video/luci :
+    Disponiamo di un’ampia gamma di strutture ed americane e di vari sistemi :
     RCF, L-Acoustics e Meyer Sound;
     <p>
     mixer audio SSL, Midas, Yamaha e DiGiCo;
@@ -721,34 +711,38 @@ ul.custom-list li > strong {
     // 2c) Assicura che su touch “Clicca qui” parta la showroom
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
       el.addEventListener('touchstart', e => {
-        e.preventDefault();
+        e.preventDefault();  // evita doppio tap
         attivaSlideshow();
       }, { passive: false });
     });
+
+    // 2d) Avvia la showroom automaticamente (se lo desideri)
+    // attivaSlideshow();
   }
 
   // 3) Pianifica il pop-up di benvenuto
-  welcomeTimeout = setTimeout(() => {
+  let welcomeTimeout = setTimeout(() => {
     modalContent.innerHTML = contenutoHome;
     modal.classList.add('show');
-    welcomeShown = true;
+    let welcomeShown = true;
 
     const hideWelcome = e => {
-      if (
-        e.target.closest('#sidebar') ||
-        e.target.closest('.menu-item') ||
-        e.target.closest('#modal') ||
-        e.target.closest('#logo-btn')
-      ) return;
+  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
+  if (
+    e.target.closest('#sidebar') ||
+    e.target.closest('.menu-item') ||
+    e.target.closest('#modal') ||
+    e.target.closest('#logo-btn')
+  ) {
+    return;
+  }
+  modal.classList.remove('show');
+  document.removeEventListener('click', hideWelcome);
+};
+document.addEventListener('click', hideWelcome, { once: true });
 
-      modal.classList.remove('show');
-      document.removeEventListener('click', hideWelcome);
-    };
-
-    document.addEventListener('click', hideWelcome, { once: true });
-  }, 500); // mezzo secondo
+  }, 2000);
 });
-
 
 // Override del clic sul logo grande (non riapre mai il welcome)
 document.getElementById('logo-btn').addEventListener('click', () => {
@@ -780,7 +774,19 @@ document.addEventListener('submit', function(e) {
     }, 3000);
   }
 });
+
+
+ 
 </script>
-<div id="right-glow"></div>
+
+<div id="right-glow"></div>  <!-- spostato dentro il body -->
 </body>
+</html>
+
+  </script>
+</body>
+
+
+<div id="right-glow"></div>
+
 </html>
