@@ -637,13 +637,19 @@ function apriSubservizio(tipo) {
   `;
   break;
 
-      case 'progettazione':
+  case 'progettazione':
   contenuto = `
-    <h2>Progettazione Ambienti</h2>
-    <p>Rendering e modellazione acustica e illuminotecnica in 3D. Software CAD avanzato e analisi simulativa su misura.</p>
-    <p>Ogni progetto è unico. Analizziamo le esigenze specifiche del cliente e costruiamo soluzioni scalabili, integrate e sostenibili.</p>
-    <p>Che si tratti di un piccolo impianto per eventi privati o di una produzione su vasta scala, mettiamo in campo l’esperienza per garantire risultati impeccabili.</p>
-    <p>Usiamo modelli digitali, rendering 3D e simulazioni acustiche, per pre-visualizzare ogni installazione prima della realizzazione.</p>
+    <h2>Progettazione Ambienti e Soluzioni su Misura</h2>
+    <p>Forniamo un servizio completo di progettazione tecnica per ambienti professionali, eventi e installazioni fisse, combinando <strong style="color:#00a6ff;">esperienza ingegneristica</strong>, <strong style="color:#00a6ff;">tecnologie CAD 3D</strong> e <strong style="color:#00a6ff;">modellazione acustico-visiva</strong> ad alta precisione.</p>
+
+    <ul class="custom-list">
+      <li><strong style="color:#00a6ff;">Rendering e modellazione 3D</strong>: simulazioni fotorealistiche e interattive per impianti audio/luci/video, con valutazione dell’impatto estetico e funzionale negli spazi architettonici esistenti.</li>
+      <li><strong style="color:#00a6ff;">Analisi acustiche e illuminotecniche</strong>: calcolo dei tempi di riverbero, distribuzione sonora, luminanza e contrasto visivo, con software specializzati per ambienti teatrali, conferenziali e studi di registrazione.</li>
+      <li><strong style="color:#00a6ff;">Personalizzazione scenotecnica</strong>: studio e realizzazione di elementi su misura (fondali, layer, pareti mobili, set modulari) con soluzioni ad alta efficienza energetica e flessibilità installativa.</li>
+      <li><strong style="color:#00a6ff;">Progettazione studi televisivi e regie</strong>: sviluppo integrato di spazi broadcast con isolamento acustico, pareti foniche, illuminazione a LED calibrata, pannellature tecniche e sistemi di controllo centralizzato IP.</li>
+    </ul>
+
+    <p>Ogni progetto è accompagnato da <strong style="color:#00a6ff;">documentazione tecnica dettagliata</strong>, planimetrie esecutive e consulenza dedicata nella fase di cantiere. Il nostro approccio modulare ci consente di soddisfare le esigenze sia di piccoli eventi privati sia di grandi produzioni professionali, garantendo risultati impeccabili e piena coerenza normativa.</p>
   `;
   break;
 
@@ -687,7 +693,7 @@ function apriSubservizio(tipo) {
 
     <p><strong>Ogni intervento è accompagnato da diagnosi documentata, tracciabilità seriale, test funzionale e collaudo secondo standard ISO 9001.</strong></p>
 
-    <h3>🔧 Laboratorio LEDwall dedicato</h3>
+    <h3 style="color:#00ffb3;">🔧 Laboratorio LEDwall dedicato</h3>
     <p>Disponiamo inoltre di un’area tecnica specifica per la riparazione, calibrazione e sostituzione componenti di <strong>LEDwall modulari indoor/outdoor</strong>:</p>
     <ul class="custom-list">
       <li>Analisi e sostituzione di moduli SMD (RGB 3-in-1, COB, miniLED);</li>
@@ -723,18 +729,27 @@ function apriSubservizio(tipo) {
 }
 
 
-    modalContent.addEventListener('click', () => {
-      if (currentIndex === null && modal.classList.contains('show') && !isTransitioning) {
-        isTransitioning = true;
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          isTransitioning = false;
-        }, 600);
-      }
-    });
+modalContent.addEventListener('click', (e) => {
+  // Solo chiusura se si clicca in un'area vuota e non ci sono contenuti attivi
+  if (
+    currentIndex === null &&
+    modal.classList.contains('show') &&
+    !isTransitioning &&
+    !e.target.closest('form') && // non chiude se clicco su un form
+    !e.target.closest('.custom-list') && // non chiude se clicco su una lista
+    !e.target.closest('p') // evita chiusura se clicco su un paragrafo
+  ) {
+    isTransitioning = true;
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      isTransitioning = false;
+    }, 600);
+  }
+});
+
 
     function attivaSlideshow() {
       if (slideshowAttivo) return;
