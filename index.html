@@ -647,12 +647,15 @@ function toggleSubmenu() {
 
 function ripristinaMenuPrincipale() {
   const submenu = document.getElementById('submenu-servizi');
+  // riporta in vista il pannello menu
+document.getElementById('sidebar').style.display = '';
+
   const menuItems = document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)');
   const logo = document.getElementById('logo-btn');
 
   // Nasconde il contenuto modale con dissolvenza
   if (modal.classList.contains('show')) {
-    isTransitioning = true;
+    isTransitioning = false;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
@@ -841,6 +844,14 @@ modalContent.addEventListener('click', (e) => {
 
     function attivaSlideshow() {
       if (slideshowAttivo) return;
+      // nasconde completamente il pannello menu
+const sidebar = document.getElementById('sidebar');
+sidebar.style.display = 'none';
+// giusto per sicurezza, togli anche eventuale sottomenu
+const submenu = document.getElementById('submenu-servizi');
+submenu.style.display = 'none';
+document.body.style.overflow = 'hidden';
+
       slideshowAttivo = true;
       if (modal.classList.contains('show')) {
         modal.classList.remove('show');
