@@ -547,16 +547,17 @@ let slideshowInterval = null;
 let showroomRequested = false;
 let showroomActive    = false;
 
-document.body.addEventListener('click', e => {
+// All’inizio del tuo <script>, subito dopo le let/const:
+    document.body.addEventListener('click', e => {
+  if (!/Mobi|Android/i.test(navigator.userAgent)) return;  // solo mobile
   if (e.target.matches('span[onclick="attivaSlideshow()"]')) {
     e.preventDefault();
     showroomRequested = true;
-    // rimuovi warning principale
-    document.getElementById('orientation-warning').style.display = 'none';
-    // mostra il warning showroom
+    document.getElementById('orientation-warning').classList.remove('show');
     document.getElementById('showroom-orientation').classList.add('show');
   }
 });
+
 
       const contenuti = [
         `<!-- Chi siamo -->
@@ -1095,42 +1096,46 @@ document.addEventListener('submit', function(e) {
 function checkOrientation() {
   const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
   const isLandscape = window.innerWidth > window.innerHeight;
-  const isPortrait  = !isLandscape;
   const warnMain    = document.getElementById('orientation-warning');
   const warnShow    = document.getElementById('showroom-orientation');
 
-  // **1. Se ho cliccato "Clicca qui" disabilito SEMPRE il warning principale**
-  if (showroomRequested) {
-    warnMain.style.display = 'none';
-  }
-  else if (isMobile && isLandscape) {
-    // altrimenti, se non ho richiesto showroom, mostro il warning originale
-    warnMain.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  } else {
-    warnMain.style.display = 'none';
-    document.body.style.overflow = '';
+  if (!isMobile) {
+    warnMain.classList.remove('show');
+    warnShow.classList.remove('show');
+    return;
   }
 
-  // **2. Gestione showroom (solo su mobile)**
-  if (isMobile && showroomRequested) {
-    if (isPortrait && !showroomActive) {
-      warnShow.style.display = 'flex';
-    } else if (isLandscape && !showroomActive) {
-      warnShow.style.display = 'none';
-      showroomActive = true;
-      attivaSlideshow();
-    } else if (isPortrait && showroomActive) {
-      warnShow.style.display = 'none';
-      showroomRequested = false;
-      showroomActive    = false;
-      clearInterval(slideshowInterval);
-      ripristinaMenuPrincipale();
-    }
+  if (!showroomRequested) {
+    // FLOW “SITO”:
+    if (isLandscape) warnMain.classList.add('show');
+    else              warnMain.classList.remove('show');
+    warnShow.classList.remove('show');
   } else {
-    warnShow.style.display = 'none';
+    // FLOW “SHOWROOM”:
+    warnMain.classList.remove('show');
+
+    if (!showroomActive) {
+      // Prima mostro l’overlay showroom in portrait
+      if (!isLandscape) warnShow.classList.add('show');
+      // Poi al cambio in landscape avvio slideshow
+      else {
+        warnShow.classList.remove('show');
+        showroomActive = true;
+        attivaSlideshow();
+      }
+    } else {
+      // Tornando in portrait fermo tutto e ripristino menu
+      if (!isLandscape) {
+        warnShow.classList.remove('show');
+        showroomRequested = false;
+        showroomActive    = false;
+        clearInterval(slideshowInterval);
+        ripristinaMenuPrincipale();
+      }
+    }
   }
 }
+
 
 // appena la pagina è pronta e a ogni resize/orientation change,
 // eseguo la nuova logica di orientamento
