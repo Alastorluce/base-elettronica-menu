@@ -375,157 +375,116 @@ ul.custom-list li > strong {
 </head>
 
 <body>
-<div id="right-glow"></div>
-  <div id="orientation-warning">
-    <div class="orientation-content">
-      <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"
-           viewBox="0 0 24 24" fill="#00a6ff">
-        <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
-                 4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
-                 12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
-                 12h2v-2H5v2z"/>
-      </svg>
-      <p>Ruota il telefono in verticale per vedere il sito</p>
-    </div>
-  </div>
-  <div id="sidebar">
-    <div id="sidebar-content">
-       <div id="sidebar-logo" onclick="location.reload();">
-        <img src="logo.png" alt="Logo">
-      </div>
-      <div class="menu-list">
-        <div class="menu-item" onclick="apri(0)">Chi siamo</div>
-        <div class="menu-item" onclick="apri(1)">Servizi offerti</div>
-        <div class="menu-item" onclick="apri(2)">Portfolio</div>
-        <div class="menu-item" onclick="apri(3)">Soluzioni su misura</div>
-        <div class="menu-item" onclick="apri(4)">Preventivi e Contatti</div>
+    <div id="right-glow"></div>
+  
+    <div id="orientation-warning">
+      <div class="orientation-content">
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"
+             viewBox="0 0 24 24" fill="#00a6ff">
+          <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
+                   4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
+                   12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
+                   12h2v-2H5v2z"/>
+        </svg>
+        <p>Ruota il telefono in verticale per vedere il sito</p>
       </div>
     </div>
-  </div>
-
-  <div id="main">
-    <img src="logo.png" id="logo-btn" alt="Logo">
-    <div id="modal" class="modal">
-      <div id="modal-content"><h2>Caricamento...</h2></div>
-    </div>
-  </div>
-
-f  <script>
-    const contenuti = [
-      `<!-- Chi siamo -->
-      <h2>Chi siamo</h2>
-      <p><strong><span style="color:#00a6ff;">Base Elettronica Service</span></strong><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;è una realtà professionale con oltre 30 anni di esperienza,<br>
-      specializzata in progettazione e gestione di impianti <em>audio, video, luci, sicurezza e antincendio</em>.<br>
-      Operiamo su tutto il territorio nazionale con tecnici qualificati e tecnologie all’avanguardia,<br>
-      al servizio di eventi, spettacoli, installazioni fisse e soluzioni su misura.<br><br>
-      Dalla consulenza tecnica all’assistenza on-site, garantiamo precisione, affidabilità e innovazione,<br>
-      valorizzando ogni progetto con un approccio ingegneristico funzionale e creativo.<br><br>
-      CEO:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00ffb3;">Fabrizio di Filippo</span><br>
-      Responsabile Tecnico:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00ffb3;">Maiolo Alessio</span></p>`,
   
-      `<!-- Servizi -->
-      <h2>Servizi Offerti</h2>
-      <ul>
-  <ul class="custom-list">   
-  <li><strong>Progettazione acustica e illuminotecnica</strong>:</p>
-    Ogni ambiente viene analizzato e modellato in CAD dai nostri ingegneri specializzati, per garantire una resa sonora e luminosa perfettamente calibrata sulle tue esigenze.
-  </li>
-  <br>
-
-  <li><strong>Allestimenti per eventi live e teatrali</strong>:</p>
-    Cur​iamo ogni fase, dal design delle scenografie alla messa a punto di audio e luci, per trasformare il tuo spettacolo in un’esperienza coinvolgente e senza intoppi.
-  </li>
-  <br>
-
-  <li><strong>Installazioni fisse audio/video/luci</strong>:</p>
-    Progettiamo soluzioni integrate e durature per sale conferenze, teatri e studi professionali, offrendo affidabilità e qualità costante nel tempo.
-  </li>
-  <br>
-
-  <li><strong>Sistemi di sicurezza e antincendio</strong>:</p>
-    Implementiamo tecnologie certificate per allarmi, videosorveglianza e rilevazione incendi, perché prevenire è sempre meglio che correre ai ripari.
-  </li>
-  <br>
-
-  <li><strong>Noleggio attrezzature professionali</strong>:</p>
-    Mettiamo a tua disposizione materiali di ultima generazione, regolarmente testati e aggiornati, per un supporto flessibile che si adatta a qualsiasi progetto.
-  </li>
-  <br>
-
-  <li><strong>Supporto tecnico e assistenza onsite</strong>:</p>
-    I nostri tecnici esperti sono presenti sul posto per interventi immediati, assicurando continuità operativa e tranquillità in ogni fase dell’evento.
-  </li>
-  <br>
-
-  <li><strong>Dotazione professionale</strong>:</p>
-    Disponiamo di un’ampia gamma di strutture ed americane e di vari sistemi :
-    RCF, L-Acoustics e Meyer Sound;
-    <p>
-    mixer audio SSL, Midas, Yamaha e DiGiCo;
-    <p>
-    console luci GrandMA e Avolites di ultima generazione;
-    <p>
-    soluzioni lighting DTS, Prolights e ROBE Lighting.
-    <p>
-    sistemi LEDwall 2.6 .
-    <p> 
-    Collaboriamo con le migliori aziende del settore per offrirti sempre il top della tecnologia.
-  </li>
-  <br>
-      </ul>`,
+    <div id="sidebar">
+      <div id="sidebar-content">
+        <div id="sidebar-logo" onclick="location.reload();">
+          <img src="logo.png" alt="Logo">
+        </div>
   
-      `<!-- Portfolio -->
-      <h2>Portfolio</h2>
-      <p>Ecco alcuni dei nostri progetti più rappresentativi:</p>
-      <ul>
-        <li>Festival Nazionali e Tour Musicali</li>
-        <li>Installazioni in teatri e auditorium</li>
-        <li>Soluzioni per centri congressi e showroom</li>
-        <li>Supporto tecnico per fiere e dirette streaming</li>
-      </ul>
-      <p>
-        <em><span role="button" onclick="apri(4)" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
-          Contattaci
-        </span></em>&nbsp;&nbsp;per ricevere un portfolio dettagliato con referenze e materiali visivi.
-      </p>
-      <p style="margin-top:1.5em;">
-        <em><span role="button" onclick="attivaSlideshow()" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
-          Clicca qui
-        </span></em>&nbsp;&nbsp;per avviare una piccola anteprima nella showroom.
-      </p>`,
+        <div class="menu-list">
+          <div class="menu-item" onclick="apri(0)">Chi siamo</div>
+          <div class="menu-item" onclick="toggleSubmenu()">I nostri servizi</div>
+          <div class="menu-item" onclick="apri(1)">Portfolio</div>
+          <div class="menu-item" onclick="apri(2)">Preventivi e Contatti</div>
   
-      `<!-- Soluzioni -->
-      <h2>Soluzioni su Misura</h2>
-      <p>Ogni progetto è unico. Analizziamo le esigenze specifiche del cliente e costruiamo soluzioni scalabili,
-      integrate e sostenibili.</p>
-      <p>Che si tratti di un piccolo impianto per eventi privati o di una produzione su vasta scala,
-      mettiamo in campo l’esperienza per garantire risultati impeccabili.</p>
-      <p>Usiamo modelli digitali, rendering 3D e simulazioni acustiche, per pre-visualizzare ogni installazione prima della realizzazione.</p>`,
-  
-      `<!-- Contattaci -->
-      <h2>Contattaci</h2>
-      <p>Richiedi un preventivo gratuito o un sopralluogo tecnico al nostro CEO Fabrizio di Filippo:</p>
-      <div style="backdrop-filter: blur(10px); background:rgba(0,0,0,0.5); padding:2em; border-radius:15px; border:1px solid rgba(0,166,255,0.2); box-shadow:0 0 5px rgba(0,166,255,0.3);">
-        <form id="contact-form" style="display:flex; flex-direction:column; gap:1em;">
-          <label><span style="display:block; margin-bottom:0.3em;">Nome e Cognome</span>
-            <input type="text" placeholder="Mario Rossi" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;">
-          </label>
-          <label><span style="display:block; margin-bottom:0.3em;">Email</span>
-            <input type="email" placeholder="tu@email.it" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;">
-          </label>
-          <label><span style="display:block; margin-bottom:0.3em;">Messaggio</span>
-            <textarea rows="10" placeholder="Descrivi il tuo progetto o le tue necessità" required style="width:100%; min-height:180px; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;"></textarea>
-          </label>
-          <button type="submit" style="padding:0.8em 1.5em; background:#00a6ff; color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-            Invia Richiesta
-          </button>
-        </form>
+          <!-- SOTTOMENU VISIBILE SOLO AL CLICK -->
+          <div id="submenu-servizi" style="display:none; flex-direction: column; align-items: center; width: 100%;">
+            <div class="menu-item sotto-servizio" onclick="apriSubservizio('service')">Service</div>
+            <div class="menu-item sotto-servizio" onclick="apriSubservizio('antincendio')">Sicurezza Antincendio</div>
+            <div class="menu-item sotto-servizio" onclick="apriSubservizio('progettazione')">Progettazione e Soluzioni su misura</div>
+            <div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
+            <div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Centro Assistenza Riparazioni</div>
+            <div class="menu-item sotto-servizio" onclick="ripristinaMenuPrincipale()" style="margin-top: 2em; font-size: 0.85em; opacity: 0.8;">🔙 Torna al menu principale</div>
+          </div>
+        </div>
       </div>
-      <p style="margin-top:1em;">
-        Oppure scrivici a: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
-      </p>`
-    ];
+    </div>
+  
+    <div id="main">
+      <img src="logo.png" id="logo-btn" alt="Logo">
+      <div id="modal" class="modal">
+        <div id="modal-content"><h2>Caricamento...</h2></div>
+      </div>
+    </div>
+  
+    <script>
+      const contenuti = [
+        `<!-- Chi siamo -->
+        <h2>Chi siamo</h2>
+        <p><strong><span style="color:#00a6ff;">Base Elettronica Service</span></strong><br>
+        è una realtà professionale con oltre 30 anni di esperienza,<br>
+        specializzata in progettazione e gestione di impianti <em>audio, video, luci, sicurezza e antincendio</em>.<br>
+        Operiamo su tutto il territorio nazionale con tecnici qualificati e tecnologie all’avanguardia,<br>
+        al servizio di eventi, spettacoli, installazioni fisse e soluzioni su misura.</p>`,
+  
+        `<!-- Portfolio -->
+<h2>Portfolio</h2>
+<p>Nel corso degli anni abbiamo contribuito alla realizzazione tecnica e progettuale di numerosi eventi, installazioni e ambienti professionali in tutta Italia. Il nostro portfolio riflette la varietà e l’elevato standard qualitativo dei servizi offerti.</p>
+
+<ul>
+  <li><strong>Festival Nazionali e Tour Musicali</strong>: service completo per eventi live, dalla fase di pre-produzione alla regia tecnica in loco, con artisti di fama nazionale e internazionale.</li>
+  <li><strong>Installazioni in teatri e auditorium</strong>: sistemi fissi audio/luci/video integrati per spettacoli, musical, conferenze e produzioni culturali, con controllo centralizzato e interfacce utente dedicate.</li>
+  <li><strong>Soluzioni per centri congressi e showroom</strong>: impianti multimediali e di traduzione simultanea, videowall, microfonazione digitale e ambienti immersivi per la presentazione di brand e prodotti.</li>
+  <li><strong>Supporto tecnico per fiere, sfilate e dirette streaming</strong>: copertura A/V integrata, cablaggi fibra, ponti radio e mixer broadcast, con assistenza tecnica continua.</li>
+  <li><strong>Realizzazione di studi televisivi</strong>: progettazione e allestimento completo di ambienti televisivi e regie broadcast, con sistemi di illuminazione a LED, fondali scenografici, cablaggi audio/video digitali, pareti acustiche e regia IP-ready per produzioni live e on demand.</li>
+</ul>
+
+<p><em><span role="button" onclick="apri(4)" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
+  Contattaci
+</span></em>&nbsp;&nbsp;per ricevere un portfolio dettagliato con referenze certificate, fotografie dei lavori realizzati e descrizioni tecniche complete.</p>
+
+<p style="margin-top:1.5em;"><em><span role="button" onclick="attivaSlideshow()" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
+  Clicca qui
+</span></em>&nbsp;&nbsp;per avviare una piccola anteprima nella showroom interattiva.</p>
+`,
+  
+        `<!-- Contattaci -->
+<h2>Contattaci</h2>
+<p>Hai un progetto da realizzare, un evento da organizzare o necessiti di assistenza tecnica? Il nostro team è a tua disposizione per consulenze, preventivi gratuiti e sopralluoghi personalizzati.</p>
+<p>Compila il modulo sottostante per essere ricontattato dal nostro CEO <strong>Fabrizio Di Filippo</strong> o da un nostro tecnico incaricato.</p>
+
+<div style="backdrop-filter: blur(10px); background:rgba(0,0,0,0.5); padding:2em; border-radius:15px; border:1px solid rgba(0,166,255,0.2); box-shadow:0 0 5px rgba(0,166,255,0.3);">
+  <form id="contact-form" style="display:flex; flex-direction:column; gap:1em;">
+    <label>
+      <span style="display:block; margin-bottom:0.3em;">Nome e Cognome</span>
+      <input type="text" placeholder="Mario Rossi" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;">
+    </label>
+    <label>
+      <span style="display:block; margin-bottom:0.3em;">Email</span>
+      <input type="email" placeholder="tu@email.it" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;">
+    </label>
+    <label>
+      <span style="display:block; margin-bottom:0.3em;">Messaggio</span>
+      <textarea rows="10" placeholder="Descrivi il tuo progetto, le tue esigenze o richiedi una consulenza tecnica." required style="width:100%; min-height:180px; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;"></textarea>
+    </label>
+    <button type="submit" style="padding:0.8em 1.5em; background:#00a6ff; color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+      Invia Richiesta
+    </button>
+  </form>
+</div>
+
+<p style="margin-top:1em;">
+  Preferisci scriverci direttamente? Puoi contattarci via email all’indirizzo: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
+</p>
+`
+      ];
+  
+  
 
     const contenutoHome = `
       <h2>Benvenuti in Base Elettronica Service</h2>
@@ -535,46 +494,228 @@ f  <script>
     `;
 
     let modal = document.getElementById('modal');
-    let modalContent = document.getElementById('modal-content');
-    let currentIndex = null;
-    let isTransitioning = false;
-    let slideshowAttivo = false;
-    let slideshowInterval = null;
-    
-    
-    
-    function apri(index) {
-      if (isTransitioning) return;
-      if (currentIndex === index) {
-        isTransitioning = true;
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-          isTransitioning = false;
-        }, 600);
-      } else {
-        isTransitioning = true;
-        if (modal.classList.contains('show')) {
-          modal.classList.remove('show');
-          modal.classList.add('fade-out');
-          setTimeout(() => {
-            modalContent.innerHTML = contenuti[index];
-            modal.classList.remove('fade-out');
-            modal.classList.add('show');
-            currentIndex = index;
-            isTransitioning = false;
-          }, 600);
-        } else {
-          modalContent.innerHTML = contenuti[index];
-          modal.classList.add('show');
-          currentIndex = index;
-          isTransitioning = false;
-        }
-      }
+let modalContent = document.getElementById('modal-content');
+let currentIndex = null;
+let isTransitioning = false;
+let slideshowAttivo = false;
+let slideshowInterval = null;
+
+function apri(index) {
+  if (isTransitioning) return;
+
+
+  isTransitioning = true;
+
+  if (currentIndex === index) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      currentIndex = null;
+      isTransitioning = false;
+    }, 600);
+  } else {
+    if (modal.classList.contains('show')) {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modalContent.innerHTML = contenuti[index];
+        modal.classList.remove('fade-out');
+        modal.classList.add('show');
+        currentIndex = index;
+        isTransitioning = false;
+      }, 600);
+    } else {
+      modalContent.innerHTML = contenuti[index];
+      modal.classList.add('show');
+      currentIndex = index;
+      isTransitioning = false;
     }
+  }
+}
+
+
+function toggleSubmenu() {
+  const submenu = document.getElementById('submenu-servizi');
+  const menuItems = document.querySelectorAll('.menu-list > .menu-item');
+
+  menuItems.forEach(el => {
+    // Nascondi solo quelli che NON stanno dentro il sottomenu
+    if (!el.closest('#submenu-servizi')) {
+      el.style.display = 'none';
+    }
+  });
+
+  submenu.style.display = 'flex';
+}
+
+
+function ripristinaMenuPrincipale() {
+  const submenu = document.getElementById('submenu-servizi');
+  const menuItems = document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)');
+  const logo = document.getElementById('logo-btn');
+
+  // Nasconde il contenuto modale con dissolvenza
+  if (modal.classList.contains('show')) {
+    isTransitioning = true;
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      isTransitioning = false;
+    }, 600);
+  }
+
+  // Nasconde il submenu
+  submenu.style.display = 'none';
+
+  // Mostra i pulsanti principali
+  menuItems.forEach(el => {
+    el.style.display = 'flex';
+  });
+
+  // Ripristina il logo al centro (se era stato nascosto o sostituito)
+  logo.style.opacity = '1';
+  logo.style.visibility = 'visible';
+  logo.classList.add('pulse');
+
+  // Reset variabili di stato
+  currentIndex = null;
+  slideshowAttivo = false;
+  if (slideshowInterval) clearInterval(slideshowInterval);
+}
+
+
+function apriSubservizio(tipo) {
+  if (isTransitioning) return;
+
+  let contenuto = '';
+  switch (tipo) {
+    case 'service':
+  contenuto = `
+    <h2>Service Tecnico per Eventi e Spettacoli</h2>
+<p>Offriamo un servizio integrato per l’allestimento tecnico di eventi di qualsiasi scala, in conformità al <strong>D.Lgs. 81/08</strong> e alle normative vigenti in materia di sicurezza, acustica e compatibilità elettromagnetica.</p>
+
+<p>La nostra struttura operativa è progettata per garantire continuità, affidabilità e tempestività nelle seguenti aree:</p>
+
+<ul class="custom-list">
+  <li><strong>Progettazione tecnica preliminare</strong> con sopralluogo, elaborazione planimetrie e simulazioni acustico-visive su CAD 2D/3D;</li>
+  <li><strong>Montaggio e collaudo</strong> di strutture portanti, layer, americane, passerelle e punti di sospensione certificati, con utilizzo di DPI e verifiche secondo norme UNI EN;</li>
+  <li><strong>Configurazione impianti audio/luci/video</strong> con sistemi professionali (RCF, L-Acoustics, Meyer Sound, DiGiCo, GrandMA) ottimizzati per ogni tipologia di venue indoor e outdoor;</li>
+  <li><strong>Cablaggio elettrico e segnale</strong> (audio, DMX, HDMI, fibra ottica) con certificazione a norma CEI 64-8 e messa a terra equipotenziale temporanea;</li>
+  <li><strong>Regia tecnica on-site</strong> durante lo spettacolo, con operatori specializzati per la gestione in tempo reale di scena, mixer, luci, effetti speciali e visual show;</li>
+  <li><strong>Supporto tecnico in studi televisivi</strong> con gestione audio-video, routing digitale, timecode, multicamera e coordinamento interfonico professionale per regie live e on-demand;</li>
+  <li><strong>Disallestimento controllato</strong> e verifica post-evento per il ripristino in sicurezza dell’area e il tracciamento dei materiali a noleggio.</li>
+</ul>
+
+<p>Tutti i tecnici coinvolti sono formati secondo i moduli PES-PAV-PEI, piattaforme aeree (PLE), antincendio rischio elevato e movimentazione carichi in sicurezza, con copertura assicurativa completa.</p>
+
+<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>`;
+  break;
+
+      case 'antincendio':
+  contenuto = `
+    <h2>Sistemi di Sicurezza Antincendio</h2>
+    <p>Progettiamo e installiamo impianti antincendio conformi alle normative vigenti, con particolare attenzione alla certificazione <strong>UNI EN 54</strong>, garantendo affidabilità, integrazione e tempestività d'intervento.</p>
+    <p>Le nostre soluzioni comprendono:</p>
+    <ul class="custom-list">
+      <li><strong>Rivelazione automatica</strong> tramite sensori ottici, termici e multispettrali ad alta sensibilità;</li>
+      <li><strong>Attuazione immediata</strong> mediante sirene, pannelli di evacuazione luminosa e dispositivi elettromeccanici;</li>
+      <li><strong>Gestione centralizzata</strong> con centrali di controllo modulari, interfacciabili con sistemi BMS e di videosorveglianza;</li>
+      <li><strong>Integrazione con sistemi audio/luci</strong> per l’attivazione di scenari di sicurezza e comunicazioni vocali di emergenza;</li>
+      <li><strong>Monitoraggio remoto</strong> e manutenzione predittiva su infrastrutture industriali, civili e per eventi temporanei.</li>
+    </ul>
+    <p>Ogni progetto viene sviluppato in sinergia con i nostri ingegneri e tecnici certificati, per garantire la massima copertura del rischio e la piena conformità alle normative nazionali ed europee.</p>
+  `;
+  break;
+
+      case 'progettazione':
+  contenuto = `
+    <h2>Progettazione Ambienti</h2>
+    <p>Rendering e modellazione acustica e illuminotecnica in 3D. Software CAD avanzato e analisi simulativa su misura.</p>
+    <p>Ogni progetto è unico. Analizziamo le esigenze specifiche del cliente e costruiamo soluzioni scalabili, integrate e sostenibili.</p>
+    <p>Che si tratti di un piccolo impianto per eventi privati o di una produzione su vasta scala, mettiamo in campo l’esperienza per garantire risultati impeccabili.</p>
+    <p>Usiamo modelli digitali, rendering 3D e simulazioni acustiche, per pre-visualizzare ogni installazione prima della realizzazione.</p>
+  `;
+  break;
+
+  case 'noleggio':
+  contenuto = `
+    <h2>Noleggio di Attrezzature Professionali</h2>
+    <p>Offriamo un servizio di noleggio completo per impianti e attrezzature di alta gamma nel settore <strong>audio, video, luci, strutture e controllo scenotecnico</strong>, con disponibilità immediata, contratti flessibili e assistenza tecnica qualificata.</p>
+
+    <p>Il nostro parco attrezzature è regolarmente revisionato, aggiornato e conforme alle normative CE, EN 60598-2-17 (illuminotecnica), CEI 64-8 (impiantistica elettrica) e D.Lgs. 81/08 per la sicurezza nei luoghi di lavoro.</p>
+
+    <ul class="custom-list">
+      <li><strong>Diffusione sonora professionale</strong>: line array e subwoofer RCF, L-Acoustics, Meyer Sound, d&b audiotechnik;</li>
+      <li><strong>Mixer digitali</strong>: DiGiCo, Yamaha CL/QL Series, Midas, Soundcraft, Allen & Heath;</li>
+      <li><strong>Console luci</strong>: GrandMA3, Avolites, ChamSys, con supporto per pixel mapping e timecode;</li>
+      <li><strong>Proiettori, teste mobili e LED</strong>: ROBE Lighting, Prolights, DTS, Clay Paky;</li>
+      <li><strong>Videoproiezione e LEDwall</strong>: pannelli LED pitch 2.6/3.9 indoor/outdoor, scalers e matrici video, proiettori laser full HD/4K;</li>
+      <li><strong>Strutture e supporti</strong>: americane truss, layer certificati, motori elettrici e manuali, palchi modulari, torri di sollevamento;</li>
+      <li><strong>Cabling e networking</strong>: cablaggio segnale e potenza, stage box Dante, switch professionali per reti AVB/Art-Net/sACN;</li>
+      <li><strong>Accessori e sicurezza</strong>: quadri elettrici CEI, canaline, copricavi, flight case, dispositivi antinfortunistici per montaggio in quota.</li>
+    </ul>
+
+    <p>È possibile stipulare contratti di <strong>noleggio giornaliero, settimanale, mensile o a lungo termine</strong>, con servizio opzionale di consegna, installazione, supervisione tecnica e smontaggio.</p>
+
+    <p>Ogni richiesta viene gestita con analisi tecnica preliminare, scheda materiali dettagliata e supporto nella scelta della configurazione più efficiente rispetto all’ambiente operativo e al tipo di evento.</p>
+  `;
+  break;
+
+  case 'assistenza':
+  contenuto = `
+    <h2>Centro Assistenza Tecnica e Riparazioni</h2>
+    <p>Il nostro centro tecnico offre un servizio specializzato di assistenza e riparazione su attrezzature <strong>audio, luci, video, strutture elettroniche e digitali</strong>, con interventi tempestivi sia <strong>on-site</strong> che in <strong>laboratorio interno certificato</strong>.</p>
+
+    <p>Siamo in grado di eseguire <strong>riparazioni elettroniche su qualsiasi componente</strong>, anche a livello microelettronico e SMT, grazie a un reparto dotato di strumentazione avanzata per diagnostica, collaudo e ricostruzione circuitale.</p>
+
+    <ul class="custom-list">
+      <li><strong>Apparati audio professionali</strong>: amplificatori, mixer digitali, stage box, processori DSP;</li>
+      <li><strong>Corpi illuminanti e console luci</strong>: teste mobili, dimmer, centraline DMX, alimentatori switching;</li>
+      <li><strong>Sistemi video</strong>: proiettori laser, scaler, matrici, convertitori SDI/HDMI e trasmettitori ottici;</li>
+      <li><strong>Alimentazione e cablaggi</strong>: quadri elettrici, PSU, connettori industriali, reti AVB/Art-Net.</li>
+    </ul>
+
+    <p><strong>Ogni intervento è accompagnato da diagnosi documentata, tracciabilità seriale, test funzionale e collaudo secondo standard ISO 9001.</strong></p>
+
+    <h3>🔧 Laboratorio LEDwall dedicato</h3>
+    <p>Disponiamo inoltre di un’area tecnica specifica per la riparazione, calibrazione e sostituzione componenti di <strong>LEDwall modulari indoor/outdoor</strong>:</p>
+    <ul class="custom-list">
+      <li>Analisi e sostituzione di moduli SMD (RGB 3-in-1, COB, miniLED);</li>
+      <li>Ripristino controller, riceventi, alimentatori e ribbon cable;</li>
+      <li>Taratura luminosa e mappatura pixel su software proprietari;</li>
+      <li>Backup e restore firmware per schede NovaStar, ColorLight, Linsn, Brompton.</li>
+    </ul>
+
+    <p>Il nostro team è abilitato a operare su installazioni fisse, strutture mobili e rental, con servizio di <strong>supporto tecnico pre e post-evento</strong>, documentazione CE e certificazione di conformità post-intervento.</p>
+  `;
+  break;
+
+  }
+
+  isTransitioning = true;
+
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modalContent.innerHTML = contenuto;
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+      currentIndex = null;
+      isTransitioning = false;
+    }, 600);
+  } else {
+    modalContent.innerHTML = contenuto;
+    modal.classList.add('show');
+    currentIndex = null;
+    isTransitioning = false;
+  }
+}
+
 
     modalContent.addEventListener('click', () => {
       if (currentIndex === null && modal.classList.contains('show') && !isTransitioning) {
@@ -636,26 +777,28 @@ f  <script>
     }
 
     document.getElementById('logo-btn').addEventListener('click', () => {
-      if (isTransitioning) return;
-      isTransitioning = true;
-      if (modal.classList.contains('show')) {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modalContent.innerHTML = contenutoHome;
-          currentIndex = null;
-          modal.classList.remove('fade-out');
-          void modal.offsetWidth;
-          modal.classList.add('show');
-          isTransitioning = false;
-        },600);
-      } else {
-        modalContent.innerHTML = contenutoHome;
-        currentIndex = null;
-        modal.classList.add('show');
-        isTransitioning = false;
-      }
-    });
+  clearTimeout(welcomeTimeout);
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modalContent.innerHTML = contenutoHome;
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+      isTransitioning = false;
+    }, 600);
+  } else {
+    modalContent.innerHTML = contenutoHome;
+    modal.classList.add('show');
+    isTransitioning = false;
+  }
+
+  welcomeShown = true;
+});
+
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
       if (isTransitioning) return;
@@ -763,14 +906,7 @@ document.addEventListener('click', hideWelcome, { once: true });
   }, 500);
 });
 
-// Override del clic sul logo grande (non riapre mai il welcome)
-document.getElementById('logo-btn').addEventListener('click', () => {
-  clearTimeout(welcomeTimeout);
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-  }
-  welcomeShown = true;
-});
+
 
 // Event delegation per il form di contatto
 document.addEventListener('submit', function(e) {
