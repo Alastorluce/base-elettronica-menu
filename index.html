@@ -243,7 +243,11 @@
   flex-grow: 1;
 }
 
-
+/* rimuove la linea tratteggiata solo su mobile */
+  .menu-item.sotto-servizio:last-child {
+    border: none !important;
+  }
+}
 
 #sidebar-logo {
   display: block !important;
@@ -323,10 +327,6 @@
     cursor: pointer;
     z-index: 1001;
   }
-}
-
-
-
 
 
 /* — Tablet only: da 769px a 1024px — */
@@ -647,15 +647,15 @@ function toggleSubmenu() {
 
 function ripristinaMenuPrincipale() {
   const submenu = document.getElementById('submenu-servizi');
-  // riporta in vista il pannello menu
-document.getElementById('sidebar').style.display = '';
+  const sidebar = document.getElementById('sidebar');
+  const modal   = document.getElementById('modal');
 
-  const menuItems = document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)');
-  const logo = document.getElementById('logo-btn');
+  // 1) Riporta in vista il pannello menu
+  sidebar.style.display = '';
 
-  // Nasconde il contenuto modale con dissolvenza
+  // 2) Nascondi il contenuto modale con dissolvenza
   if (modal.classList.contains('show')) {
-    isTransitioning = false;
+    isTransitioning = true;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
@@ -665,24 +665,31 @@ document.getElementById('sidebar').style.display = '';
     }, 600);
   }
 
-  // Nasconde il submenu
+  // 3) Nascondi il submenu
   submenu.style.display = 'none';
 
-  // Mostra i pulsanti principali
+  // 4) Ripristina i pulsanti principali (lascia al CSS il display giusto)
+  const menuItems = document.querySelectorAll(
+    '.menu-list > .menu-item:not(#submenu-servizi .menu-item)'
+  );
   menuItems.forEach(el => {
-    el.style.display = 'flex';
+    el.style.display = '';
   });
 
-  // Ripristina il logo al centro (se era stato nascosto o sostituito)
+  // 5) Ripristina logo e stato slideshow
+  const logo = document.getElementById('logo-btn');
   logo.style.opacity = '1';
   logo.style.visibility = 'visible';
   logo.classList.add('pulse');
 
-  // Reset variabili di stato
   currentIndex = null;
   slideshowAttivo = false;
-  if (slideshowInterval) clearInterval(slideshowInterval);
+  if (slideshowInterval) {
+    clearInterval(slideshowInterval);
+    slideshowInterval = null;
+  }
 }
+
 
 
 function apriSubservizio(tipo) {
@@ -851,7 +858,7 @@ sidebar.style.display = 'none';
 const submenu = document.getElementById('submenu-servizi');
 submenu.style.display = 'none';
 document.body.style.overflow = 'hidden';
-
+clearTimeout(welcomeTimeout);   // <— impedisce il popup automatico
       slideshowAttivo = true;
       if (modal.classList.contains('show')) {
         modal.classList.remove('show');
@@ -897,7 +904,16 @@ document.body.style.overflow = 'hidden';
     }
 
     document.getElementById('logo-btn').addEventListener('click', () => {
+  // 0) Annulla sempre il popup di benvenuto programmato
   clearTimeout(welcomeTimeout);
+
+  // 1) Se siamo in showroom, torna al menu e non fare altro
+  if (slideshowAttivo) {
+    ripristinaMenuPrincipale();
+    return;
+  }
+
+  // 2) Altrimenti esegui il solito codice per mostrare la home
   if (isTransitioning) return;
   isTransitioning = true;
 
@@ -915,9 +931,8 @@ document.body.style.overflow = 'hidden';
     modal.classList.add('show');
     isTransitioning = false;
   }
-
-  welcomeShown = true;
 });
+
 
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
@@ -1079,6 +1094,9 @@ el.style.setProperty('--delay', delay);
 el.style.setProperty('--duration', speed);
 
 });
+
+
+
 
 
 </script>
