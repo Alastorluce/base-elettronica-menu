@@ -842,6 +842,19 @@ modalContent.addEventListener('click', (e) => {
     function attivaSlideshow() {
       if (slideshowAttivo) return;
       slideshowAttivo = true;
+      // 🔧 Se siamo in mobile, nascondi il sidebar
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    document.getElementById('sidebar').style.display = 'none';
+  }
+
+  // … TUTTO IL RESTO DELLA TUA LOGICA DI SHOWROOM …
+}
+
+function ripristinaMenuPrincipale() {
+  // 🔧 Ripristina il sidebar
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    document.getElementById('sidebar').style.display = 'flex';
+  }
       if (modal.classList.contains('show')) {
         modal.classList.remove('show');
         modal.classList.add('fade-out');
@@ -1068,6 +1081,7 @@ el.style.setProperty('--delay', delay);
 el.style.setProperty('--duration', speed);
 
 });
+
 
 
 </script>
