@@ -243,6 +243,14 @@
   flex-grow: 1;
 }
 
+#logo-btn {
+    position: static !important;
+    transform: none !important;
+    margin-top: 20px;
+    animation: none !important;
+    width: 90vw !important;
+    max-height: 50vh;
+  }
 
 
 #sidebar-logo {
@@ -977,7 +985,16 @@ function attivaSlideshow() {
         },600);
       }
     });
- 
+ // 🔧 Correzione mobile: resetta stile del logo
+if (window.matchMedia('(max-width: 768px)').matches) {
+  logo.style.position = 'static';
+  logo.style.transform = 'none';
+  logo.style.marginTop = '20px';
+  logo.style.animation = 'none';
+  logo.style.width = '90vw';
+  logo.style.maxHeight = '50vh';
+}
+
   // 1. Variabili di controllo
   let welcomeTimeout;
   let welcomeShown = false;
