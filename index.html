@@ -47,7 +47,24 @@
   font-family: 'Varela Round', sans-serif;
 }
 
-
+#showroom-orientation {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 10000;
+      display: flex;         /* serve solo per eventuali default, ma verrà overridato */
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #00a6ff;
+      font-family: 'Varela Round', sans-serif;
+      padding: 2em;
+    }
+    /* Quando serve mostrarlo */
+    #showroom-orientation.show {
+      display: flex !important;
+    }
 
     /* Layout generale */
     body {
@@ -498,18 +515,18 @@ ul.custom-list li > strong {
       </div>
     </div>
   
-    <div id="showroom-orientation" style="display:none; position:fixed; inset:0; background:#000; z-index:10000;
-     display:flex; align-items:center; justify-content:center; text-align:center; color:#00a6ff; font-family:'Varela Round'; padding:2em;">
-  <div>
-    <svg width="120" height="120" viewBox="0 0 24 24" fill="#00a6ff" style="margin-bottom:1em">
-      <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
-               4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
-               12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
-               12h2v-2H5v2z"/>
-    </svg>
-    <p>Gira lo schermo per visualizzare la showroom<br>e riportalo in verticale per chiuderla.</p>
-  </div>
-</div>
+    <div id="showroom-orientation">
+        <div>
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="#00a6ff" style="margin-bottom:1em">
+            <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
+                     4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
+                     12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
+                     12h2v-2H5v2z"/>
+          </svg>
+          <p>Gira lo schermo per visualizzare la showroom<br>e riportalo in verticale per chiuderla.</p>
+        </div>
+      </div>
+      
 
 
 
@@ -520,7 +537,27 @@ ul.custom-list li > strong {
       </div>
     </div>
   
-    <script>
+ <script>
+let modal = document.getElementById('modal');
+let modalContent = document.getElementById('modal-content');
+let currentIndex = null;
+let isTransitioning = false;
+let slideshowAttivo = false;
+let slideshowInterval = null;
+let showroomRequested = false;
+let showroomActive    = false;
+
+document.body.addEventListener('click', e => {
+  if (e.target.matches('span[onclick="attivaSlideshow()"]')) {
+    e.preventDefault();
+    showroomRequested = true;
+    // rimuovi warning principale
+    document.getElementById('orientation-warning').style.display = 'none';
+    // mostra il warning showroom
+    document.getElementById('showroom-orientation').classList.add('show');
+  }
+});
+
       const contenuti = [
         `<!-- Chi siamo -->
 <div style="text-align:center;">
@@ -602,14 +639,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
       </p>
     `;
 
-    let modal = document.getElementById('modal');
-let modalContent = document.getElementById('modal-content');
-let currentIndex = null;
-let isTransitioning = false;
-let slideshowAttivo = false;
-let slideshowInterval = null;
-let showroomRequested = false;
-let showroomActive    = false;
+
 
 
 function apri(index) {
