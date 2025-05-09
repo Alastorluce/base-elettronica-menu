@@ -650,45 +650,44 @@ function ripristinaMenuPrincipale() {
   const sidebar = document.getElementById('sidebar');
   const modal   = document.getElementById('modal');
 
-  // 1) Riporta in vista il pannello menu
+  // 1) Riporta in vista la sidebar
   sidebar.style.display = '';
 
-  // 2) Nascondi il contenuto modale con dissolvenza
+  // 2) Chiudi il modal, se aperto
   if (modal.classList.contains('show')) {
-    isTransitioning = true;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
-      isTransitioning = false;
     }, 600);
   }
 
   // 3) Nascondi il submenu
   submenu.style.display = 'none';
 
-  // 4) Ripristina i pulsanti principali (lascia al CSS il display giusto)
+  // 4) Ripristina le voci di menu rimuovendo TUTTI gli inline-style
   const menuItems = document.querySelectorAll(
     '.menu-list > .menu-item:not(#submenu-servizi .menu-item)'
   );
   menuItems.forEach(el => {
-    el.style.display = '';
+    el.style.removeProperty('display');
+    el.style.removeProperty('width');
   });
 
-  // 5) Ripristina logo e stato slideshow
+  // 5) Reset logo e slideshow
   const logo = document.getElementById('logo-btn');
   logo.style.opacity = '1';
   logo.style.visibility = 'visible';
   logo.classList.add('pulse');
 
-  currentIndex = null;
   slideshowAttivo = false;
   if (slideshowInterval) {
     clearInterval(slideshowInterval);
     slideshowInterval = null;
   }
 }
+
 
 
 
