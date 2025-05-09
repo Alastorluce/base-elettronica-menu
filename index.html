@@ -53,7 +53,6 @@
       inset: 0;
       background: #000;
       z-index: 10000;
-      display: flex;         /* serve solo per eventuali default, ma verrà overridato */
       align-items: center;
       justify-content: center;
       text-align: center;
@@ -537,615 +536,410 @@ ul.custom-list li > strong {
       </div>
     </div>
   
- <script>
-let modal = document.getElementById('modal');
-let modalContent = document.getElementById('modal-content');
-let currentIndex = null;
-let isTransitioning = false;
-let slideshowAttivo = false;
-let slideshowInterval = null;
-let showroomRequested = false;
-let showroomActive    = false;
+   
 
-// All’inizio del tuo <script>, subito dopo le let/const:
-    document.body.addEventListener('click', e => {
-  if (!/Mobi|Android/i.test(navigator.userAgent)) return;  // solo mobile
-  if (e.target.matches('span[onclick="attivaSlideshow()"]')) {
-    e.preventDefault();
-    showroomRequested = true;
-    document.getElementById('orientation-warning').classList.remove('show');
-    document.getElementById('showroom-orientation').classList.add('show');
-  }
-});
-
-
-      const contenuti = [
-        `<!-- Chi siamo -->
-<div style="text-align:center;">
-  <h2>Chi siamo</h2>
-  <h3 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h3>
-</div>
-
-<p style="text-align:justify;">
-Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della tecnologia applicata agli eventi, agli ambienti professionali e agli impianti integrati.</p>
-
-<p>Operiamo su tutto il territorio nazionale offrendo servizi altamente specializzati nella <em>progettazione, installazione e gestione</em> di impianti <strong>audio, video, luci, sicurezza, automazione e antincendio</strong>, con un approccio multidisciplinare che integra know-how tecnico, creatività progettuale e rigore normativo.</p>
-
-<p>Il nostro team è composto da tecnici qualificati, progettisti certificati e operatori esperti, in grado di affrontare ogni fase operativa: dal sopralluogo iniziale alla consegna chiavi in mano, passando per modellazione acustica, rendering 3D, collaudi funzionali e formazione all’utilizzo delle tecnologie installate.</p>
-
-<p>Collaboriamo con enti pubblici, aziende private, studi di architettura, service per lo spettacolo e broadcaster televisivi, adattando ogni progetto alle esigenze specifiche del cliente con <strong>soluzioni su misura, scalabili e ad alta efficienza</strong>.</p>
-
-<p>Lavoriamo con attrezzature all’avanguardia e standard qualitativi elevati, ponendoci come partner di riferimento per eventi live, showroom, installazioni fisse, studi televisivi, ambienti immersivi e produzioni ad alto impatto tecnologico.</p>
-`,
-  
-        `<!-- Portfolio -->
-<h2>Portfolio</h2>
-<p>Nel corso degli anni abbiamo contribuito alla realizzazione tecnica e progettuale di numerosi eventi, installazioni e ambienti professionali in tutta Italia. Il nostro portfolio riflette la varietà e l’elevato standard qualitativo dei servizi offerti.</p>
-
-<ul>
-  <li><strong style="color:#00a6ff;">Festival Nazionali e Tour Musicali</strong>: service completo per eventi live, dalla fase di pre-produzione alla regia tecnica in loco, con artisti di fama nazionale e internazionale.</li>
-  <li><strong style="color:#00a6ff;">Installazioni in teatri e auditorium</strong>: sistemi fissi audio/luci/video integrati per spettacoli, musical, conferenze e produzioni culturali, con controllo centralizzato e interfacce utente dedicate.</li>
-  <li><strong style="color:#00a6ff;">Soluzioni per centri congressi e showroom</strong>: impianti multimediali e di traduzione simultanea, videowall, microfonazione digitale e ambienti immersivi per la presentazione di brand e prodotti.</li>
-  <li><strong style="color:#00a6ff;">Supporto tecnico per fiere, sfilate e dirette streaming</strong>: copertura A/V integrata, cablaggi fibra, ponti radio e mixer broadcast, con assistenza tecnica continua.</li>
-  <li><strong style="color:#00a6ff;">Realizzazione di studi televisivi</strong>: progettazione e allestimento completo di ambienti televisivi e regie broadcast, con sistemi di illuminazione a LED, fondali scenografici, cablaggi audio/video digitali, pareti acustiche e regia IP-ready per produzioni live e on demand.</li>
-</ul>
-
-<p><em><span role="button" onclick="apri(2)" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
-  Contattaci
-</span></em>&nbsp;&nbsp;per ricevere un portfolio dettagliato con referenze certificate, fotografie dei lavori realizzati e descrizioni tecniche complete.</p>
-
-<p style="margin-top:1.5em;"><em><span role="button" onclick="attivaSlideshow()" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
-  Clicca qui
-</span></em>&nbsp;&nbsp;per avviare una piccola anteprima nella showroom interattiva.</p>
-
-`,
-  
-        `<!-- Contattaci -->
-<h2>Contattaci</h2>
-<p>Hai un progetto da realizzare, un evento da organizzare o necessiti di assistenza tecnica? Il nostro team è a tua disposizione per consulenze, preventivi gratuiti e sopralluoghi personalizzati.</p>
-<p>Compila il modulo sottostante per essere ricontattato dal nostro CEO <strong>Fabrizio Di Filippo</strong> o da un nostro tecnico incaricato.</p>
-
-<div style="backdrop-filter: blur(10px); background:rgba(0,0,0,0.5); padding:2em; border-radius:15px; border:1px solid rgba(0,166,255,0.2); box-shadow:0 0 5px rgba(0,166,255,0.3);">
-  <form id="contact-form" style="display:flex; flex-direction:column; gap:1em;">
-    <label>
-      <span style="display:block; margin-bottom:0.3em;">Nome e Cognome</span>
-      <input type="text" placeholder="Mario Rossi" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;">
-    </label>
-    <label>
-      <span style="display:block; margin-bottom:0.3em;">Email</span>
-      <input type="email" placeholder="tu@email.it" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;">
-    </label>
-    <label>
-      <span style="display:block; margin-bottom:0.3em;">Messaggio</span>
-      <textarea rows="10" placeholder="Descrivi il tuo progetto, le tue esigenze o richiedi una consulenza tecnica." required style="width:100%; min-height:180px; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px; outline:none;"></textarea>
-    </label>
-    <button type="submit" style="padding:0.8em 1.5em; background:#00a6ff; color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-      Invia Richiesta
-    </button>
-  </form>
-</div>
-
-<p style="margin-top:1em;">
-  Preferisci scriverci direttamente? Puoi contattarci via email all’indirizzo: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
-</p>
-`
-      ];
-  
-  
-
-    const contenutoHome = `
-      <h2>Benvenuti in Base Elettronica Service</h2>
-      <p>Siamo il partner ideale per progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi e installazioni professionali.<br><br>
-      Scopri di più esplorando il nostro sito!
-      </p>
-    `;
-
-
-
-
-function apri(index) {
-  if (isTransitioning) return;
-
-
-  isTransitioning = true;
-
-  if (currentIndex === index) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-      isTransitioning = false;
-    }, 600);
-  } else {
-    if (modal.classList.contains('show')) {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
-      setTimeout(() => {
-        modalContent.innerHTML = contenuti[index];
-        modal.classList.remove('fade-out');
-        modal.classList.add('show');
-        currentIndex = index;
-        isTransitioning = false;
-      }, 600);
-    } else {
-      modalContent.innerHTML = contenuti[index];
-      modal.classList.add('show');
-      currentIndex = index;
-      isTransitioning = false;
-    }
-  }
-}
-
-
-function toggleSubmenu() {
-  const submenu = document.getElementById('submenu-servizi');
-  const menuItems = document.querySelectorAll('.menu-list > .menu-item');
-
-  menuItems.forEach(el => {
-    // Nascondi solo quelli che NON stanno dentro il sottomenu
-    if (!el.closest('#submenu-servizi')) {
-      el.style.display = 'none';
-    }
-  });
-
-  submenu.style.display = 'flex';
-}
-
-
-function ripristinaMenuPrincipale() {
-  const submenu = document.getElementById('submenu-servizi');
-  const menuItems = document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)');
-  const logo = document.getElementById('logo-btn');
-
-  // Nasconde il contenuto modale con dissolvenza
-  if (modal.classList.contains('show')) {
-    isTransitioning = true;
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      isTransitioning = false;
-    }, 600);
-  }
-
-  // Nasconde il submenu
-  submenu.style.display = 'none';
-
-  // Mostra i pulsanti principali
-  menuItems.forEach(el => {
-    el.style.display = 'flex';
-  });
-
-  // Ripristina il logo al centro (se era stato nascosto o sostituito)
-  logo.style.opacity = '1';
-  logo.style.visibility = 'visible';
-  logo.classList.add('pulse');
-
-  // Reset variabili di stato
-  currentIndex = null;
-  slideshowAttivo = false;
-  if (slideshowInterval) clearInterval(slideshowInterval);
-}
-
-
-function apriSubservizio(tipo) {
-  if (isTransitioning) return;
-
-  let contenuto = '';
-  switch (tipo) {
-    case 'service':
-  contenuto = `
-    <h2>Service Tecnico per Eventi e Spettacoli</h2>
-<p>Offriamo un servizio integrato per l’allestimento tecnico di eventi di qualsiasi scala, in conformità al <strong>D.Lgs. 81/08</strong> e alle normative vigenti in materia di sicurezza, acustica e compatibilità elettromagnetica.</p>
-
-<p>La nostra struttura operativa è progettata per garantire continuità, affidabilità e tempestività nelle seguenti aree:</p>
-
-<ul class="custom-list">
-  <li><strong>Progettazione tecnica preliminare</strong> con sopralluogo, elaborazione planimetrie e simulazioni acustico-visive su CAD 2D/3D;</li>
-  <li><strong>Montaggio e collaudo</strong> di strutture portanti, layer, americane, passerelle e punti di sospensione certificati, con utilizzo di DPI e verifiche secondo norme UNI EN;</li>
-  <li><strong>Configurazione impianti audio/luci/video</strong> con sistemi professionali (RCF, L-Acoustics, Meyer Sound, DiGiCo, GrandMA) ottimizzati per ogni tipologia di venue indoor e outdoor;</li>
-  <li><strong>Cablaggio elettrico e segnale</strong> (audio, DMX, HDMI, fibra ottica) con certificazione a norma CEI 64-8 e messa a terra equipotenziale temporanea;</li>
-  <li><strong>Regia tecnica on-site</strong> durante lo spettacolo, con operatori specializzati per la gestione in tempo reale di scena, mixer, luci, effetti speciali e visual show;</li>
-  <li><strong>Supporto tecnico in studi televisivi</strong> con gestione audio-video, routing digitale, timecode, multicamera e coordinamento interfonico professionale per regie live e on-demand;</li>
-  <li><strong>Disallestimento controllato</strong> e verifica post-evento per il ripristino in sicurezza dell’area e il tracciamento dei materiali a noleggio.</li>
-</ul>
-
-<p>Tutti i tecnici coinvolti sono formati secondo i moduli PES-PAV-PEI, piattaforme aeree (PLE), antincendio rischio elevato e movimentazione carichi in sicurezza, con copertura assicurativa completa.</p>
-
-<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>`;
-  break;
-
-      case 'antincendio':
-  contenuto = `
-    <h2>Sistemi di Sicurezza Antincendio</h2>
-    <p>Progettiamo e installiamo impianti antincendio conformi alle normative vigenti, con particolare attenzione alla certificazione <strong>UNI EN 54</strong>, garantendo affidabilità, integrazione e tempestività d'intervento.</p>
-    <p>Le nostre soluzioni comprendono:</p>
-    <ul class="custom-list">
-      <li><strong>Rivelazione automatica</strong> tramite sensori ottici, termici e multispettrali ad alta sensibilità;</li>
-      <li><strong>Attuazione immediata</strong> mediante sirene, pannelli di evacuazione luminosa e dispositivi elettromeccanici;</li>
-      <li><strong>Gestione centralizzata</strong> con centrali di controllo modulari, interfacciabili con sistemi BMS e di videosorveglianza;</li>
-      <li><strong>Integrazione con sistemi audio/luci</strong> per l’attivazione di scenari di sicurezza e comunicazioni vocali di emergenza;</li>
-      <li><strong>Monitoraggio remoto</strong> e manutenzione predittiva su infrastrutture industriali, civili e per eventi temporanei.</li>
-    </ul>
-    <p>Ogni progetto viene sviluppato in sinergia con i nostri ingegneri e tecnici certificati, per garantire la massima copertura del rischio e la piena conformità alle normative nazionali ed europee.</p>
-  `;
-  break;
-
-  case 'progettazione':
-  contenuto = `
-    <h2>Progettazione Ambienti e Soluzioni su Misura</h2>
-    <p>Forniamo un servizio completo di progettazione tecnica per ambienti professionali, eventi e installazioni fisse, combinando <strong style="color:#00a6ff;">esperienza ingegneristica</strong>, <strong style="color:#00a6ff;">tecnologie CAD 3D</strong> e <strong style="color:#00a6ff;">modellazione acustico-visiva</strong> ad alta precisione.</p>
-
-    <ul class="custom-list">
-      <li><strong style="color:#00a6ff;">Rendering e modellazione 3D</strong>: simulazioni fotorealistiche e interattive per impianti audio/luci/video, con valutazione dell’impatto estetico e funzionale negli spazi architettonici esistenti.</li>
-      <li><strong style="color:#00a6ff;">Analisi acustiche e illuminotecniche</strong>: calcolo dei tempi di riverbero, distribuzione sonora, luminanza e contrasto visivo, con software specializzati per ambienti teatrali, conferenziali e studi di registrazione.</li>
-      <li><strong style="color:#00a6ff;">Personalizzazione scenotecnica</strong>: studio e realizzazione di elementi su misura (fondali, layer, pareti mobili, set modulari) con soluzioni ad alta efficienza energetica e flessibilità installativa.</li>
-      <li><strong style="color:#00a6ff;">Progettazione studi televisivi e regie</strong>: sviluppo integrato di spazi broadcast con isolamento acustico, pareti foniche, illuminazione a LED calibrata, pannellature tecniche e sistemi di controllo centralizzato IP.</li>
-    </ul>
-
-    <p>Ogni progetto è accompagnato da <strong style="color:#00a6ff;">documentazione tecnica dettagliata</strong>, planimetrie esecutive e consulenza dedicata nella fase di cantiere. Il nostro approccio modulare ci consente di soddisfare le esigenze sia di piccoli eventi privati sia di grandi produzioni professionali, garantendo risultati impeccabili e piena coerenza normativa.</p>
-  `;
-  break;
-
-  case 'noleggio':
-  contenuto = `
-    <h2>Noleggio di Attrezzature Professionali</h2>
-    <p>Offriamo un servizio di noleggio completo per impianti e attrezzature di alta gamma nel settore <strong>audio, video, luci, strutture e controllo scenotecnico</strong>, con disponibilità immediata, contratti flessibili e assistenza tecnica qualificata.</p>
-
-    <p>Il nostro parco attrezzature è regolarmente revisionato, aggiornato e conforme alle normative CE, EN 60598-2-17 (illuminotecnica), CEI 64-8 (impiantistica elettrica) e D.Lgs. 81/08 per la sicurezza nei luoghi di lavoro.</p>
-
-    <ul class="custom-list">
-      <li><strong>Diffusione sonora professionale</strong>: line array e subwoofer RCF, L-Acoustics, Meyer Sound, d&b audiotechnik;</li>
-      <li><strong>Mixer digitali</strong>: DiGiCo, Yamaha CL/QL Series, Midas, Soundcraft, Allen & Heath;</li>
-      <li><strong>Console luci</strong>: GrandMA3, Avolites, ChamSys, con supporto per pixel mapping e timecode;</li>
-      <li><strong>Proiettori, teste mobili e LED</strong>: ROBE Lighting, Prolights, DTS, Clay Paky;</li>
-      <li><strong>Videoproiezione e LEDwall</strong>: pannelli LED pitch 2.6/3.9 indoor/outdoor, scalers e matrici video, proiettori laser full HD/4K;</li>
-      <li><strong>Strutture e supporti</strong>: americane truss, layer certificati, motori elettrici e manuali, palchi modulari, torri di sollevamento;</li>
-      <li><strong>Cabling e networking</strong>: cablaggio segnale e potenza, stage box Dante, switch professionali per reti AVB/Art-Net/sACN;</li>
-      <li><strong>Accessori e sicurezza</strong>: quadri elettrici CEI, canaline, copricavi, flight case, dispositivi antinfortunistici per montaggio in quota.</li>
-    </ul>
-
-    <p>È possibile stipulare contratti di <strong>noleggio giornaliero, settimanale, mensile o a lungo termine</strong>, con servizio opzionale di consegna, installazione, supervisione tecnica e smontaggio.</p>
-
-    <p>Ogni richiesta viene gestita con analisi tecnica preliminare, scheda materiali dettagliata e supporto nella scelta della configurazione più efficiente rispetto all’ambiente operativo e al tipo di evento.</p>
-  `;
-  break;
-
-  case 'assistenza':
-  contenuto = `
-    <h2>Centro Assistenza Tecnica e Riparazioni</h2>
-    <p>Il nostro centro tecnico offre un servizio specializzato di assistenza e riparazione su attrezzature <strong>audio, luci, video, strutture elettroniche e digitali</strong>, con interventi tempestivi sia <strong>on-site</strong> che in <strong>laboratorio interno certificato</strong>.</p>
-
-    <p>Siamo in grado di eseguire <strong>riparazioni elettroniche su qualsiasi componente</strong>, anche a livello microelettronico e SMT, grazie a un reparto dotato di strumentazione avanzata per diagnostica, collaudo e ricostruzione circuitale.</p>
-
-    <ul class="custom-list">
-      <li><strong>Apparati audio professionali</strong>: amplificatori, mixer digitali, stage box, processori DSP;</li>
-      <li><strong>Corpi illuminanti e console luci</strong>: teste mobili, dimmer, centraline DMX, alimentatori switching;</li>
-      <li><strong>Sistemi video</strong>: proiettori laser, scaler, matrici, convertitori SDI/HDMI e trasmettitori ottici;</li>
-      <li><strong>Alimentazione e cablaggi</strong>: quadri elettrici, PSU, connettori industriali, reti AVB/Art-Net.</li>
-    </ul>
-
-    <p><strong>Ogni intervento è accompagnato da diagnosi documentata, tracciabilità seriale, test funzionale e collaudo secondo standard ISO 9001.</strong></p>
-
-    <h3 style="color:#00ffb3;">🔧 Laboratorio LEDwall dedicato</h3>
-    <p>Disponiamo inoltre di un’area tecnica specifica per la riparazione, calibrazione e sostituzione componenti di <strong>LEDwall modulari indoor/outdoor</strong>:</p>
-    <ul class="custom-list">
-      <li>Analisi e sostituzione di moduli SMD (RGB 3-in-1, COB, miniLED);</li>
-      <li>Ripristino controller, riceventi, alimentatori e ribbon cable;</li>
-      <li>Taratura luminosa e mappatura pixel su software proprietari;</li>
-      <li>Backup e restore firmware per schede NovaStar, ColorLight, Linsn, Brompton.</li>
-    </ul>
-
-    <p>Il nostro team è abilitato a operare su installazioni fisse, strutture mobili e rental, con servizio di <strong>supporto tecnico pre e post-evento</strong>, documentazione CE e certificazione di conformità post-intervento.</p>
-  `;
-  break;
-
-  }
-
-  isTransitioning = true;
-
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modalContent.innerHTML = contenuto;
-      modal.classList.remove('fade-out');
-      modal.classList.add('show');
-      currentIndex = null;
-      isTransitioning = false;
-    }, 600);
-  } else {
-    modalContent.innerHTML = contenuto;
-    modal.classList.add('show');
-    currentIndex = null;
-    isTransitioning = false;
-  }
-}
-
-
-modalContent.addEventListener('click', (e) => {
-  // Solo chiusura se si clicca in un'area vuota e non ci sono contenuti attivi
-  if (
-    currentIndex === null &&
-    modal.classList.contains('show') &&
-    !isTransitioning &&
-    !e.target.closest('form') && // non chiude se clicco su un form
-    !e.target.closest('.custom-list') && // non chiude se clicco su una lista
-    !e.target.closest('p') // evita chiusura se clicco su un paragrafo
-  ) {
-    isTransitioning = true;
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      isTransitioning = false;
-    }, 600);
-  }
-});
-
-
-    function attivaSlideshow() {
-      if (slideshowAttivo) return;
-      slideshowAttivo = true;
-      if (modal.classList.contains('show')) {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
+    <script>
+        // 1) Variabili di stato
+        let modal             = document.getElementById('modal');
+        let modalContent      = document.getElementById('modal-content');
+        let isTransitioning   = false;
+        let slideshowAttivo   = false;
+        let slideshowInterval = null;
+        let showroomRequested = false;
+        let showroomActive    = false;
+        let currentIndex      = null;
+        let welcomeTimeout    = null;
+        let welcomeShown      = false;
+      
+        // warning overlay
+        const warnMain = document.getElementById('orientation-warning');
+        const warnShow = document.getElementById('showroom-orientation');
+      
+        // 2) Delegate “Clicca qui” (solo mobile)
+        document.body.addEventListener('click', e => {
+          if (!/Mobi|Android/i.test(navigator.userAgent)) return;
+          if (e.target.matches('span[onclick="attivaSlideshow()"]')) {
+            e.preventDefault();
+            showroomRequested = true;
+            warnMain.classList.remove('show');
+            warnShow.classList.add('show');
+          }
+        });
+      
+        // 3) Contenuti modali
+        const contenuti = [
+          `<!-- Chi siamo -->
+          <div style="text-align:center;">
+            <h2>Chi siamo</h2>
+            <h3 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h3>
+          </div>
+          <p style="text-align:justify;">
+            Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della tecnologia applicata agli eventi, agli ambienti professionali e agli impianti integrati.
+          </p>
+          <p>
+            Operiamo su tutto il territorio nazionale offrendo servizi altamente specializzati nella <em>progettazione, installazione e gestione</em> di impianti <strong>audio, video, luci, sicurezza, automazione e antincendio</strong>, con un approccio multidisciplinare che integra know-how tecnico, creatività progettuale e rigore normativo.
+          </p>
+          <p>
+            Il nostro team è composto da tecnici qualificati, progettisti certificati e operatori esperti, in grado di affrontare ogni fase operativa: dal sopralluogo iniziale alla consegna chiavi in mano, passando per modellazione acustica, rendering 3D, collaudi funzionali e formazione all’utilizzo delle tecnologie installate.
+          </p>
+          <p>
+            Collaboriamo con enti pubblici, aziende private, studi di architettura, service per lo spettacolo e broadcaster televisivi, adattando ogni progetto alle esigenze specifiche del cliente con <strong>soluzioni su misura, scalabili e ad alta efficienza</strong>.
+          </p>
+          <p>
+            Lavoriamo con attrezzature all’avanguardia e standard qualitativi elevati, ponendoci come partner di riferimento per eventi live, showroom, installazioni fisse, studi televisivi, ambienti immersivi e produzioni ad alto impatto tecnologico.
+          </p>`,
+      
+          `<!-- Portfolio -->
+          <h2>Portfolio</h2>
+          <p>
+            Nel corso degli anni abbiamo contribuito alla realizzazione tecnica e progettuale di numerosi eventi, installazioni e ambienti professionali in tutta Italia. Il nostro portfolio riflette la varietà e l’elevato standard qualitativo dei servizi offerti.
+          </p>
+          <ul>
+            <li><strong style="color:#00a6ff;">Festival Nazionali e Tour Musicali</strong>: service completo per eventi live, dalla fase di pre-produzione alla regia tecnica in loco, con artisti di fama nazionale e internazionale.</li>
+            <li><strong style="color:#00a6ff;">Installazioni in teatri e auditorium</strong>: sistemi fissi audio/luci/video integrati per spettacoli, musical, conferenze e produzioni culturali, con controllo centralizzato e interfacce utente dedicate.</li>
+            <li><strong style="color:#00a6ff;">Soluzioni per centri congressi e showroom</strong>: impianti multimediali e di traduzione simultanea, videowall, microfonazione digitale e ambienti immersivi per la presentazione di brand e prodotti.</li>
+            <li><strong style="color:#00a6ff;">Supporto tecnico per fiere, sfilate e dirette streaming</strong>: copertura A/V integrata, cablaggi fibra, ponti radio e mixer broadcast, con assistenza tecnica continua.</li>
+            <li><strong style="color:#00a6ff;">Realizzazione di studi televisivi</strong>: progettazione e allestimento completo di ambienti televisivi e regie broadcast, con sistemi di illuminazione a LED, fondali scenografici, cablaggi audio/video digitali, pareti acustiche e regia IP-ready per produzioni live e on demand.</li>
+          </ul>
+          <p style="margin-top:1.5em;">
+            <em><span role="button" onclick="apri(2)" style="color:#00ffb3; text-decoration:none; cursor:pointer;">Contattaci</span></em>
+            &nbsp;&nbsp;per ricevere un portfolio dettagliato con referenze certificate, fotografie dei lavori realizzati e descrizioni tecniche complete.
+          </p>
+          <p style="margin-top:1.5em;">
+            <em><span role="button" onclick="attivaSlideshow()" style="color:#00ffb3; text-decoration:none; cursor:pointer;">Clicca qui</span></em>
+            &nbsp;&nbsp;per avviare una piccola anteprima nella showroom interattiva.
+          </p>`,
+      
+          `<!-- Contattaci -->
+          <h2>Contattaci</h2>
+          <p>
+            Hai un progetto da realizzare, un evento da organizzare o necessiti di assistenza tecnica? Il nostro team è a tua disposizione per consulenze, preventivi gratuiti e sopralluoghi personalizzati.
+          </p>
+          <p>
+            Compila il modulo sottostante per essere ricontattato dal nostro CEO <strong>Fabrizio Di Filippo</strong> o da un nostro tecnico incaricato.
+          </p>
+          <form id="contact-form" style="display:flex; flex-direction:column; gap:1em; backdrop-filter:blur(10px); background:rgba(0,0,0,0.5); padding:2em; border-radius:15px; border:1px solid rgba(0,166,255,0.2); box-shadow:0 0 5px rgba(0,166,255,0.3);">
+            <label>
+              <span style="display:block; margin-bottom:0.3em;">Nome e Cognome</span>
+              <input type="text" placeholder="Mario Rossi" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px;">
+            </label>
+            <label>
+              <span style="display:block; margin-bottom:0.3em;">Email</span>
+              <input type="email" placeholder="tu@email.it" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px;">
+            </label>
+            <label>
+              <span style="display:block; margin-bottom:0.3em;">Messaggio</span>
+              <textarea rows="10" placeholder="Descrivi il tuo progetto…" required style="width:100%; padding:0.75em; background:rgba(10,10,10,0.7); border:1px solid #00a6ff; color:#fff; border-radius:8px;"></textarea>
+            </label>
+            <button type="submit" style="padding:0.8em 1.5em; background:#00a6ff; color:#000; border:none; border-radius:8px; font-weight:bold;">
+              Invia Richiesta
+            </button>
+          </form>
+          <p style="margin-top:1em;">
+            Preferisci scriverci direttamente? Scrivi a
+            <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
+          </p>`
+        ];
+      
+        const contenutoHome = `
+          <h2>Benvenuti in Base Elettronica Service</h2>
+          <p>
+            Siamo il partner ideale per progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi e installazioni professionali.<br><br>
+            Scopri di più esplorando il nostro sito!
+          </p>`;
+      
+        // 4) Apertura/chiusura modale
+        function apri(index) {
+          if (isTransitioning) return;
+          isTransitioning = true;
+          if (currentIndex === index) {
+            modal.classList.remove('show');
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+              modal.classList.remove('fade-out');
+              modalContent.innerHTML = '';
+              currentIndex = null;
+              isTransitioning = false;
+            }, 600);
+          } else {
+            const nuovo = contenuti[index];
+            if (modal.classList.contains('show')) {
+              modal.classList.remove('show');
+              modal.classList.add('fade-out');
+              setTimeout(() => {
+                modalContent.innerHTML = nuovo;
+                modal.classList.remove('fade-out');
+                modal.classList.add('show');
+                currentIndex = index;
+                isTransitioning = false;
+              }, 600);
+            } else {
+              modalContent.innerHTML = nuovo;
+              modal.classList.add('show');
+              currentIndex = index;
+              isTransitioning = false;
+            }
+          }
+        }
+      
+        // 5) Toggle sottomenu
+        function toggleSubmenu() {
+          document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)')
+                  .forEach(el => el.style.display = 'none');
+          document.getElementById('submenu-servizi').style.display = 'flex';
+        }
+      
+        // 6) Ripristina menu principale
+        function ripristinaMenuPrincipale() {
+          if (isTransitioning) return;
+          isTransitioning = true;
+          if (modal.classList.contains('show')) {
+            modal.classList.remove('show');
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+              modal.classList.remove('fade-out');
+              modalContent.innerHTML = '';
+              isTransitioning = false;
+            }, 600);
+          }
+          document.getElementById('submenu-servizi').style.display = 'none';
+          document.querySelectorAll('.menu-list > .menu-item')
+                  .forEach(el => el.style.display = 'flex');
           currentIndex = null;
-          isTransitioning = false;
-        }, 600);
-      }
-      const immagini = [
-        'image_background/img1.jpg',
-        'image_background/img2.jpg',
-        'image_background/img3.jpg',
-        'image_background/img4.jpg',
-        'image_background/img5.jpg',
-        'image_background/img6.jpg',
-        'image_background/img7.png',
-        'image_background/img8.png',
-        'image_background/img9.png',
-        'image_background/img10.png'
-      ];
-      const logo = document.getElementById('logo-btn');
-      let idx = Math.floor(Math.random() * immagini.length);
-      const changeImage = () => {
-        const img = new Image();
-        img.src = immagini[idx];
-        img.onload = () => {
+          clearInterval(slideshowInterval);
+          slideshowAttivo = false;
+        }
+      
+        // 7) Apri servizi specifici
+        function apriSubservizio(tipo) {
+          if (isTransitioning) return;
+          let html = '';
+          switch (tipo) {
+            case 'service':
+              html = `<h2>Service Tecnico per Eventi e Spettacoli</h2>
+                      <p>Offriamo un servizio integrato…</p>
+                      <ul class="custom-list">…</ul>`;
+              break;
+            case 'antincendio':
+              html = `<h2>Sistemi di Sicurezza Antincendio</h2>
+                      <ul class="custom-list">…</ul>`;
+              break;
+            case 'progettazione':
+              html = `<h2>Progettazione Ambienti e Soluzioni su Misura</h2>
+                      <ul class="custom-list">…</ul>`;
+              break;
+            case 'noleggio':
+              html = `<h2>Noleggio di Attrezzature Professionali</h2>
+                      <ul class="custom-list">…</ul>`;
+              break;
+            case 'assistenza':
+              html = `<h2>Centro Assistenza Tecnica e Riparazioni</h2>
+                      <ul class="custom-list">…</ul>`;
+              break;
+          }
+          isTransitioning = true;
+          if (modal.classList.contains('show')) {
+            modal.classList.remove('show');
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+              modalContent.innerHTML = html;
+              modal.classList.remove('fade-out');
+              modal.classList.add('show');
+              isTransitioning = false;
+            }, 600);
+          } else {
+            modalContent.innerHTML = html;
+            modal.classList.add('show');
+            isTransitioning = false;
+          }
+          currentIndex = null;
+        }
+      
+        // 8) Clic fuori per chiudere (solo se non ci sono form o paragrafi attivi)
+        modalContent.addEventListener('click', e => {
+          if (
+            currentIndex === null &&
+            modal.classList.contains('show') &&
+            !isTransitioning &&
+            !e.target.closest('form') &&
+            !e.target.closest('.custom-list') &&
+            !e.target.closest('p')
+          ) {
+            isTransitioning = true;
+            modal.classList.remove('show');
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+              modal.classList.remove('fade-out');
+              modalContent.innerHTML = '';
+              isTransitioning = false;
+            }, 600);
+          }
+        });
+      
+        // 9) Slideshow showroom
+        function attivaSlideshow() {
+          if (slideshowAttivo) return;
+          slideshowAttivo = true;
+          clearInterval(slideshowInterval);
+          modal.classList.contains('show') && modal.classList.remove('show');
+      
+          const immagini = [
+            'image_background/img1.jpg',
+            'image_background/img2.jpg',
+            'image_background/img3.jpg',
+            'image_background/img4.jpg',
+            'image_background/img5.jpg',
+            'image_background/img6.jpg',
+            'image_background/img7.png',
+            'image_background/img8.png',
+            'image_background/img9.png',
+            'image_background/img10.png'
+          ];
+          let idx = Math.floor(Math.random() * immagini.length);
+          const logo = document.getElementById('logo-btn');
+      
+          const changeImage = () => {
+            const img = new Image();
+            img.src = immagini[idx];
+            img.onload = () => {
+              logo.style.opacity = '0';
+              setTimeout(() => {
+                logo.src = img.src;
+                logo.classList.remove('loaded-img');
+                void logo.offsetWidth;
+                logo.classList.add('loaded-img');
+                logo.style.opacity = '1';
+              }, 50);
+            };
+            idx = (idx + 1) % immagini.length;
+          };
+          changeImage();
+          slideshowInterval = setInterval(changeImage, 5000);
+        }
+      
+        // 10) Click logo principale
+        document.getElementById('logo-btn').addEventListener('click', () => {
+          clearTimeout(welcomeTimeout);
+          if (isTransitioning) return;
+          isTransitioning = true;
+          if (modal.classList.contains('show')) {
+            modal.classList.remove('show');
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+              modalContent.innerHTML = contenutoHome;
+              modal.classList.remove('fade-out');
+              modal.classList.add('show');
+              isTransitioning = false;
+            }, 600);
+          } else {
+            modalContent.innerHTML = contenutoHome;
+            modal.classList.add('show');
+            isTransitioning = false;
+          }
+          welcomeShown = true;
+        });
+      
+        // 11) Click logo sidebar
+        document.getElementById('sidebar-logo').addEventListener('click', () => {
+          if (isTransitioning) return;
+          clearInterval(slideshowInterval);
+          slideshowAttivo = false;
+          const logo = document.getElementById('logo-btn');
+          logo.style.visibility = 'hidden';
           logo.style.opacity = '0';
-          setTimeout(() => {
-            logo.src = img.src;
-            logo.classList.remove('loading','loaded-img');
-            void logo.offsetWidth;
-            logo.classList.add('loaded-img');
+          isTransitioning = true;
+          const preload = new Image();
+          preload.src = 'logo.png';
+          preload.onload = () => {
+            logo.src = preload.src;
+            logo.style.visibility = 'visible';
             logo.style.opacity = '1';
-          },50);
-        };
-        idx = (idx + 1) % immagini.length;
-      };
-      changeImage();
-      slideshowInterval = setInterval(changeImage, 5000);
-    }
-
-    document.getElementById('logo-btn').addEventListener('click', () => {
-  clearTimeout(welcomeTimeout);
-  if (isTransitioning) return;
-  isTransitioning = true;
-
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modalContent.innerHTML = contenutoHome;
-      modal.classList.remove('fade-out');
-      modal.classList.add('show');
-      isTransitioning = false;
-    }, 600);
-  } else {
-    modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
-    isTransitioning = false;
-  }
-
-  welcomeShown = true;
-});
-
-
-    document.getElementById('sidebar-logo').addEventListener('click', () => {
-      if (isTransitioning) return;
-      if (slideshowInterval) clearInterval(slideshowInterval);
-      slideshowAttivo = false;
-      const logo = document.getElementById('logo-btn');
-      logo.style.transition = 'none';
-      logo.style.visibility = 'hidden';
-      logo.style.opacity = '0';
-      logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
-      isTransitioning = true;
-      const preload = new Image();
-      preload.src = 'logo.png';
-      preload.onload = () => {
-        logo.src = preload.src;
-        logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
-        void logo.offsetWidth;
-        logo.style.transition = 'opacity 0.6s ease-in-out';
-        logo.style.visibility = 'visible';
-        logo.style.opacity = '1';
-        setTimeout(() => {
-          logo.classList.add('pulse');
-          isTransitioning = false;
-        },600);
-      };
-      if (modal.classList.contains('show')) {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-        },600);
-      }
-    });
- 
-  // 1. Variabili di controllo
-  let welcomeTimeout;
-  let welcomeShown = false;
-
-  window.addEventListener('DOMContentLoaded', () => {
-  // 1) Avvia animazioni sidebar/menu
-  document.getElementById('sidebar').classList.add('animated');
-  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
-
-  // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
-  if (window.matchMedia('(max-width: 768px)').matches) {
-    const modal        = document.getElementById('modal');
-    const modalContent = document.getElementById('modal-content');
-
-    // 2a) Inietta il pulsante di chiusura, se non esiste già
-    if (!modal.querySelector('.modal-close')) {
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'modal-close';
-      closeBtn.setAttribute('aria-label', 'Chiudi');
-      closeBtn.textContent = '×';
-      modal.insertBefore(closeBtn, modalContent);
-    }
-
-    // 2b) Collega il click sulla “×” per chiudere la modale
-    modal.querySelectorAll('.modal-close').forEach(btn => {
-      btn.addEventListener('click', () => {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-        }, 600);
-      });
-    });
-
-    // 2c) Assicura che su touch “Clicca qui” parta la showroom
-    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-  el.addEventListener('click', e => {
-    e.preventDefault();
-    showroomRequested = true;
-    // subito mostriamo l’overlay di orientamento
-    document.getElementById('showroom-orientation').style.display = 'flex';
-  });
-  // già gestisci touchstart per mobile
-});
-
-
-    // 2d) Avvia la showroom automaticamente (se lo desideri)
-    // attivaSlideshow();
-  }
-
-  // 3) Pianifica il pop-up di benvenuto
-  let welcomeTimeout = setTimeout(() => {
-    modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
-    let welcomeShown = true;
-
-    const hideWelcome = e => {
-  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
-  if (
-    e.target.closest('#sidebar') ||
-    e.target.closest('.menu-item') ||
-    e.target.closest('#modal') ||
-    e.target.closest('#logo-btn')
-  ) {
-    return;
-  }
-  modal.classList.remove('show');
-  document.removeEventListener('click', hideWelcome);
-};
-document.addEventListener('click', hideWelcome, { once: true });
-
-  }, 500);
-});
-
-
-
-// Event delegation per il form di contatto
-document.addEventListener('submit', function(e) {
-  if (e.target.matches('#contact-form')) {
-    e.preventDefault();
-    modalContent.innerHTML = `
-      <div style="text-align:center; padding:1em;">
-        <h2>Grazie di averci contattato!</h2>
-        <p>Risponderemo entro 24 ore.</p>
-      </div>`;
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
-    setTimeout(() => {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
-      setTimeout(() => {
-        modalContent.innerHTML = contenutoHome;
-        currentIndex = null;
-      }, 600);
-    }, 3000);
-  }
-});
-
-
-function checkOrientation() {
-  const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
-  const isLandscape = window.innerWidth > window.innerHeight;
-  const warnMain    = document.getElementById('orientation-warning');
-  const warnShow    = document.getElementById('showroom-orientation');
-
-  if (!isMobile) {
-    warnMain.classList.remove('show');
-    warnShow.classList.remove('show');
-    return;
-  }
-
-  if (!showroomRequested) {
-    // FLOW “SITO”:
-    if (isLandscape) warnMain.classList.add('show');
-    else              warnMain.classList.remove('show');
-    warnShow.classList.remove('show');
-  } else {
-    // FLOW “SHOWROOM”:
-    warnMain.classList.remove('show');
-
-    if (!showroomActive) {
-      // Prima mostro l’overlay showroom in portrait
-      if (!isLandscape) warnShow.classList.add('show');
-      // Poi al cambio in landscape avvio slideshow
-      else {
-        warnShow.classList.remove('show');
-        showroomActive = true;
-        attivaSlideshow();
-      }
-    } else {
-      // Tornando in portrait fermo tutto e ripristino menu
-      if (!isLandscape) {
-        warnShow.classList.remove('show');
-        showroomRequested = false;
-        showroomActive    = false;
-        clearInterval(slideshowInterval);
-        ripristinaMenuPrincipale();
-      }
-    }
-  }
-}
-
-
-// appena la pagina è pronta e a ogni resize/orientation change,
-// eseguo la nuova logica di orientamento
-window.addEventListener('load',           checkOrientation);
-window.addEventListener('resize',         checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
-
-
-
-
-</script>
+            setTimeout(() => isTransitioning = false, 600);
+          };
+          if (modal.classList.contains('show')) {
+            modal.classList.remove('show');
+            modalContent.innerHTML = '';
+            currentIndex = null;
+          }
+        });
+      
+        // 12) Submit form di contatto
+        document.addEventListener('submit', e => {
+          if (e.target.matches('#contact-form')) {
+            e.preventDefault();
+            modalContent.innerHTML = `
+              <div style="text-align:center; padding:1em;">
+                <h2>Grazie di averci contattato!</h2>
+                <p>Risponderemo entro 24 ore.</p>
+              </div>`;
+            modal.classList.remove('fade-out');
+            modal.classList.add('show');
+            setTimeout(() => {
+              modal.classList.remove('show');
+              modal.classList.add('fade-out');
+              setTimeout(() => {
+                modalContent.innerHTML = contenutoHome;
+                currentIndex = null;
+              }, 600);
+            }, 3000);
+          }
+        });
+      
+        // 13) Controllo orientamento
+        function checkOrientation() {
+          const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+          if (!/Mobi|Android/i.test(navigator.userAgent)) {
+            warnMain.classList.remove('show');
+            warnShow.classList.remove('show');
+            return;
+          }
+          if (!showroomRequested) {
+            isLandscape ? warnMain.classList.add('show')
+                        : warnMain.classList.remove('show');
+            warnShow.classList.remove('show');
+          } else {
+            warnMain.classList.remove('show');
+            if (!showroomActive) {
+              if (!isLandscape) warnShow.classList.add('show');
+              else {
+                warnShow.classList.remove('show');
+                showroomActive = true;
+                attivaSlideshow();
+              }
+            } else {
+              if (!isLandscape) {
+                warnShow.classList.remove('show');
+                showroomRequested = false;
+                showroomActive    = false;
+                clearInterval(slideshowInterval);
+                ripristinaMenuPrincipale();
+              }
+            }
+          }
+        }
+      
+        // 14) Welcome popup automatico
+        welcomeTimeout = setTimeout(() => {
+          modalContent.innerHTML = contenutoHome;
+          modal.classList.add('show');
+          welcomeShown = true;
+          document.addEventListener('click', e => {
+            if (
+              !e.target.closest('#sidebar') &&
+              !e.target.closest('.menu-item') &&
+              !e.target.closest('#modal') &&
+              !e.target.closest('#logo-btn')
+            ) {
+              modal.classList.remove('show');
+            }
+          }, { once: true });
+        }, 500);
+      
+        // 15) Eventi di resize/orientationchange
+        window.addEventListener('load', checkOrientation);
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+      </script>
+      
 </body>
 </html>
