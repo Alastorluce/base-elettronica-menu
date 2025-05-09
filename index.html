@@ -498,6 +498,21 @@ ul.custom-list li > strong {
       </div>
     </div>
   
+    <div id="showroom-orientation" style="display:none; position:fixed; inset:0; background:#000; z-index:10000;
+     display:flex; align-items:center; justify-content:center; text-align:center; color:#00a6ff; font-family:'Varela Round'; padding:2em;">
+  <div>
+    <svg width="120" height="120" viewBox="0 0 24 24" fill="#00a6ff" style="margin-bottom:1em">
+      <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
+               4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
+               12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
+               12h2v-2H5v2z"/>
+    </svg>
+    <p>Gira lo schermo per visualizzare la showroom<br>e riportalo in verticale per chiuderla.</p>
+  </div>
+</div>
+
+
+
     <div id="main">
       <img src="logo.png" id="logo-btn" alt="Logo">
       <div id="modal" class="modal">
@@ -593,6 +608,9 @@ let currentIndex = null;
 let isTransitioning = false;
 let slideshowAttivo = false;
 let slideshowInterval = null;
+let showroomRequested = false;
+let showroomActive    = false;
+
 
 function apri(index) {
   if (isTransitioning) return;
@@ -981,11 +999,15 @@ modalContent.addEventListener('click', (e) => {
 
     // 2c) Assicura che su touch “Clicca qui” parta la showroom
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-      el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tap
-        attivaSlideshow();
-      }, { passive: false });
-    });
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    showroomRequested = true;
+    // subito mostriamo l’overlay di orientamento
+    document.getElementById('showroom-orientation').style.display = 'flex';
+  });
+  // già gestisci touchstart per mobile
+});
+
 
     // 2d) Avvia la showroom automaticamente (se lo desideri)
     // attivaSlideshow();
@@ -1040,34 +1062,53 @@ document.addEventListener('submit', function(e) {
 });
 
 
+function checkOrientation() {
+  const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const isPortrait  = !isLandscape;
+  const warnMain    = document.getElementById('orientation-warning');
+  const warnShow    = document.getElementById('showroom-orientation');
 
-(function() {
-  function checkOrientation() {
-    const w = document.getElementById('orientation-warning');
-    const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
-    const isLandscape = window.innerWidth > window.innerHeight;
-    if (isMobile && isLandscape) {
-      w.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    } else {
-      w.style.display = 'none';
-      document.body.style.overflow = '';
-    }
+  // **1. Se ho cliccato "Clicca qui" disabilito SEMPRE il warning principale**
+  if (showroomRequested) {
+    warnMain.style.display = 'none';
   }
-  // Chiama subito e rilancia ad ogni resize/orientationchange
-  window.addEventListener('load',           checkOrientation);
-  window.addEventListener('resize',         checkOrientation);
-  window.addEventListener('orientationchange', checkOrientation);
-})();
+  else if (isMobile && isLandscape) {
+    // altrimenti, se non ho richiesto showroom, mostro il warning originale
+    warnMain.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  } else {
+    warnMain.style.display = 'none';
+    document.body.style.overflow = '';
+  }
 
-document.querySelectorAll('.menu-item').forEach(el => {
-  const delay = (Math.random() * 3).toFixed(2) + 's';
-  el.style.setProperty('--delay', delay);
-  const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
-el.style.setProperty('--delay', delay);
-el.style.setProperty('--duration', speed);
+  // **2. Gestione showroom (solo su mobile)**
+  if (isMobile && showroomRequested) {
+    if (isPortrait && !showroomActive) {
+      warnShow.style.display = 'flex';
+    } else if (isLandscape && !showroomActive) {
+      warnShow.style.display = 'none';
+      showroomActive = true;
+      attivaSlideshow();
+    } else if (isPortrait && showroomActive) {
+      warnShow.style.display = 'none';
+      showroomRequested = false;
+      showroomActive    = false;
+      clearInterval(slideshowInterval);
+      ripristinaMenuPrincipale();
+    }
+  } else {
+    warnShow.style.display = 'none';
+  }
+}
 
-});
+// appena la pagina è pronta e a ogni resize/orientation change,
+// eseguo la nuova logica di orientamento
+window.addEventListener('load',           checkOrientation);
+window.addEventListener('resize',         checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+
+
 
 
 </script>
