@@ -243,11 +243,6 @@
   flex-grow: 1;
 }
 
-/* rimuove la linea tratteggiata solo su mobile */
-  .menu-item.sotto-servizio:last-child {
-    border: none !important;
-  }
-}
 
 #sidebar-logo {
   display: block !important;
@@ -327,6 +322,10 @@
     cursor: pointer;
     z-index: 1001;
   }
+
+
+
+
 
 
 /* — Tablet only: da 769px a 1024px — */
@@ -451,6 +450,17 @@ ul.custom-list li > strong {
       300% 0%, 100% 300%, -200% 100%, 0% -200%;
   }
 }
+
+/* rimuove completamente ogni bordo o outline animato solo per l’ultimo sotto-servizio */
+.menu-item.sotto-servizio:last-child {
+  border: none !important;
+}
+.menu-item.sotto-servizio:last-child::before,
+.menu-item.sotto-servizio:last-child::after {
+  content: none !important;
+}
+
+
 
 
 </style>
@@ -1069,18 +1079,6 @@ document.addEventListener('submit', function(e) {
   window.addEventListener('resize',         checkOrientation);
   window.addEventListener('orientationchange', checkOrientation);
 })();
-
-document.querySelectorAll('.menu-item').forEach(el => {
-  const delay = (Math.random() * 3).toFixed(2) + 's';
-  el.style.setProperty('--delay', delay);
-  const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
-el.style.setProperty('--delay', delay);
-el.style.setProperty('--duration', speed);
-
-});
-
-
-
 
 
 </script>
