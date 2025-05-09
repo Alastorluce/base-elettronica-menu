@@ -864,7 +864,8 @@ modalContent.addEventListener('click', (e) => {
 
 function attivaSlideshow() {
   if (slideshowAttivo) return;
-  slideshowAttivo = true;
+  window.slideshowAttivo = true;
+
 
   const main = document.getElementById('main');
   const logo = document.getElementById('logo-btn');
@@ -1097,7 +1098,9 @@ document.addEventListener('submit', function(e) {
     const w = document.getElementById('orientation-warning');
     const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
     const isLandscape = window.innerWidth > window.innerHeight;
-    if (isMobile && isLandscape) {
+    const isShowroom  = window.slideshowAttivo === true;
+
+    if (isMobile && isLandscape && !isShowroom) {
       w.style.display = 'flex';
       document.body.style.overflow = 'hidden';
     } else {
@@ -1105,11 +1108,12 @@ document.addEventListener('submit', function(e) {
       document.body.style.overflow = '';
     }
   }
-  // Chiama subito e rilancia ad ogni resize/orientationchange
-  window.addEventListener('load',           checkOrientation);
-  window.addEventListener('resize',         checkOrientation);
+
+  window.addEventListener('load', checkOrientation);
+  window.addEventListener('resize', checkOrientation);
   window.addEventListener('orientationchange', checkOrientation);
 })();
+
 
 document.querySelectorAll('.menu-item').forEach(el => {
   const delay = (Math.random() * 3).toFixed(2) + 's';
