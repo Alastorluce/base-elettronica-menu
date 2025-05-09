@@ -646,43 +646,53 @@ function toggleSubmenu() {
 
 
 function ripristinaMenuPrincipale() {
+  const sidebar = document.getElementById('sidebar');
   const submenu = document.getElementById('submenu-servizi');
-  // riporta in vista il pannello menu
-document.getElementById('sidebar').style.display = '';
-
   const menuItems = document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)');
   const logo = document.getElementById('logo-btn');
 
-  // Nasconde il contenuto modale con dissolvenza
+  // 1) riporta in vista il pannello menu
+  sidebar.style.display = '';
+
+  // 2) nasconde il sottomenu
+  submenu.style.display = 'none';
+
+  // 3) mostra di nuovo tutti i menu-item principali
+  menuItems.forEach(el => {
+    el.style.display = 'flex';
+  });
+
+  // 4) reset slideshow
+  slideshowAttivo = false;
+  if (slideshowInterval) clearInterval(slideshowInterval);
+
+  // 5) chiudi eventuale modale aperta
   if (modal.classList.contains('show')) {
-    isTransitioning = false;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
-      isTransitioning = false;
     }, 600);
   }
 
-  // Nasconde il submenu
-  submenu.style.display = 'none';
-
-  // Mostra i pulsanti principali
-  menuItems.forEach(el => {
-    el.style.display = 'flex';
-  });
-
-  // Ripristina il logo al centro (se era stato nascosto o sostituito)
+  // 6) **RESET DEL LOGO** → torna a logo.png, scala e anima a pulse
+  logo.src = 'logo.png';
+  logo.style.transform = 'translate(-50%, -50%) scale(2.3)';
   logo.style.opacity = '1';
   logo.style.visibility = 'visible';
+  logo.classList.remove('loaded-img');
+  void logo.offsetWidth;               // forza il reflow
   logo.classList.add('pulse');
 
-  // Reset variabili di stato
+  // 7) sblocca lo scroll
+  document.body.style.overflow = '';
+
+  // 8) reset variabili di stato
   currentIndex = null;
-  slideshowAttivo = false;
-  if (slideshowInterval) clearInterval(slideshowInterval);
+  isTransitioning = false;
 }
+
 
 
 function apriSubservizio(tipo) {
