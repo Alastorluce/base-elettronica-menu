@@ -453,6 +453,16 @@ ul.custom-list li > strong {
 }
 
 
+/* Rimuove la dashed-border e le outline solo per l’ultimo sotto-servizio */
+.menu-item.sotto-servizio:last-child {
+  border: none !important;
+}
+/* Disabilita anche i bordi generati dai pseudo-elementi */
+.menu-item.sotto-servizio:last-child::before,
+.menu-item.sotto-servizio:last-child::after {
+  display: none !important;
+}
+
 </style>
 </head>
 
