@@ -243,7 +243,11 @@
   flex-grow: 1;
 }
 
-
+/* rimuove la linea tratteggiata solo su mobile */
+  .menu-item.sotto-servizio:last-child {
+    border: none !important;
+  }
+}
 
 #sidebar-logo {
   display: block !important;
@@ -646,53 +650,43 @@ function toggleSubmenu() {
 
 
 function ripristinaMenuPrincipale() {
-  const sidebar = document.getElementById('sidebar');
   const submenu = document.getElementById('submenu-servizi');
+  // riporta in vista il pannello menu
+document.getElementById('sidebar').style.display = '';
+
   const menuItems = document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)');
   const logo = document.getElementById('logo-btn');
 
-  // 1) riporta in vista il pannello menu
-  sidebar.style.display = '';
-
-  // 2) nasconde il sottomenu
-  submenu.style.display = 'none';
-
-  // 3) mostra di nuovo tutti i menu-item principali
-  menuItems.forEach(el => {
-    el.style.display = 'flex';
-  });
-
-  // 4) reset slideshow
-  slideshowAttivo = false;
-  if (slideshowInterval) clearInterval(slideshowInterval);
-
-  // 5) chiudi eventuale modale aperta
+  // Nasconde il contenuto modale con dissolvenza
   if (modal.classList.contains('show')) {
+    isTransitioning = false;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
+      isTransitioning = false;
     }, 600);
   }
 
-  // 6) **RESET DEL LOGO** → torna a logo.png, scala e anima a pulse
-  logo.src = 'logo.png';
-  logo.style.transform = 'translate(-50%, -50%) scale(2.3)';
+  // Nasconde il submenu
+  submenu.style.display = 'none';
+
+  // Mostra i pulsanti principali
+  menuItems.forEach(el => {
+    el.style.display = 'flex';
+  });
+
+  // Ripristina il logo al centro (se era stato nascosto o sostituito)
   logo.style.opacity = '1';
   logo.style.visibility = 'visible';
-  logo.classList.remove('loaded-img');
-  void logo.offsetWidth;               // forza il reflow
   logo.classList.add('pulse');
 
-  // 7) sblocca lo scroll
-  document.body.style.overflow = '';
-
-  // 8) reset variabili di stato
+  // Reset variabili di stato
   currentIndex = null;
-  isTransitioning = false;
+  slideshowAttivo = false;
+  if (slideshowInterval) clearInterval(slideshowInterval);
 }
-
 
 
 function apriSubservizio(tipo) {
@@ -852,27 +846,27 @@ modalContent.addEventListener('click', (e) => {
 });
 
 
-function attivaSlideshow() {
-  if (slideshowAttivo) return;
-  // nasconde completamente il pannello menu
-  const sidebar = document.getElementById('sidebar');
-  sidebar.style.display = 'none';
-  // giusto per sicurezza, togli anche eventuale sottomenu
-  const submenu = document.getElementById('submenu-servizi');
-  submenu.style.display = 'none';
-  document.body.style.overflow = 'hidden';
+    function attivaSlideshow() {
+      if (slideshowAttivo) return;
+      // nasconde completamente il pannello menu
+const sidebar = document.getElementById('sidebar');
+sidebar.style.display = 'none';
+// giusto per sicurezza, togli anche eventuale sottomenu
+const submenu = document.getElementById('submenu-servizi');
+submenu.style.display = 'none';
+document.body.style.overflow = 'hidden';
 
-  slideshowAttivo = true;
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-      isTransitioning = false;
-    }, 600);
-  }
+      slideshowAttivo = true;
+      if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+          isTransitioning = false;
+        }, 600);
+      }
       const immagini = [
         'image_background/img1.jpg',
         'image_background/img2.jpg',
@@ -886,40 +880,48 @@ function attivaSlideshow() {
         'image_background/img10.png'
       ];
       const logo = document.getElementById('logo-btn');
-  let idx = Math.floor(Math.random() * immagini.length);
+      let idx = Math.floor(Math.random() * immagini.length);
+      const changeImage = () => {
+        const img = new Image();
+        img.src = immagini[idx];
+        img.onload = () => {
+          logo.style.opacity = '0';
+          setTimeout(() => {
+            logo.src = img.src;
+            logo.classList.remove('loading','loaded-img');
+            void logo.offsetWidth;
+            logo.classList.add('loaded-img');
+            logo.style.opacity = '1';
+          },50);
+        };
+        idx = (idx + 1) % immagini.length;
+      };
+      changeImage();
+      slideshowInterval = setInterval(changeImage, 5000);
+    }
 
-  const changeImage = () => {
-    const img = new Image();
-    img.src = immagini[idx];
-    img.onload = () => {
-      logo.style.opacity = '0';
-      setTimeout(() => {
-        logo.src = img.src;
-        logo.classList.remove('loading','loaded-img');
-        void logo.offsetWidth;
-        logo.classList.add('loaded-img');
-        logo.style.opacity = '1';
-      },50);
-    };
-    idx = (idx + 1) % immagini.length;
-  };
-  changeImage();
-  slideshowInterval = setInterval(changeImage, 5000);
+    document.getElementById('logo-btn').addEventListener('click', () => {
+  clearTimeout(welcomeTimeout);
+  if (isTransitioning) return;
+  isTransitioning = true;
 
-  // ————————————————
-  // NUOVA LOGICA: al primo click sull'immagine ESCO dalla showroom
-  function exitShowroom(e) {
-    // fermo anche il welcome-popup se stava per arrivare
-    clearTimeout(welcomeTimeout);
-    e.preventDefault();
-    ripristinaMenuPrincipale();
-    // tolgo subito questo listener, così non interferisce dopo
-    logo.removeEventListener('click', exitShowroom);
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modalContent.innerHTML = contenutoHome;
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+      isTransitioning = false;
+    }, 600);
+  } else {
+    modalContent.innerHTML = contenutoHome;
+    modal.classList.add('show');
+    isTransitioning = false;
   }
-  // lo attacco “once” per sicurezza: listener si rimuove da solo
-  logo.addEventListener('click', exitShowroom, { once: true });
-}
 
+  welcomeShown = true;
+});
 
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
