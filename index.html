@@ -1085,15 +1085,6 @@ document.addEventListener('submit', function(e) {
   window.addEventListener('orientationchange', checkOrientation);
 })();
 
-document.querySelectorAll('.menu-item').forEach(el => {
-  const delay = (Math.random() * 3).toFixed(2) + 's';
-  el.style.setProperty('--delay', delay);
-  const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
-el.style.setProperty('--delay', delay);
-el.style.setProperty('--duration', speed);
-
-});
-
 
 </script>
 </body>
