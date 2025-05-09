@@ -243,14 +243,6 @@
   flex-grow: 1;
 }
 
-#logo-btn {
-    position: static !important;
-    transform: none !important;
-    margin-top: 20px;
-    animation: none !important;
-    width: 90vw !important;
-    max-height: 50vh;
-  }
 
 
 #sidebar-logo {
@@ -333,21 +325,6 @@
   }
 }
 
-#main {
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  opacity: 1 !important;
-  visibility: visible !important;
-  z-index: 10;
-}
-
-#logo-btn {
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
 
 
 
@@ -614,7 +591,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 let modalContent = document.getElementById('modal-content');
 let currentIndex = null;
 let isTransitioning = false;
-window.slideshowAttivo = false;
+let slideshowAttivo = false;
 let slideshowInterval = null;
 
 function apri(index) {
@@ -862,71 +839,51 @@ modalContent.addEventListener('click', (e) => {
 });
 
 
-function attivaSlideshow() {
-  if (slideshowAttivo) return;
-  window.slideshowAttivo = true;
-
-
-  const main = document.getElementById('main');
-  const logo = document.getElementById('logo-btn');
-
-  // 🔧 Forza visibilità e z-index su mobile
-  main.style.display = 'flex';
-  main.style.opacity = '1';
-  main.style.visibility = 'visible';
-  main.style.zIndex = '10';
-
-  logo.style.display = 'block';
-  logo.style.opacity = '1';
-  logo.style.visibility = 'visible';
-
-  // 🔄 Chiudi eventuale modale aperta
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-      isTransitioning = false;
-    }, 600);
-  }
-
-  const immagini = [
-    'image_background/img1.jpg',
-    'image_background/img2.jpg',
-    'image_background/img3.jpg',
-    'image_background/img4.jpg',
-    'image_background/img5.jpg',
-    'image_background/img6.jpg',
-    'image_background/img7.png',
-    'image_background/img8.png',
-    'image_background/img9.png',
-    'image_background/img10.png'
-  ];
-
-  let idx = Math.floor(Math.random() * immagini.length);
-
-  const changeImage = () => {
-    const img = new Image();
-    img.src = immagini[idx];
-    img.onload = () => {
-      logo.style.opacity = '0';
-      setTimeout(() => {
-        logo.src = img.src;
-        logo.classList.remove('loading', 'loaded-img');
-        void logo.offsetWidth;
-        logo.classList.add('loaded-img');
-        logo.style.opacity = '1';
-      }, 50);
-    };
-    idx = (idx + 1) % immagini.length;
-  };
-
-  changeImage();
-  slideshowInterval = setInterval(changeImage, 5000);
-}
-
+    function attivaSlideshow() {
+      if (slideshowAttivo) return;
+      slideshowAttivo = true;
+      if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+          isTransitioning = false;
+        }, 600);
+      }
+      const immagini = [
+        'image_background/img1.jpg',
+        'image_background/img2.jpg',
+        'image_background/img3.jpg',
+        'image_background/img4.jpg',
+        'image_background/img5.jpg',
+        'image_background/img6.jpg',
+        'image_background/img7.png',
+        'image_background/img8.png',
+        'image_background/img9.png',
+        'image_background/img10.png'
+      ];
+      const logo = document.getElementById('logo-btn');
+      let idx = Math.floor(Math.random() * immagini.length);
+      const changeImage = () => {
+        const img = new Image();
+        img.src = immagini[idx];
+        img.onload = () => {
+          logo.style.opacity = '0';
+          setTimeout(() => {
+            logo.src = img.src;
+            logo.classList.remove('loading','loaded-img');
+            void logo.offsetWidth;
+            logo.classList.add('loaded-img');
+            logo.style.opacity = '1';
+          },50);
+        };
+        idx = (idx + 1) % immagini.length;
+      };
+      changeImage();
+      slideshowInterval = setInterval(changeImage, 5000);
+    }
 
     document.getElementById('logo-btn').addEventListener('click', () => {
   clearTimeout(welcomeTimeout);
@@ -986,16 +943,7 @@ function attivaSlideshow() {
         },600);
       }
     });
- // 🔧 Correzione mobile: resetta stile del logo
-if (window.matchMedia('(max-width: 768px)').matches) {
-  logo.style.position = 'static';
-  logo.style.transform = 'none';
-  logo.style.marginTop = '20px';
-  logo.style.animation = 'none';
-  logo.style.width = '90vw';
-  logo.style.maxHeight = '50vh';
-}
-
+ 
   // 1. Variabili di controllo
   let welcomeTimeout;
   let welcomeShown = false;
@@ -1093,7 +1041,8 @@ document.addEventListener('submit', function(e) {
 
 
 
-function checkOrientation() {
+(function() {
+  function checkOrientation() {
     const w = document.getElementById('orientation-warning');
     const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
     const isLandscape = window.innerWidth > window.innerHeight;
@@ -1105,7 +1054,11 @@ function checkOrientation() {
       document.body.style.overflow = '';
     }
   }
-
+  // Chiama subito e rilancia ad ogni resize/orientationchange
+  window.addEventListener('load',           checkOrientation);
+  window.addEventListener('resize',         checkOrientation);
+  window.addEventListener('orientationchange', checkOrientation);
+})();
 
 document.querySelectorAll('.menu-item').forEach(el => {
   const delay = (Math.random() * 3).toFixed(2) + 's';
@@ -1115,10 +1068,6 @@ el.style.setProperty('--delay', delay);
 el.style.setProperty('--duration', speed);
 
 });
-
-
-
-
 
 
 </script>
