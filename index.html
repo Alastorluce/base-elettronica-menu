@@ -1093,14 +1093,11 @@ document.addEventListener('submit', function(e) {
 
 
 
-(function() {
-  function checkOrientation() {
+function checkOrientation() {
     const w = document.getElementById('orientation-warning');
     const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
     const isLandscape = window.innerWidth > window.innerHeight;
-    const isShowroom  = window.slideshowAttivo === true;
-
-    if (isMobile && isLandscape && !isShowroom) {
+    if (isMobile && isLandscape) {
       w.style.display = 'flex';
       document.body.style.overflow = 'hidden';
     } else {
@@ -1108,11 +1105,6 @@ document.addEventListener('submit', function(e) {
       document.body.style.overflow = '';
     }
   }
-
-  window.addEventListener('load', checkOrientation);
-  window.addEventListener('resize', checkOrientation);
-  window.addEventListener('orientationchange', checkOrientation);
-})();
 
 
 document.querySelectorAll('.menu-item').forEach(el => {
