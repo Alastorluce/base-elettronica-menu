@@ -165,6 +165,9 @@
       overflow: hidden;
       padding: 2em;
       box-sizing: border-box;
+      overflow: hidden;
+      opacity: 1;                                   /* stato visibile */
+      transition: opacity 0.5s ease-in-out;         /* dissolvenza morbida */
     }
 
     #logo-btn {
@@ -601,7 +604,7 @@ ul.custom-list li > strong {
   
     <div id="sidebar">
       <div id="sidebar-content">
-        <div id="sidebar-logo" onclick="location.reload();">
+        <div id="sidebar-logo">
           <img src="logo.png" alt="Logo">
         </div>
   
@@ -1094,35 +1097,28 @@ modalContent.addEventListener('click', (e) => {
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
   if (isTransitioning) return;
-
-  if (slideshowInterval) clearInterval(slideshowInterval);
-  slideshowAttivo = false;
-
-  // NASCONDE IL LOGO WATERMARK
-  document.getElementById('watermark-logo').style.display = 'none';
-
-  const logo = document.getElementById('logo-btn');
-  logo.style.transition = 'none';
-  logo.style.visibility = 'hidden';
-  logo.style.opacity = '0';
-  logo.classList.remove('pulse', 'loaded-img', 'fade-in-logo', 'fade-out-logo');
-
   isTransitioning = true;
 
-  const preload = new Image();
-  preload.src = 'logo.png';
-  preload.onload = () => {
-    logo.src = preload.src;
-    logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
-    void logo.offsetWidth;
-    logo.style.transition = 'opacity 0.6s ease-in-out';
-    logo.style.visibility = 'visible';
-    logo.style.opacity = '1';
-    setTimeout(() => {
-      logo.classList.add('pulse');
-      isTransitioning = false;
-    }, 600);
-  };
+  const main = document.getElementById('main');
+  // 1) svenimento
+  main.style.opacity = '0';
+
+  // 2) aspetta un attimo che parta la dissolvenza
+  setTimeout(() => {
+    // qui metti tutta la logica di reset che avevi dentro
+    if (slideshowInterval) clearInterval(slideshowInterval);
+    slideshowAttivo = false;
+    document.getElementById('watermark-logo').style.display = 'none';
+    // reset del logo centrale…
+    // (codice che caricavi in quel listener)
+
+    // 3) rientro morbido
+    main.style.opacity = '1';
+
+    isTransitioning = false;
+  }, 500);  // 500ms corrisponde alla tua transition: opacity 0.5s
+});
+
 
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
