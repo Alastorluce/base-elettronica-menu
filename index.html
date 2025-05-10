@@ -459,19 +459,24 @@ ul.custom-list li > strong {
 
 .logo-wrapper {
   position: absolute;
-  top: 55%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(2.3);
+  transform: translate(-50%, -50%);
   z-index: 1;
-  animation: pulse 2s infinite ease-in-out;
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
 }
 
-.logo-wrapper img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  transition: opacity 0.4s ease-in-out;
+.logo-wrapper.pulse {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
 }
 
 #slideshow-img {
@@ -490,7 +495,9 @@ ul.custom-list li > strong {
   pointer-events: none;
   filter: drop-shadow(0 0 4px #000);
   z-index: 2;
+  display: none; /* 👈 parte nascosto */
 }
+
 
 
 </style>
@@ -542,10 +549,11 @@ ul.custom-list li > strong {
   
     <div id="main">
       <div id="logo-btn" class="logo-wrapper">
-  <img id="slideshow-img" src="logo.png" alt="Logo">
-  <img id="watermark-logo" src="logo.png" alt="Watermark">
-</div>
-      <div id="modal" class="modal">
+        <img id="slideshow-img" src="logo.png" alt="Logo">
+        <img id="watermark-logo" src="logo.png" alt="Watermark">
+    </div>
+
+        <div id="modal" class="modal">
         <div id="modal-content"><h2>Caricamento...</h2></div>
       </div>
     </div>
@@ -893,58 +901,76 @@ modalContent.addEventListener('click', (e) => {
 
 
     function attivaSlideshow() {
-      if (slideshowAttivo) return;
-      // nasconde completamente il pannello menu
-const sidebar = document.getElementById('sidebar');
-sidebar.style.display = 'none';
-// giusto per sicurezza, togli anche eventuale sottomenu
-const submenu = document.getElementById('submenu-servizi');
-submenu.style.display = 'none';
-document.body.style.overflow = 'hidden';
+  if (slideshowAttivo) return;
 
-      slideshowAttivo = true;
-      if (modal.classList.contains('show')) {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-          isTransitioning = false;
-        }, 600);
-      }
-      const immagini = [
-        'image_background/img1.jpg',
-        'image_background/img2.jpg',
-        'image_background/img3.jpg',
-        'image_background/img4.jpg',
-        'image_background/img5.jpg',
-        'image_background/img6.jpg',
-        'image_background/img7.png',
-        'image_background/img8.png',
-        'image_background/img9.png',
-        'image_background/img10.png'
-      ];
-      const logo = document.getElementById('slideshow-img');
-      let idx = Math.floor(Math.random() * immagini.length);
-      const changeImage = () => {
-        const img = new Image();
-        img.src = immagini[idx];
-        img.onload = () => {
-          logo.style.opacity = '0';
-          setTimeout(() => {
-            logo.src = img.src;
-            logo.classList.remove('loading','loaded-img');
-            void logo.offsetWidth;
-            logo.classList.add('loaded-img');
-            logo.style.opacity = '1';
-          },50);
-        };
-        idx = (idx + 1) % immagini.length;
-      };
-      changeImage();
-      slideshowInterval = setInterval(changeImage, 5000);
-    }
+  // nasconde completamente il pannello menu
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.display = 'none';
+
+  // giusto per sicurezza, togli anche eventuale sottomenu
+  const submenu = document.getElementById('submenu-servizi');
+  submenu.style.display = 'none';
+  document.body.style.overflow = 'hidden';
+
+  slideshowAttivo = true;
+
+  // rimuovi pulse e mostra watermark
+  const wrapper = document.getElementById('logo-btn');
+const logo = document.getElementById('slideshow-img');
+const watermark = document.getElementById('watermark-logo');
+
+logo.src = 'logo.png';
+wrapper.classList.add('pulse');
+watermark.style.display = 'none';
+
+
+
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      currentIndex = null;
+      isTransitioning = false;
+    }, 600);
+  }
+
+  const immagini = [
+    'image_background/img1.jpg',
+    'image_background/img2.jpg',
+    'image_background/img3.jpg',
+    'image_background/img4.jpg',
+    'image_background/img5.jpg',
+    'image_background/img6.jpg',
+    'image_background/img7.png',
+    'image_background/img8.png',
+    'image_background/img9.png',
+    'image_background/img10.png'
+  ];
+
+  let idx = Math.floor(Math.random() * immagini.length);
+
+  const changeImage = () => {
+    const img = new Image();
+    img.src = immagini[idx];
+    img.onload = () => {
+      logo.style.opacity = '0';
+      setTimeout(() => {
+        logo.src = img.src;
+        logo.classList.remove('loading','loaded-img');
+        void logo.offsetWidth;
+        logo.classList.add('loaded-img');
+        logo.style.opacity = '1';
+      }, 50);
+    };
+    idx = (idx + 1) % immagini.length;
+  };
+
+  changeImage();
+  slideshowInterval = setInterval(changeImage, 5000);
+}
+
 
 
 
