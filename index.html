@@ -717,10 +717,10 @@ function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // 0) Nascondi il watermark togliendo la classe .visible
+  // 0) Nascondi il watermark se è visibile
   const watermark = document.getElementById('watermark-logo');
-  watermark.classList.remove('visible');
-  
+  if (watermark) watermark.style.display = 'none';
+
   // 1) Chiudi la modale se c’è
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
