@@ -894,39 +894,31 @@ document.body.style.overflow = 'hidden';
         img.onload = () => {
           logo.style.opacity = '0';
           setTimeout(() => {
-  // Crea un contenitore temporaneo
-  const wrapper = document.createElement('div');
-  wrapper.style.position = 'relative';
-  wrapper.style.width = logo.width + 'px';
-  wrapper.style.maxWidth = '90vw';
-  wrapper.style.display = 'inline-block';
-  wrapper.id = 'logo-btn'; // mantieni l'ID per continuità
+  const logoContainer = document.getElementById('logo-btn');
+  logoContainer.innerHTML = ''; // pulisci prima
 
   // Immagine di sfondo dello slideshow
-  const imgElement = document.createElement('img');
-  imgElement.src = img.src;
-  imgElement.style.width = '100%';
-  imgElement.style.display = 'block';
+  const mainImg = document.createElement('img');
+  mainImg.src = img.src;
+  mainImg.style.width = '100%';
+  mainImg.style.display = 'block';
 
-  // Logo piccolino
-  const overlayLogo = document.createElement('img');
-  overlayLogo.src = 'logo.png';
-  overlayLogo.alt = 'Watermark';
-  overlayLogo.style.position = 'absolute';
-  overlayLogo.style.bottom = '10px';
-  overlayLogo.style.right = '10px';
-  overlayLogo.style.width = '50px';
-  overlayLogo.style.opacity = '0.6';
-  overlayLogo.style.pointerEvents = 'none';
-  overlayLogo.style.filter = 'drop-shadow(0 0 3px #000)'; // visibilità su immagini chiare
+  // Logo piccolino sovrapposto
+  const overlay = document.createElement('img');
+  overlay.src = 'logo.png';
+  overlay.alt = 'Logo watermark';
+  overlay.style.position = 'absolute';
+  overlay.style.bottom = '10px';
+  overlay.style.right = '10px';
+  overlay.style.width = '60px';
+  overlay.style.opacity = '0.6';
+  overlay.style.pointerEvents = 'none';
+  overlay.style.filter = 'drop-shadow(0 0 3px #000)';
 
-  // Montaggio
-  wrapper.appendChild(imgElement);
-  wrapper.appendChild(overlayLogo);
-
-  // Sostituisci il vecchio #logo-btn
-  logo.replaceWith(wrapper);
+  logoContainer.appendChild(mainImg);
+  logoContainer.appendChild(overlay);
 }, 50);
+
 
 
 
