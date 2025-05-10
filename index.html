@@ -454,12 +454,6 @@ ul.custom-list li > strong {
 
 
 
-/* keyframes per far salire l’opacità fino a 0.15 in 1s */
-@keyframes watermarkFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 0.15; }
-}
-
 #watermark-logo {
   display: none;
   position: fixed;
@@ -467,24 +461,18 @@ ul.custom-list li > strong {
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
-  opacity: 0;
+  opacity: 0;                      /* invisibile all’avvio */
   pointer-events: none;
   filter: drop-shadow(0 0 4px #000);
-}
-
-/* quando aggiungi la classe .visible, parte l’animazione */
-#watermark-logo.visible {
-  display: block;
-  animation: watermarkFadeIn 1s ease-in forwards;
+  transition: opacity 0.5s ease;   /* solo transition, niente animation */
 }
 
 #watermark-logo img {
-  max-width: 60px;
+  max-width: 200px;   /* dimensione piccola fissa */
   height: auto;
   display: block;
   filter: brightness(120%) contrast(90%);
 }
-
 
 
 
@@ -923,16 +911,24 @@ modalContent.addEventListener('click', (e) => {
   if (slideshowAttivo) return;
   slideshowAttivo = true;
 
-  // nascondi menu, blocca scroll…
+  // 1) nascondi menu, blocca scroll, etc.
   document.getElementById('sidebar').style.display = 'none';
   document.getElementById('submenu-servizi').style.display = 'none';
   document.body.style.overflow = 'hidden';
 
-  // mostra e fai partire la fade-in da 0 → 0.15 in 1s
+  // 2) mostra e sfuma il watermark
   const watermark = document.getElementById('watermark-logo');
-  watermark.classList.add('visible');
+  watermark.style.display = 'block';
+  // forzo subito opacity a 1 (istantaneo)
+  watermark.style.opacity = '1';
+  // reflow per assicurarmi che il browser "ved|
+  void watermark.offsetWidth;
+  // sulla frame successiva, avvio la transizione verso 0.15
+  requestAnimationFrame(() => {
+    watermark.style.opacity = '0.15';
+  });
 
-  // chiudi eventuale modal aperta
+  // 3) stoppa eventuale modal aperta
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -942,7 +938,6 @@ modalContent.addEventListener('click', (e) => {
     }, 600);
   }
 }
-
 
 
   const immagini = [
@@ -979,7 +974,7 @@ modalContent.addEventListener('click', (e) => {
 
   changeImage();
   slideshowInterval = setInterval(changeImage, 5000);
-}
+
 
 
 
