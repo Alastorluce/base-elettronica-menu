@@ -560,7 +560,8 @@ ul.custom-list li > strong {
   /* effetto “abbassamento” via classe pressed */
 .menu-item.pressed,
 .menu-item.sotto-servizio.pressed {
-  transform: scale(0.90) !important;
+  /* mantieni la traslazione a 0 e aggiungi lo shrink */
+  transform: translateX(0) scale(0.90) !important;
   box-shadow: inset 0 0 5px #00a6ff !important;
 }
 
