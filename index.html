@@ -1099,37 +1099,58 @@ modalContent.addEventListener('click', (e) => {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  const main = document.getElementById('main');
-  // 1) svenimento
+  const main       = document.getElementById('main');
+  const sidebar    = document.getElementById('sidebar');
+  const watermark  = document.getElementById('watermark-logo');
+  const logo       = document.getElementById('logo-btn');
+
+  // 1) inizio dissolvenza OUT della home
   main.style.opacity = '0';
 
-  // 2) aspetta un attimo che parta la dissolvenza
+  // 2) dopo 500ms (fade-out completo), resettiamo tutto
   setTimeout(() => {
-    // qui metti tutta la logica di reset che avevi dentro
+    // 2a) ferma lo slideshow
     if (slideshowInterval) clearInterval(slideshowInterval);
-    slideshowAttivo = false;
-    document.getElementById('watermark-logo').style.display = 'none';
-    // reset del logo centrale…
-    // (codice che caricavi in quel listener)
+    slideshowInterval = null;
+    slideshowAttivo   = false;
 
-    // 3) rientro morbido
+    // 2b) nascondi watermark
+    watermark.style.display = 'none';
+
+    // 2c) ripristina la sidebar
+    sidebar.style.display = '';
+
+    // 2d) reset del logo centrale (come nel tuo preload)
+    logo.style.transition   = 'none';
+    logo.style.visibility   = 'hidden';
+    logo.style.opacity      = '0';
+    logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
+
+    const preload = new Image();
+    preload.src = 'logo.png';
+    preload.onload = () => {
+      logo.src = preload.src;
+      logo.style.transform    = 'translate(-50%,-60%) scale(1.8)';
+      void logo.offsetWidth; // forzo reflow
+      logo.style.transition   = 'opacity 0.6s ease-in-out';
+      logo.style.visibility   = 'visible';
+      logo.style.opacity      = '1';
+      setTimeout(() => {
+        logo.classList.add('pulse');
+      }, 600);
+    };
+
+    // 3) dissolvenza IN della home
     main.style.opacity = '1';
 
-    isTransitioning = false;
-  }, 500);  // 500ms corrisponde alla tua transition: opacity 0.5s
-});
-
-
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
+    // 4) fine transizione
     setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
+      isTransitioning = false;
     }, 600);
-  }
+
+  }, 500); // attendi 0.5s per il fade-out
 });
+
 
  
   // 1. Variabili di controllo
