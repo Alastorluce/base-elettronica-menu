@@ -435,7 +435,16 @@ ul.custom-list li > strong {
   position: relative;
   overflow: visible;
   z-index: 0;
+  transition: transform 0.2s ease; /* AGGIUNTA */
 }
+
+.menu-item:active,
+.menu-item.sotto-servizio:active {
+  transform: scale(0.80); /* EFFETTO DI PRESSIONE */
+}
+
+
+
 
 /* Bordo statico */
 .menu-item::before {
