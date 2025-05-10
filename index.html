@@ -908,22 +908,24 @@ modalContent.addEventListener('click', (e) => {
     function attivaSlideshow() {
   if (slideshowAttivo) return;
 
-  // Nasconde sidebar e submenu
+  // nasconde completamente il pannello menu
   const sidebar = document.getElementById('sidebar');
   sidebar.style.display = 'none';
+
+  // giusto per sicurezza, togli anche eventuale sottomenu
   const submenu = document.getElementById('submenu-servizi');
   submenu.style.display = 'none';
-  document.body.style.overflow = 'hidden';
 
-  // Attiva slideshow e prepara stato
+  document.body.style.overflow = 'hidden';
   slideshowAttivo = true;
 
-  // Nasconde logo home, mostra container slideshow e watermark
-  document.getElementById('logo-btn').style.display = 'none';
-  document.getElementById('slideshow-container').style.display = 'block';
-  document.getElementById('watermark-logo').style.display = 'block';
+  // 🔥 LOGICA CORRETTA
+  const logo = document.getElementById('logo-btn');
+  const watermark = document.getElementById('watermark-logo');
 
-  // Chiude eventuale modale
+  logo.classList.remove('pulse');            // togli effetto pulsante
+  watermark.style.display = 'block';         // mostra watermark
+
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -934,6 +936,43 @@ modalContent.addEventListener('click', (e) => {
       isTransitioning = false;
     }, 600);
   }
+
+  const immagini = [
+    'image_background/img1.jpg',
+    'image_background/img2.jpg',
+    'image_background/img3.jpg',
+    'image_background/img4.jpg',
+    'image_background/img5.jpg',
+    'image_background/img6.jpg',
+    'image_background/img7.png',
+    'image_background/img8.png',
+    'image_background/img9.png',
+    'image_background/img10.png'
+  ];
+
+  let idx = Math.floor(Math.random() * immagini.length);
+  const imgTag = document.getElementById('slideshow-img');
+
+  const changeImage = () => {
+    const img = new Image();
+    img.src = immagini[idx];
+    img.onload = () => {
+      imgTag.style.opacity = '0';
+      setTimeout(() => {
+        imgTag.src = img.src;
+        imgTag.classList.remove('loading', 'loaded-img');
+        void imgTag.offsetWidth;
+        imgTag.classList.add('loaded-img');
+        imgTag.style.opacity = '1';
+      }, 50);
+    };
+    idx = (idx + 1) % immagini.length;
+  };
+
+  changeImage();
+  slideshowInterval = setInterval(changeImage, 5000);
+}
+
 
   // Immagini slideshow
   const immagini = [
