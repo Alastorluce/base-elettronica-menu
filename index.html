@@ -455,20 +455,22 @@ ul.custom-list li > strong {
 
 
 #watermark-logo {
-  display: none; /* <-- parte nascosto */
+  display: none;
   position: fixed;
   bottom: 50%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
-  opacity: 0.25;
+  opacity: 1;                        /* parte completamente opaco */
   pointer-events: none;
   filter: drop-shadow(0 0 4px #000);
+  transition: opacity 0.5s ease;     /* transizione dolce */
   animation: fadeImage 1s ease-in-out;
 }
 
+
 #watermark-logo img {
-  max-width: 100px;
+  max-width: 300px;
   height: auto;
   display: block;
   filter: brightness(120%) contrast(90%);
@@ -921,17 +923,17 @@ modalContent.addEventListener('click', (e) => {
   slideshowAttivo = true;
 
   // MOSTRA IL LOGO WATERMARK
-  document.getElementById('watermark-logo').style.display = 'block';
+  const watermark = document.getElementById('watermark-logo');
+  watermark.style.display = 'block';
+  watermark.style.opacity = '1';      // parte opaco
 
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-      isTransitioning = false;
-    }, 600);
+    watermark.style.opacity = '0.25';
+  }, 50);  // 50ms dopo, per far scattare la transition
+
   }
 
   const immagini = [
