@@ -243,11 +243,7 @@
   flex-grow: 1;
 }
 
-/* rimuove la linea tratteggiata solo su mobile */
-  .menu-item.sotto-servizio:last-child {
-    border: none !important;
-  }
-}
+
 
 #sidebar-logo {
   display: block !important;
@@ -327,6 +323,10 @@
     cursor: pointer;
     z-index: 1001;
   }
+}
+
+
+
 
 
 /* — Tablet only: da 769px a 1024px — */
@@ -450,32 +450,6 @@ ul.custom-list li > strong {
     background-position:
       300% 0%, 100% 300%, -200% 100%, 0% -200%;
   }
-}
-
-/* per desktop: larghezza fissa dei bottoni */
-@media (min-width: 769px) {
-  .menu-item {
-    display: block;
-    width: 60%;
-    margin: 0.5em auto;
-  }
-}
-
-/* classe per nascondere i pulsanti */
-.menu-item.hidden {
-  display: none;
-}
-
-/* submenu di default nascosto */
-#submenu-servizi {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* quando attivo lo show */
-#submenu-servizi.active {
-  display: flex;
 }
 
 
@@ -673,48 +647,42 @@ function toggleSubmenu() {
 
 function ripristinaMenuPrincipale() {
   const submenu = document.getElementById('submenu-servizi');
-  const sidebar = document.getElementById('sidebar');
-  const modal   = document.getElementById('modal');
+  // riporta in vista il pannello menu
+document.getElementById('sidebar').style.display = '';
 
-  // 1) Riporta in vista la sidebar
-  sidebar.style.display = '';
+  const menuItems = document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)');
+  const logo = document.getElementById('logo-btn');
 
-  // 2) Chiudi il modal, se aperto
+  // Nasconde il contenuto modale con dissolvenza
   if (modal.classList.contains('show')) {
+    isTransitioning = false;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
+      isTransitioning = false;
     }, 600);
   }
 
-  // 3) Nascondi il submenu
+  // Nasconde il submenu
   submenu.style.display = 'none';
 
-  // 4) Ripristina le voci di menu rimuovendo TUTTI gli inline-style
-  const menuItems = document.querySelectorAll(
-    '.menu-list > .menu-item:not(#submenu-servizi .menu-item)'
-  );
+  // Mostra i pulsanti principali
   menuItems.forEach(el => {
-    el.style.removeProperty('display');
-    el.style.removeProperty('width');
+    el.style.display = 'flex';
   });
 
-  // 5) Reset logo e slideshow
-  const logo = document.getElementById('logo-btn');
+  // Ripristina il logo al centro (se era stato nascosto o sostituito)
   logo.style.opacity = '1';
   logo.style.visibility = 'visible';
   logo.classList.add('pulse');
 
+  // Reset variabili di stato
+  currentIndex = null;
   slideshowAttivo = false;
-  if (slideshowInterval) {
-    clearInterval(slideshowInterval);
-    slideshowInterval = null;
-  }
+  if (slideshowInterval) clearInterval(slideshowInterval);
 }
-
-
 
 
 function apriSubservizio(tipo) {
@@ -883,7 +851,7 @@ sidebar.style.display = 'none';
 const submenu = document.getElementById('submenu-servizi');
 submenu.style.display = 'none';
 document.body.style.overflow = 'hidden';
-clearTimeout(welcomeTimeout);   // <— impedisce il popup automatico
+
       slideshowAttivo = true;
       if (modal.classList.contains('show')) {
         modal.classList.remove('show');
@@ -929,16 +897,7 @@ clearTimeout(welcomeTimeout);   // <— impedisce il popup automatico
     }
 
     document.getElementById('logo-btn').addEventListener('click', () => {
-  // 0) Annulla sempre il popup di benvenuto programmato
   clearTimeout(welcomeTimeout);
-
-  // 1) Se siamo in showroom, torna al menu e non fare altro
-  if (slideshowAttivo) {
-    ripristinaMenuPrincipale();
-    return;
-  }
-
-  // 2) Altrimenti esegui il solito codice per mostrare la home
   if (isTransitioning) return;
   isTransitioning = true;
 
@@ -956,8 +915,9 @@ clearTimeout(welcomeTimeout);   // <— impedisce il popup automatico
     modal.classList.add('show');
     isTransitioning = false;
   }
-});
 
+  welcomeShown = true;
+});
 
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
@@ -1119,9 +1079,6 @@ el.style.setProperty('--delay', delay);
 el.style.setProperty('--duration', speed);
 
 });
-
-
-
 
 
 </script>
