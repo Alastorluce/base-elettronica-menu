@@ -454,6 +454,12 @@ ul.custom-list li > strong {
 
 
 
+/* keyframes per far salire l’opacità fino a 0.15 in 1s */
+@keyframes watermarkFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 0.15; }
+}
+
 #watermark-logo {
   display: none;
   position: fixed;
@@ -461,18 +467,24 @@ ul.custom-list li > strong {
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
-  opacity: 0;                      /* invisibile all’avvio */
+  opacity: 0;
   pointer-events: none;
   filter: drop-shadow(0 0 4px #000);
-  transition: opacity 0.5s ease;   /* solo transition, niente animation */
+}
+
+/* quando aggiungi la classe .visible, parte l’animazione */
+#watermark-logo.visible {
+  display: block;
+  animation: watermarkFadeIn 1s ease-in forwards;
 }
 
 #watermark-logo img {
-  max-width: 200px;   /* dimensione piccola fissa */
+  max-width: 60px;
   height: auto;
   display: block;
   filter: brightness(120%) contrast(90%);
 }
+
 
 
 
@@ -705,10 +717,10 @@ function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // 0) Nascondi il watermark se è visibile
+  // 0) Nascondi il watermark togliendo la classe .visible
   const watermark = document.getElementById('watermark-logo');
-  if (watermark) watermark.style.display = 'none';
-
+  watermark.classList.remove('visible');
+  
   // 1) Chiudi la modale se c’è
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
@@ -911,24 +923,16 @@ modalContent.addEventListener('click', (e) => {
   if (slideshowAttivo) return;
   slideshowAttivo = true;
 
-  // 1) nascondi menu, blocca scroll, etc.
+  // nascondi menu, blocca scroll…
   document.getElementById('sidebar').style.display = 'none';
   document.getElementById('submenu-servizi').style.display = 'none';
   document.body.style.overflow = 'hidden';
 
-  // 2) mostra e sfuma il watermark
+  // mostra e fai partire la fade-in da 0 → 0.15 in 1s
   const watermark = document.getElementById('watermark-logo');
-  watermark.style.display = 'block';
-  // forzo subito opacity a 1 (istantaneo)
-  watermark.style.opacity = '1';
-  // reflow per assicurarmi che il browser "ved|
-  void watermark.offsetWidth;
-  // sulla frame successiva, avvio la transizione verso 0.15
-  requestAnimationFrame(() => {
-    watermark.style.opacity = '0.15';
-  });
+  watermark.classList.add('visible');
 
-  // 3) stoppa eventuale modal aperta
+  // chiudi eventuale modal aperta
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -937,10 +941,8 @@ modalContent.addEventListener('click', (e) => {
       modalContent.innerHTML = '';
     }, 600);
   }
-
-  // 4) parte lo slideshow delle immagini sul logo centrale...
-  //    (resto del tuo codice unchanged)
 }
+
 
 
   const immagini = [
