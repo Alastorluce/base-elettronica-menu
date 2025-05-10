@@ -896,6 +896,23 @@ document.body.style.overflow = 'hidden';
       slideshowInterval = setInterval(changeImage, 5000);
     }
 
+document.getElementById('logo-btn').addEventListener('click', () => {
+  if (isTransitioning) return;
+  // Ferma slideshow e ripristina sidebar/scroll
+  clearInterval(slideshowInterval);
+  slideshowAttivo = false;
+  document.body.style.overflow = '';
+  document.getElementById('sidebar').style.display = '';
+  // Ripristina logo home
+  const logo = document.getElementById('logo-btn');
+  logo.src = 'logo.png';
+  logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
+  logo.classList.add('pulse');
+  // Apri il modal con la home
+  modalContent.innerHTML = contenutoHome;
+  modal.classList.remove('fade-out');
+  modal.classList.add('show');
+});
 
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
