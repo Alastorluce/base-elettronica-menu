@@ -452,54 +452,34 @@ ul.custom-list li > strong {
   }
 }
 
+
+
+#watermark-logo {
+  display: none; /* <-- parte nascosto */
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  opacity: 0.25;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px #000);
+  animation: fadeImage 1s ease-in-out;
+}
+
+#watermark-logo img {
+  max-width: 100px;
+  height: auto;
+  display: block;
+  filter: brightness(120%) contrast(90%);
+}
+
+
+
+
 .menu-item {
   border-color: transparent !important;
 }
-
-
-#logo-home {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 200px;
-  animation: pulse 2s infinite ease-in-out;
-  z-index: 1;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50%      { transform: translate(-50%, -50%) scale(1.1); }
-}
-
-#slideshow-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 90vw;
-  max-height: 90vh;
-  z-index: 1;
-}
-
-#slideshow-img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-#watermark-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 100px;
-  opacity: 0.25;
-  pointer-events: none;
-  z-index: 2;
-}
-
-
 
 </style>
 </head>
@@ -549,19 +529,20 @@ ul.custom-list li > strong {
     </div>
   
     <div id="main">
-  <!-- HOME: logo pulsante -->
-  <img id="logo-home" src="logo.png" alt="Logo Home" class="pulse">
+  <img src="logo.png" id="logo-btn" alt="Logo">
 
-  <!-- SLIDESHOW: immagini + watermark -->
-  <div id="slideshow-container" style="display: none;">
-    <img id="slideshow-img" src="logo.png" alt="Slideshow">
-    <img id="watermark-logo" src="logo.png" alt="Watermark">
+  <!-- Watermark centrato in basso -->
+  <div id="watermark-logo">
+    <img src="logo.png" alt="Watermark Logo">
   </div>
 
   <div id="modal" class="modal">
     <div id="modal-content"><h2>Caricamento...</h2></div>
   </div>
 </div>
+
+
+
   
     <script>
       const contenuti = [
@@ -915,16 +896,12 @@ modalContent.addEventListener('click', (e) => {
   // giusto per sicurezza, togli anche eventuale sottomenu
   const submenu = document.getElementById('submenu-servizi');
   submenu.style.display = 'none';
-
   document.body.style.overflow = 'hidden';
+
   slideshowAttivo = true;
 
-  // 🔥 LOGICA CORRETTA
-  const logo = document.getElementById('logo-btn');
-  const watermark = document.getElementById('watermark-logo');
-
-  logo.classList.remove('pulse');            // togli effetto pulsante
-  watermark.style.display = 'block';         // mostra watermark
+  // MOSTRA IL LOGO WATERMARK
+  document.getElementById('watermark-logo').style.display = 'block';
 
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
@@ -950,45 +927,7 @@ modalContent.addEventListener('click', (e) => {
     'image_background/img10.png'
   ];
 
-  let idx = Math.floor(Math.random() * immagini.length);
-  const imgTag = document.getElementById('slideshow-img');
-
-  const changeImage = () => {
-    const img = new Image();
-    img.src = immagini[idx];
-    img.onload = () => {
-      imgTag.style.opacity = '0';
-      setTimeout(() => {
-        imgTag.src = img.src;
-        imgTag.classList.remove('loading', 'loaded-img');
-        void imgTag.offsetWidth;
-        imgTag.classList.add('loaded-img');
-        imgTag.style.opacity = '1';
-      }, 50);
-    };
-    idx = (idx + 1) % immagini.length;
-  };
-
-  changeImage();
-  slideshowInterval = setInterval(changeImage, 5000);
-}
-
-
-  // Immagini slideshow
-  const immagini = [
-    'image_background/img1.jpg',
-    'image_background/img2.jpg',
-    'image_background/img3.jpg',
-    'image_background/img4.jpg',
-    'image_background/img5.jpg',
-    'image_background/img6.jpg',
-    'image_background/img7.png',
-    'image_background/img8.png',
-    'image_background/img9.png',
-    'image_background/img10.png'
-  ];
-
-  const logo = document.getElementById('slideshow-img');  // <-- usa solo img slideshow
+  const logo = document.getElementById('logo-btn');
   let idx = Math.floor(Math.random() * immagini.length);
 
   const changeImage = () => {
@@ -1020,34 +959,28 @@ modalContent.addEventListener('click', (e) => {
   if (slideshowInterval) clearInterval(slideshowInterval);
   slideshowAttivo = false;
 
-  // Mostra logo centrale pulsante, nasconde slideshow
-  const logoHome = document.getElementById('logo-btn');
-  const slideshowBox = document.getElementById('slideshow-container');
-  const watermark = document.getElementById('watermark-logo');
-  const logoImg = document.getElementById('slideshow-img');
+  // NASCONDE IL LOGO WATERMARK
+  document.getElementById('watermark-logo').style.display = 'none';
 
-  logoHome.style.display = 'block';
-  slideshowBox.style.display = 'none';
-  watermark.style.display = 'none';
-
-  logoImg.style.transition = 'none';
-  logoImg.style.visibility = 'hidden';
-  logoImg.style.opacity = '0';
-  logoImg.classList.remove('pulse', 'loaded-img', 'fade-in-logo', 'fade-out-logo');
+  const logo = document.getElementById('logo-btn');
+  logo.style.transition = 'none';
+  logo.style.visibility = 'hidden';
+  logo.style.opacity = '0';
+  logo.classList.remove('pulse', 'loaded-img', 'fade-in-logo', 'fade-out-logo');
 
   isTransitioning = true;
 
   const preload = new Image();
   preload.src = 'logo.png';
   preload.onload = () => {
-    logoImg.src = preload.src;
-    logoImg.style.transform = 'translate(-50%,-60%) scale(1.8)';
-    void logoImg.offsetWidth;
-    logoImg.style.transition = 'opacity 0.6s ease-in-out';
-    logoImg.style.visibility = 'visible';
-    logoImg.style.opacity = '1';
+    logo.src = preload.src;
+    logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
+    void logo.offsetWidth;
+    logo.style.transition = 'opacity 0.6s ease-in-out';
+    logo.style.visibility = 'visible';
+    logo.style.opacity = '1';
     setTimeout(() => {
-      logoHome.classList.add('pulse'); // torna a pulsare
+      logo.classList.add('pulse');
       isTransitioning = false;
     }, 600);
   };
