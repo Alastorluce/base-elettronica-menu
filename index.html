@@ -456,6 +456,7 @@ ul.custom-list li > strong {
   border-color: transparent !important;
 }
 
+
 </style>
 </head>
 
@@ -893,18 +894,40 @@ document.body.style.overflow = 'hidden';
         img.onload = () => {
           logo.style.opacity = '0';
           setTimeout(() => {
-            logo.src = img.src;
-            logo.classList.remove('loading','loaded-img');
-            void logo.offsetWidth;
-            logo.classList.add('loaded-img');
-            logo.style.opacity = '1';
-          },50);
-        };
-        idx = (idx + 1) % immagini.length;
-      };
-      changeImage();
-      slideshowInterval = setInterval(changeImage, 5000);
-    }
+  // Crea un contenitore temporaneo
+  const wrapper = document.createElement('div');
+  wrapper.style.position = 'relative';
+  wrapper.style.width = logo.width + 'px';
+  wrapper.style.maxWidth = '90vw';
+  wrapper.style.display = 'inline-block';
+  wrapper.id = 'logo-btn'; // mantieni l'ID per continuità
+
+  // Immagine di sfondo dello slideshow
+  const imgElement = document.createElement('img');
+  imgElement.src = img.src;
+  imgElement.style.width = '100%';
+  imgElement.style.display = 'block';
+
+  // Logo piccolino
+  const overlayLogo = document.createElement('img');
+  overlayLogo.src = 'logo.png';
+  overlayLogo.alt = 'Watermark';
+  overlayLogo.style.position = 'absolute';
+  overlayLogo.style.bottom = '10px';
+  overlayLogo.style.right = '10px';
+  overlayLogo.style.width = '50px';
+  overlayLogo.style.opacity = '0.6';
+  overlayLogo.style.pointerEvents = 'none';
+  overlayLogo.style.filter = 'drop-shadow(0 0 3px #000)'; // visibilità su immagini chiare
+
+  // Montaggio
+  wrapper.appendChild(imgElement);
+  wrapper.appendChild(overlayLogo);
+
+  // Sostituisci il vecchio #logo-btn
+  logo.replaceWith(wrapper);
+}, 50);
+
 
 
 
