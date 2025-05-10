@@ -452,6 +452,31 @@ ul.custom-list li > strong {
   }
 }
 
+
+
+#watermark-logo {
+  display: none; /* <-- parte nascosto */
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  opacity: 0.25;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px #000);
+  animation: fadeImage 1s ease-in-out;
+}
+
+#watermark-logo img {
+  max-width: 100px;
+  height: auto;
+  display: block;
+  filter: brightness(120%) contrast(90%);
+}
+
+
+
+
 .menu-item {
   border-color: transparent !important;
 }
@@ -504,11 +529,20 @@ ul.custom-list li > strong {
     </div>
   
     <div id="main">
-      <img src="logo.png" id="logo-btn" alt="Logo">
-      <div id="modal" class="modal">
-        <div id="modal-content"><h2>Caricamento...</h2></div>
-      </div>
-    </div>
+  <img src="logo.png" id="logo-btn" alt="Logo">
+
+  <!-- Watermark centrato in basso -->
+  <div id="watermark-logo">
+    <img src="logo.png" alt="Watermark Logo">
+  </div>
+
+  <div id="modal" class="modal">
+    <div id="modal-content"><h2>Caricamento...</h2></div>
+  </div>
+</div>
+
+
+
   
     <script>
       const contenuti = [
@@ -590,7 +624,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
     position: relative;
     text-align: center;
     padding: 30px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(100, 100, 100, 0.15);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 20px;
@@ -607,7 +641,6 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
     </p>
   </div>
 `;
-  
 
     let modal = document.getElementById('modal');
 let modalContent = document.getElementById('modal-content');
@@ -670,6 +703,10 @@ function toggleSubmenu() {
 function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
   isTransitioning = true;
+
+  // 0) Nascondi il watermark se è visibile
+  const watermark = document.getElementById('watermark-logo');
+  if (watermark) watermark.style.display = 'none';
 
   // 1) Chiudi la modale se c’è
   if (modal.classList.contains('show')) {
@@ -870,95 +907,115 @@ modalContent.addEventListener('click', (e) => {
 
 
     function attivaSlideshow() {
-      if (slideshowAttivo) return;
-      // nasconde completamente il pannello menu
-const sidebar = document.getElementById('sidebar');
-sidebar.style.display = 'none';
-// giusto per sicurezza, togli anche eventuale sottomenu
-const submenu = document.getElementById('submenu-servizi');
-submenu.style.display = 'none';
-document.body.style.overflow = 'hidden';
+  if (slideshowAttivo) return;
 
-      slideshowAttivo = true;
-      if (modal.classList.contains('show')) {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-          isTransitioning = false;
-        }, 600);
-      }
-      const immagini = [
-        'image_background/img1.jpg',
-        'image_background/img2.jpg',
-        'image_background/img3.jpg',
-        'image_background/img4.jpg',
-        'image_background/img5.jpg',
-        'image_background/img6.jpg',
-        'image_background/img7.png',
-        'image_background/img8.png',
-        'image_background/img9.png',
-        'image_background/img10.png'
-      ];
-      const logo = document.getElementById('logo-btn');
-      let idx = Math.floor(Math.random() * immagini.length);
-      const changeImage = () => {
-        const img = new Image();
-        img.src = immagini[idx];
-        img.onload = () => {
-          logo.style.opacity = '0';
-          setTimeout(() => {
-            logo.src = img.src;
-            logo.classList.remove('loading','loaded-img');
-            void logo.offsetWidth;
-            logo.classList.add('loaded-img');
-            logo.style.opacity = '1';
-          },50);
-        };
-        idx = (idx + 1) % immagini.length;
-      };
-      changeImage();
-      slideshowInterval = setInterval(changeImage, 5000);
-    }
+  // nasconde completamente il pannello menu
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.display = 'none';
+
+  // giusto per sicurezza, togli anche eventuale sottomenu
+  const submenu = document.getElementById('submenu-servizi');
+  submenu.style.display = 'none';
+  document.body.style.overflow = 'hidden';
+
+  slideshowAttivo = true;
+
+  // MOSTRA IL LOGO WATERMARK
+  document.getElementById('watermark-logo').style.display = 'block';
+
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      currentIndex = null;
+      isTransitioning = false;
+    }, 600);
+  }
+
+  const immagini = [
+    'image_background/img1.jpg',
+    'image_background/img2.jpg',
+    'image_background/img3.jpg',
+    'image_background/img4.jpg',
+    'image_background/img5.jpg',
+    'image_background/img6.jpg',
+    'image_background/img7.png',
+    'image_background/img8.png',
+    'image_background/img9.png',
+    'image_background/img10.png'
+  ];
+
+  const logo = document.getElementById('logo-btn');
+  let idx = Math.floor(Math.random() * immagini.length);
+
+  const changeImage = () => {
+    const img = new Image();
+    img.src = immagini[idx];
+    img.onload = () => {
+      logo.style.opacity = '0';
+      setTimeout(() => {
+        logo.src = img.src;
+        logo.classList.remove('loading', 'loaded-img');
+        void logo.offsetWidth;
+        logo.classList.add('loaded-img');
+        logo.style.opacity = '1';
+      }, 50);
+    };
+    idx = (idx + 1) % immagini.length;
+  };
+
+  changeImage();
+  slideshowInterval = setInterval(changeImage, 5000);
+}
+
 
 
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
-      if (isTransitioning) return;
-      if (slideshowInterval) clearInterval(slideshowInterval);
-      slideshowAttivo = false;
-      const logo = document.getElementById('logo-btn');
-      logo.style.transition = 'none';
-      logo.style.visibility = 'hidden';
-      logo.style.opacity = '0';
-      logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
-      isTransitioning = true;
-      const preload = new Image();
-      preload.src = 'logo.png';
-      preload.onload = () => {
-        logo.src = preload.src;
-        logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
-        void logo.offsetWidth;
-        logo.style.transition = 'opacity 0.6s ease-in-out';
-        logo.style.visibility = 'visible';
-        logo.style.opacity = '1';
-        setTimeout(() => {
-          logo.classList.add('pulse');
-          isTransitioning = false;
-        },600);
-      };
-      if (modal.classList.contains('show')) {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-        },600);
-      }
-    });
+  if (isTransitioning) return;
+
+  if (slideshowInterval) clearInterval(slideshowInterval);
+  slideshowAttivo = false;
+
+  // NASCONDE IL LOGO WATERMARK
+  document.getElementById('watermark-logo').style.display = 'none';
+
+  const logo = document.getElementById('logo-btn');
+  logo.style.transition = 'none';
+  logo.style.visibility = 'hidden';
+  logo.style.opacity = '0';
+  logo.classList.remove('pulse', 'loaded-img', 'fade-in-logo', 'fade-out-logo');
+
+  isTransitioning = true;
+
+  const preload = new Image();
+  preload.src = 'logo.png';
+  preload.onload = () => {
+    logo.src = preload.src;
+    logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
+    void logo.offsetWidth;
+    logo.style.transition = 'opacity 0.6s ease-in-out';
+    logo.style.visibility = 'visible';
+    logo.style.opacity = '1';
+    setTimeout(() => {
+      logo.classList.add('pulse');
+      isTransitioning = false;
+    }, 600);
+  };
+
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      currentIndex = null;
+    }, 600);
+  }
+});
+
  
   // 1. Variabili di controllo
   let welcomeTimeout;
