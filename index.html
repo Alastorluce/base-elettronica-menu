@@ -132,7 +132,8 @@
       margin-bottom: 1em;
       border-radius: 6px;
       cursor: pointer;
-      transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+      will-change: transform, box-shadow;
+      transition: transform 0.4s cubic-bezier(0.25,0.1,0.25,1),box-shadow 0.4s cubic-bezier(0.25,0.1,0.25,1);
       text-shadow: 1px 0.5px 1px #1900ff;
       text-align: center;
       width: 60%;
@@ -552,9 +553,7 @@ ul.custom-list li > strong {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-
 }
-
 
 
 
@@ -1253,16 +1252,14 @@ el.style.setProperty('--duration', speed);
 
 });
 
-// ===== gestisco lo stato “pressed” sui bottoni =====
+// ===== gestione “pressed” via Pointer Events =====
 document.querySelectorAll('.menu-item').forEach(el => {
-  // mouse
-  el.addEventListener('mousedown', () => el.classList.add('pressed'));
-  el.addEventListener('mouseup',   () => el.classList.remove('pressed'));
-  el.addEventListener('mouseleave',() => el.classList.remove('pressed'));
-  // touch
-  el.addEventListener('touchstart',() => el.classList.add('pressed'), {passive: true});
-  el.addEventListener('touchend',  () => el.classList.remove('pressed'));
+  el.addEventListener('pointerdown', () => el.classList.add('pressed'));
+  el.addEventListener('pointerup',   () => el.classList.remove('pressed'));
+  el.addEventListener('pointerleave',() => el.classList.remove('pressed'));
+  el.addEventListener('pointercancel',() => el.classList.remove('pressed'));
 });
+
 
 </script>
 </body>
