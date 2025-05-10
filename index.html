@@ -1267,13 +1267,24 @@ el.style.setProperty('--duration', speed);
 
 });
 
-// ===== gestione “pressed” via Pointer Events =====
+// ===== gestione “pressed” via Pointer Events con rilascio rallentato =====
 document.querySelectorAll('.menu-item').forEach(el => {
-  el.addEventListener('pointerdown', () => el.classList.add('pressed'));
-  el.addEventListener('pointerup',   () => el.classList.remove('pressed'));
-  el.addEventListener('pointerleave',() => el.classList.remove('pressed'));
-  el.addEventListener('pointercancel',() => el.classList.remove('pressed'));
+  el.addEventListener('pointerdown', () => {
+    el.classList.add('pressed');
+  });
+  el.addEventListener('pointerup', () => {
+    // aspetta un po' prima di farlo risalire, così l'animazione è ben visibile
+    setTimeout(() => el.classList.remove('pressed'), 300);
+  });
+  el.addEventListener('pointerleave', () => {
+    // se esco dal bottone, tolgo subito
+    el.classList.remove('pressed');
+  });
+  el.addEventListener('pointercancel', () => {
+    el.classList.remove('pressed');
+  });
 });
+
 
 
 </script>
