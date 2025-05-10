@@ -468,7 +468,7 @@ ul.custom-list li > strong {
 }
 
 #watermark-logo img {
-  max-width: 200px;   /* dimensione piccola fissa */
+  max-width: 60px;   /* dimensione piccola fissa */
   height: auto;
   display: block;
   filter: brightness(120%) contrast(90%);
@@ -909,36 +909,31 @@ modalContent.addEventListener('click', (e) => {
 
     function attivaSlideshow() {
   if (slideshowAttivo) return;
-  slideshowAttivo = true;
 
-  // 1) nascondi menu, blocca scroll, etc.
-  document.getElementById('sidebar').style.display = 'none';
-  document.getElementById('submenu-servizi').style.display = 'none';
+  // nasconde completamente il pannello menu
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.display = 'none';
+
+  // giusto per sicurezza, togli anche eventuale sottomenu
+  const submenu = document.getElementById('submenu-servizi');
+  submenu.style.display = 'none';
   document.body.style.overflow = 'hidden';
 
-  // 2) mostra e sfuma il watermark
+  slideshowAttivo = true;
+
+  // MOSTRA IL LOGO WATERMARK
   const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
-  // forzo subito opacity a 1 (istantaneo)
-  watermark.style.opacity = '1';
-  // reflow per assicurarmi che il browser "ved|
-  void watermark.offsetWidth;
-  // sulla frame successiva, avvio la transizione verso 0.15
-  requestAnimationFrame(() => {
-    watermark.style.opacity = '0.15';
-  });
+  watermark.style.opacity = '1';      // parte opaco
 
-  // 3) stoppa eventuale modal aperta
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-    }, 600);
-  }
-}
+    watermark.style.opacity = '0.10';
+  }, 50);  // 50ms dopo, per far scattare la transition
 
+  }
 
   const immagini = [
     'image_background/img1.jpg',
@@ -974,7 +969,7 @@ modalContent.addEventListener('click', (e) => {
 
   changeImage();
   slideshowInterval = setInterval(changeImage, 5000);
-
+}
 
 
 
