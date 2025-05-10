@@ -896,23 +896,36 @@ document.body.style.overflow = 'hidden';
       slideshowInterval = setInterval(changeImage, 5000);
     }
 
-document.getElementById('logo-btn').addEventListener('click', () => {
-  if (isTransitioning) return;
-  // Ferma slideshow e ripristina sidebar/scroll
-  clearInterval(slideshowInterval);
-  slideshowAttivo = false;
-  document.body.style.overflow = '';
-  document.getElementById('sidebar').style.display = '';
-  // Ripristina logo home
-  const logo = document.getElementById('logo-btn');
-  logo.src = 'logo.png';
-  logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
-  logo.classList.add('pulse');
-  // Apri il modal con la home
-  modalContent.innerHTML = contenutoHome;
-  modal.classList.remove('fade-out');
-  modal.classList.add('show');
-});
+ document.getElementById('logo-btn').addEventListener('click', () => {
+    if (isTransitioning) return;
+
+    // 1) interrompi lo slideshow se attivo
+    if (slideshowInterval) clearInterval(slideshowInterval);
+    slideshowAttivo = false;
+
+    // 2) ripristina scroll e sidebar
+    document.body.style.overflow = '';
+    document.getElementById('sidebar').style.display = '';
+
+    // 3) chiudi la modale se aperta
+    if (modal.classList.contains('show')) {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modal.classList.remove('fade-out');
+        modalContent.innerHTML = '';
+      }, 600);
+    }
+
+    // 4) torna alla schermata col solo logo pulsante
+    const logo = document.getElementById('logo-btn');
+    // reset trasformazioni sul logo e riabilita l’animazione pulse
+    logo.style.transition = 'transform 0.4s ease-in-out, opacity 0.4s ease-in-out';
+    logo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
+    logo.style.visibility = 'visible';
+    logo.style.opacity    = '1';
+    logo.classList.add('pulse');
+  });
 
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
