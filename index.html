@@ -2,42 +2,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="description" content="Base Elettronica Service: progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi, installazioni e studi professionali.">
-  <meta name="keywords" content="service audio video luci, impianti sicurezza, progettazione eventi, LEDwall, noleggio attrezzature, regia tecnica, Base Elettronica Service, Teramo, live ,fiere,concerti,band,discoteca">
-  <meta name="author" content="Fabrizio Di Filippo">
-  <meta name="robots" content="index, follow">
-  <meta property="og:title" content="Base Elettronica Service - Progettazione e Service Audio Video Luci">
-  <meta property="og:description" content="Progettazione, noleggio e gestione tecnica per eventi, installazioni e ambienti professionali.">
-  <meta property="og:image" content="https://www.baseelettronicaservice.it/logo.png">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.baseelettronicaservice.it">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- già presente -->
-  <title>Base Elettronica Service - Progettazione e Service Audio Video Luci</title>
+  <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
-  <link rel="canonical" href="https://www.baseelettronicaservice.it/">
-
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "Base Elettronica Service",
-  "image": "https://www.baseelettronicaservice.it/logo.png",
-  "description": "Service tecnico audio video luci, noleggio e progettazione impianti per eventi, installazioni, showroom.",
-  "url": "https://www.baseelettronicaservice.it",
-  "telephone": "+39 0861 123456",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Teramo",
-    "addressCountry": "IT"
-  },
-  "sameAs": [
-    "https://www.facebook.com/BaseElettronicaService",
-    "https://www.instagram.com/baseelettronica"
-  ]
-}
-</script>
-
-
   <style>
      
      /* disabilita selezione di testo e immagini */
@@ -51,7 +18,7 @@
     @keyframes fadeImage {from { opacity: 0; }to   { opacity: 1; }}
     @keyframes slideInLogo { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
     @keyframes slideInSidebar { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
-    @keyframes slideIn { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0) scale(1);; opacity: 1;} }
+    @keyframes slideIn { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
     @keyframes pulse {0%,100% { transform: translate(-50%, -50%) scale(1); }50%     { transform: translate(-50%, -50%) scale(1.1); }}
     
 
@@ -171,6 +138,7 @@
       width: 60%;
       font-size: 0.9em;
       opacity: 0;
+      transform: translateX(-100%);
       animation: slideIn 0.5s ease-out forwards;
     }
     .menu-item.animated { animation: slideIn 0.5s ease-out forwards; }
@@ -428,28 +396,13 @@ ul.custom-list li > strong {
 
 
 
+
 .menu-item,
 .menu-item.sotto-servizio {
   position: relative;
   overflow: visible;
   z-index: 0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  touch-action: manipulation;
-  cursor: pointer;
 }
-
-.menu-item.pressed,
-.menu-item.sotto-servizio.pressed {
-  transform: translateX(0) scale(0.85);
-  box-shadow: inset 0 0 8px #00a6ff;
-}
-
-.menu-item:active,
-.menu-item.sotto-servizio:active {
-  transform: scale(0.85);
-}
-
-
 
 /* Bordo statico */
 .menu-item::before {
@@ -508,7 +461,7 @@ ul.custom-list li > strong {
 #watermark-logo {
   display: none;
   position: fixed;
-  bottom: 20%;
+  bottom: 50%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -526,10 +479,9 @@ ul.custom-list li > strong {
 }
 
 
-.menu-item:not(.pressed) {
+.menu-item {
   border-color: transparent !important;
 }
-
 
 
 
@@ -591,29 +543,13 @@ ul.custom-list li > strong {
   }
 }
 
-* {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
 
-.menu-item.pressed-fix,
-.menu-item.sotto-servizio.pressed-fix {
-  transform: translateX(0) scale(0.85) !important;
-  box-shadow: inset 0 0 8px #00a6ff;
-}
 
 </style>
 </head>
 
 <body>
-  <h1 style="display:none;">Base Elettronica Service - Service e Progettazione Audio Video Luci</h1>
-  <div id="right-glow"></div>
-    
-
+    <div id="right-glow"></div>
   
     <div id="orientation-warning">
       <div class="orientation-content">
@@ -1239,78 +1175,6 @@ modalContent.addEventListener('click', (e) => {
 document.addEventListener('click', hideWelcome, { once: true });
 
   }, 500);
-
-   window.addEventListener('DOMContentLoaded', () => {
-  // 1) Avvia animazioni sidebar/menu
-  document.getElementById('sidebar').classList.add('animated');
-  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
-
-  // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
-  if (window.matchMedia('(max-width: 768px)').matches) {
-    const modal        = document.getElementById('modal');
-    const modalContent = document.getElementById('modal-content');
-
-    // 2a) Inietta il pulsante di chiusura, se non esiste già
-    if (!modal.querySelector('.modal-close')) {
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'modal-close';
-      closeBtn.setAttribute('aria-label', 'Chiudi');
-      closeBtn.textContent = '×';
-      modal.insertBefore(closeBtn, modalContent);
-    }
-
-    // 2b) Collega il click sulla “×” per chiudere la modale
-    modal.querySelectorAll('.modal-close').forEach(btn => {
-      btn.addEventListener('click', () => {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-        }, 600);
-      });
-    });
-
-    // 2c) Assicura che su touch “Clicca qui” parta la showroom
-    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-      el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tap
-        attivaSlideshow();
-      }, { passive: false });
-    });
-
-    // 2d) Avvia la showroom automaticamente (se lo desideri)
-    // attivaSlideshow();
-  }
-   
-  // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
-  const logoBtn = document.getElementById('logo-btn');
-  logoBtn.style.cursor = 'pointer';
-  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
-
-  // 3) Pianifica il pop-up di benvenuto
-  let welcomeTimeout = setTimeout(() => {
-    modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
-    let welcomeShown = true;
-
-    const hideWelcome = e => {
-  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
-  if (
-    e.target.closest('#sidebar') ||
-    e.target.closest('.menu-item') ||
-    e.target.closest('#modal') ||
-    e.target.closest('#logo-btn')
-  ) {
-    return;
-  }
-  modal.classList.remove('show');
-  document.removeEventListener('click', hideWelcome);
-};
-document.addEventListener('click', hideWelcome, { once: true });
-
-  }, 500);
-});
 });
 
 
@@ -1366,21 +1230,6 @@ el.style.setProperty('--delay', delay);
 el.style.setProperty('--duration', speed);
 
 });
-
-
-document.querySelectorAll('.menu-item, .menu-item.sotto-servizio').forEach(el => {
-  el.addEventListener('mousedown', () => {
-    el.classList.add('pressed');
-    setTimeout(() => el.classList.remove('pressed'), 120);
-  });
-
-  el.addEventListener('touchstart', () => {
-    el.classList.add('pressed');
-    setTimeout(() => el.classList.remove('pressed'), 120);
-  }, { passive: true });
-});
-
-
 
 
 </script>
