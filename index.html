@@ -851,7 +851,8 @@ sidebar.style.display = 'none';
 const submenu = document.getElementById('submenu-servizi');
 submenu.style.display = 'none';
 document.body.style.overflow = 'hidden';
-
+// evita che il popup venga mai schedulato dopo aver avviato la showroom
+  clearTimeout(welcomeTimeout);
       slideshowAttivo = true;
       if (modal.classList.contains('show')) {
         modal.classList.remove('show');
@@ -897,6 +898,8 @@ document.body.style.overflow = 'hidden';
     }
 
     document.getElementById('logo-btn').addEventListener('click', () => {
+  clearTimeout(welcomeTimeout);
+  if (isTransitioning) return;
   clearTimeout(welcomeTimeout);
   if (isTransitioning) return;
   isTransitioning = true;
