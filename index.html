@@ -515,45 +515,31 @@ ul.custom-list li > strong {
 
 
 .radar-glow {
-  font-size: 1.8em;
-  position: relative;
-  color: #888;
-  background: linear-gradient(90deg, #888, #aaa);
-  background-size: 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
+  font-size: 2em;
+  font-weight: bold;
   color: transparent;
-  -webkit-text-fill-color: transparent;
-  overflow: hidden;
-}
-
-.radar-glow::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
+  background-image: linear-gradient(
     90deg,
-    transparent,
-    rgba(255, 255, 255, 0.8),
-    transparent
+    #888888 0%,
+    #aaaaaa 20%,
+    #ffffff 40%,
+    #aaaaaa 60%,
+    #888888 80%
   );
+  background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
-  animation: radarTextScan 2.4s ease-out 0.3s 1 forwards;
+  -webkit-text-fill-color: transparent;
+  animation: radarTextScan 2.5s ease-out 1 forwards;
+  display: inline-block;
 }
 
 @keyframes radarTextScan {
   0% {
-    left: -75%;
-  }
-  50% {
-    left: 25%;
+    background-position: -200% center;
   }
   100% {
-    left: 100%;
+    background-position: 200% center;
   }
 }
 
