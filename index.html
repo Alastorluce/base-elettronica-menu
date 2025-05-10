@@ -646,42 +646,47 @@ function toggleSubmenu() {
 
 
 function ripristinaMenuPrincipale() {
-  const submenu = document.getElementById('submenu-servizi');
-  // riporta in vista il pannello menu
-document.getElementById('sidebar').style.display = '';
+  if (isTransitioning) return;
+  isTransitioning = true;
 
-  const menuItems = document.querySelectorAll('.menu-list > .menu-item:not(#submenu-servizi .menu-item)');
-  const logo = document.getElementById('logo-btn');
-
-  // Nasconde il contenuto modale con dissolvenza
+  // 1) Chiudi la modale se c’è
   if (modal.classList.contains('show')) {
-    isTransitioning = false;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
-      isTransitioning = false;
     }, 600);
   }
 
-  // Nasconde il submenu
-  submenu.style.display = 'none';
+  // 2) Ferma slideshow e rimuovi overflow nascosto
+  if (slideshowInterval) {
+    clearInterval(slideshowInterval);
+    slideshowInterval = null;
+  }
+  slideshowAttivo = false;
+  document.body.style.overflow = '';
 
-  // Mostra i pulsanti principali
-  menuItems.forEach(el => {
-    el.style.display = 'flex';
-  });
+  // 3) Ripristina sidebar e menu principali
+  document.getElementById('submenu-servizi').style.display = 'none';
+  document.querySelectorAll('.menu-list > .menu-item')
+          .forEach(el => el.style.display = 'flex');
+  document.getElementById('sidebar').style.display = '';
 
-  // Ripristina il logo al centro (se era stato nascosto o sostituito)
-  logo.style.opacity = '1';
+  // 4) Ripristina logo centrale “pulse”
+  const logo = document.getElementById('logo-btn');
+  logo.classList.remove('loaded-img','loading');
+  logo.src = 'logo.png';
+  logo.style.transition = 'none';
+  logo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
+  logo.style.opacity    = '1';
   logo.style.visibility = 'visible';
+  void logo.offsetWidth;  // forzo reflow
+  logo.style.transition = 'transform 0.4s ease-in-out, opacity 0.4s ease-in-out';
   logo.classList.add('pulse');
 
-  // Reset variabili di stato
-  currentIndex = null;
-  slideshowAttivo = false;
-  if (slideshowInterval) clearInterval(slideshowInterval);
+  // 5) Fine transizione
+  setTimeout(() => { isTransitioning = false; }, 600);
 }
 
 
@@ -896,23 +901,6 @@ document.body.style.overflow = 'hidden';
       slideshowInterval = setInterval(changeImage, 5000);
     }
 
-document.getElementById('logo-btn').addEventListener('click', () => {
-  if (isTransitioning) return;
-  // Ferma slideshow e ripristina sidebar/scroll
-  clearInterval(slideshowInterval);
-  slideshowAttivo = false;
-  document.body.style.overflow = '';
-  document.getElementById('sidebar').style.display = '';
-  // Ripristina logo home
-  const logo = document.getElementById('logo-btn');
-  logo.src = 'logo.png';
-  logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
-  logo.classList.add('pulse');
-  // Apri il modal con la home
-  modalContent.innerHTML = contenutoHome;
-  modal.classList.remove('fade-out');
-  modal.classList.add('show');
-});
 
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
@@ -996,6 +984,11 @@ document.getElementById('logo-btn').addEventListener('click', () => {
     // 2d) Avvia la showroom automaticamente (se lo desideri)
     // attivaSlideshow();
   }
+   
+  // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
+  const logoBtn = document.getElementById('logo-btn');
+  logoBtn.style.cursor = 'pointer';
+  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
   // 3) Pianifica il pop-up di benvenuto
   let welcomeTimeout = setTimeout(() => {
