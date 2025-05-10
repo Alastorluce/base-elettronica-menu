@@ -565,7 +565,7 @@ ul.custom-list li > strong {
   box-shadow: inset 0 0 5px #00a6ff !important;
 }
 
-/* centra solo il testo all'interno delle modali e dell’home welcome */
+/* centra solo heading, paragrafi e liste nel modal */
 #modal-content,
 #modal-content h2,
 #modal-content h3,
@@ -573,6 +573,12 @@ ul.custom-list li > strong {
 #modal-content ul {
   text-align: center;
 }
+
+/* escludi gli item della lista: rimangono left-aligned */
+#modal-content ul li {
+  text-align: left;
+}
+
 
 
 </style>
