@@ -461,7 +461,7 @@ ul.custom-list li > strong {
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
-  opacity: 1;                        /* parte completamente opaco */
+  opacity: 0;                        /* parte completamente opaco */
   pointer-events: none;
   filter: drop-shadow(0 0 4px #000);
   transition: opacity 0.5s ease;     /* transizione dolce */
@@ -925,13 +925,13 @@ modalContent.addEventListener('click', (e) => {
   // MOSTRA IL LOGO WATERMARK
   const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
-  watermark.style.opacity = '1';      // parte opaco
+  watermark.style.opacity = '0';      // parte opaco
 
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
-    watermark.style.opacity = '0.25';
+    watermark.style.opacity = '0.15';
   }, 50);  // 50ms dopo, per far scattare la transition
 
   }
