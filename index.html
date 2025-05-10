@@ -851,8 +851,7 @@ sidebar.style.display = 'none';
 const submenu = document.getElementById('submenu-servizi');
 submenu.style.display = 'none';
 document.body.style.overflow = 'hidden';
-// evita che il popup venga mai schedulato dopo aver avviato la showroom
-  clearTimeout(welcomeTimeout);
+
       slideshowAttivo = true;
       if (modal.classList.contains('show')) {
         modal.classList.remove('show');
@@ -897,30 +896,6 @@ document.body.style.overflow = 'hidden';
       slideshowInterval = setInterval(changeImage, 5000);
     }
 
-    document.getElementById('logo-btn').addEventListener('click', () => {
-  clearTimeout(welcomeTimeout);
-  if (isTransitioning) return;
-  clearTimeout(welcomeTimeout);
-  if (isTransitioning) return;
-  isTransitioning = true;
-
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modalContent.innerHTML = contenutoHome;
-      modal.classList.remove('fade-out');
-      modal.classList.add('show');
-      isTransitioning = false;
-    }, 600);
-  } else {
-    modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
-    isTransitioning = false;
-  }
-
-  welcomeShown = true;
-});
 
 
     document.getElementById('sidebar-logo').addEventListener('click', () => {
