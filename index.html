@@ -802,49 +802,73 @@ function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // 0) Nascondi il watermark se è visibile
-  const watermark = document.getElementById('watermark-logo');
-  if (watermark) watermark.style.display = 'none';
+  const main       = document.getElementById('main');
+  const sidebar    = document.getElementById('sidebar');
+  const submenu    = document.getElementById('submenu-servizi');
+  const watermark  = document.getElementById('watermark-logo');
+  const logo       = document.getElementById('logo-btn');
 
-  // 1) Chiudi la modale se c’è
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
+  // 1) dissolvenza OUT
+  main.style.opacity = '0';
+
+  // 2) dopo 500ms (fade-out)
+  setTimeout(() => {
+    // A) nascondi watermark e slideshow
+    if (slideshowInterval) {
+      clearInterval(slideshowInterval);
+      slideshowInterval = null;
+    }
+    slideshowAttivo = false;
+    watermark.style.display = 'none';
+    document.body.style.overflow = '';
+
+    // B) chiudi modale se aperta
+    if (modal.classList.contains('show')) {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modal.classList.remove('fade-out');
+        modalContent.innerHTML = '';
+      }, 600);
+    }
+
+    // C) ripristina sidebar e menu
+    submenu.style.display = 'none';
+    document.querySelectorAll('.menu-list > .menu-item')
+            .forEach(el => el.style.display = 'flex');
+    sidebar.style.display = '';
+
+    // D) reset logo centrale
+    logo.classList.remove('loaded-img','loading','pulse');
+    logo.style.transition = 'none';
+    logo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
+    logo.style.opacity    = '0';
+    logo.style.visibility = 'hidden';
+
+    // preload e fade-in logo centrale
+    const preload = new Image();
+    preload.src = 'logo.png';
+    preload.onload = () => {
+      logo.src = preload.src;
+      void logo.offsetWidth; // forzo reflow
+      logo.style.transition  = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
+      logo.style.visibility  = 'visible';
+      logo.style.opacity     = '1';
+      logo.style.transform   = 'translate(-50%,-50%) scale(2.3)';
+      setTimeout(() => logo.classList.add('pulse'), 600);
+    };
+
+    // 3) dissolvenza IN
+    main.style.opacity = '1';
+
+    // 4) fine transizione
     setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
+      isTransitioning = false;
     }, 600);
-  }
 
-  // 2) Ferma slideshow e rimuovi overflow nascosto
-  if (slideshowInterval) {
-    clearInterval(slideshowInterval);
-    slideshowInterval = null;
-  }
-  slideshowAttivo = false;
-  document.body.style.overflow = '';
-
-  // 3) Ripristina sidebar e menu principali
-  document.getElementById('submenu-servizi').style.display = 'none';
-  document.querySelectorAll('.menu-list > .menu-item')
-          .forEach(el => el.style.display = 'flex');
-  document.getElementById('sidebar').style.display = '';
-
-  // 4) Ripristina logo centrale “pulse”
-  const logo = document.getElementById('logo-btn');
-  logo.classList.remove('loaded-img','loading');
-  logo.src = 'logo.png';
-  logo.style.transition = 'none';
-  logo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
-  logo.style.opacity    = '1';
-  logo.style.visibility = 'visible';
-  void logo.offsetWidth;  // forzo reflow
-  logo.style.transition = 'transform 0.4s ease-in-out, opacity 0.4s ease-in-out';
-  logo.classList.add('pulse');
-
-  // 5) Fine transizione
-  setTimeout(() => { isTransitioning = false; }, 600);
+  }, 500);
 }
+
 
 
 function apriSubservizio(tipo) {
