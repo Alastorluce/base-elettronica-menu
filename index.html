@@ -461,7 +461,7 @@ ul.custom-list li > strong {
 #watermark-logo {
   display: none;
   position: fixed;
-  bottom: 20%;
+  bottom: 50%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -570,7 +570,10 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 `,
   
         `<!-- Portfolio -->
-<h2>Portfolio</h2>
+<div style="text-align:center;">
+  <h3 style="color:#00a6ff; margin-top:0;">Portfolio</h3>
+</div>
+
 <p>Nel corso degli anni abbiamo contribuito alla realizzazione tecnica e progettuale di numerosi eventi, installazioni e ambienti professionali in tutta Italia. Il nostro portfolio riflette la varietà e l’elevato standard qualitativo dei servizi offerti.</p>
 
 <ul>
@@ -592,7 +595,10 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 `,
   
         `<!-- Contattaci -->
-<h2>Contattaci</h2>
+<div style="text-align:center;">
+  <h3 style="color:#00a6ff; margin-top:0;">Contattaci</h3>
+</div>
+
 <p>Hai un progetto da realizzare, un evento da organizzare o necessiti di assistenza tecnica? Il nostro team è a tua disposizione per consulenze, preventivi gratuiti e sopralluoghi personalizzati.</p>
 <p>Compila il modulo sottostante per essere ricontattato dal nostro CEO <strong>Fabrizio Di Filippo</strong> o da un nostro tecnico incaricato.</p>
 
@@ -761,7 +767,11 @@ function apriSubservizio(tipo) {
   switch (tipo) {
     case 'service':
   contenuto = `
-    <h2>Service Tecnico per Eventi e Spettacoli</h2>
+
+  <div style="text-align:center;">
+    <h3 style="color:#00a6ff; margin-top:0;">Service Tecnico per Eventi e Spettacoli</h3>
+  </div>
+
 <p>Offriamo un servizio integrato per l’allestimento tecnico di eventi di qualsiasi scala, in conformità al <strong>D.Lgs. 81/08</strong> e alle normative vigenti in materia di sicurezza, acustica e compatibilità elettromagnetica.</p>
 
 <p>La nostra struttura operativa è progettata per garantire continuità, affidabilità e tempestività nelle seguenti aree:</p>
@@ -783,7 +793,12 @@ function apriSubservizio(tipo) {
 
       case 'antincendio':
   contenuto = `
-    <h2>Sistemi di Sicurezza Antincendio</h2>
+   
+
+  <div style="text-align:center;">
+    <h3 style="color:#00a6ff; margin-top:0;">Sistemi di Sicurezza Antincendio</h3>
+  </div>
+
     <p>Progettiamo e installiamo impianti antincendio conformi alle normative vigenti, con particolare attenzione alla certificazione <strong>UNI EN 54</strong>, garantendo affidabilità, integrazione e tempestività d'intervento.</p>
     <p>Le nostre soluzioni comprendono:</p>
     <ul class="custom-list">
@@ -799,7 +814,12 @@ function apriSubservizio(tipo) {
 
   case 'progettazione':
   contenuto = `
-    <h2>Progettazione Ambienti e Soluzioni su Misura</h2>
+    
+
+  <div style="text-align:center;">
+    <h3 style="color:#00a6ff; margin-top:0;">Progettazione Ambienti e Soluzioni su Misura</h3>
+  </div>
+
     <p>Forniamo un servizio completo di progettazione tecnica per ambienti professionali, eventi e installazioni fisse, combinando <strong style="color:#00a6ff;">esperienza ingegneristica</strong>, <strong style="color:#00a6ff;">tecnologie CAD 3D</strong> e <strong style="color:#00a6ff;">modellazione acustico-visiva</strong> ad alta precisione.</p>
 
     <ul class="custom-list">
@@ -815,7 +835,12 @@ function apriSubservizio(tipo) {
 
   case 'noleggio':
   contenuto = `
-    <h2>Noleggio di Attrezzature Professionali</h2>
+    
+
+  <div style="text-align:center;">
+    <h3 style="color:#00a6ff; margin-top:0;">Noleggio di Attrezzature Professionali</h3>
+  </div>
+
     <p>Offriamo un servizio di noleggio completo per impianti e attrezzature di alta gamma nel settore <strong>audio, video, luci, strutture e controllo scenotecnico</strong>, con disponibilità immediata, contratti flessibili e assistenza tecnica qualificata.</p>
 
     <p>Il nostro parco attrezzature è regolarmente revisionato, aggiornato e conforme alle normative CE, EN 60598-2-17 (illuminotecnica), CEI 64-8 (impiantistica elettrica) e D.Lgs. 81/08 per la sicurezza nei luoghi di lavoro.</p>
@@ -839,7 +864,12 @@ function apriSubservizio(tipo) {
 
   case 'assistenza':
   contenuto = `
-    <h2>Centro Assistenza Tecnica e Riparazioni</h2>
+    
+
+  <div style="text-align:center;">
+    <h3 style="color:#00a6ff; margin-top:0;">Centro Assistenza Tecnica e Riparazioni</h3>
+  </div>
+
     <p>Il nostro centro tecnico offre un servizio specializzato di assistenza e riparazione su attrezzature <strong>audio, luci, video, strutture elettroniche e digitali</strong>, con interventi tempestivi sia <strong>on-site</strong> che in <strong>laboratorio interno certificato</strong>.</p>
 
     <p>Siamo in grado di eseguire <strong>riparazioni elettroniche su qualsiasi componente</strong>, anche a livello microelettronico e SMT, grazie a un reparto dotato di strumentazione avanzata per diagnostica, collaudo e ricostruzione circuitale.</p>
