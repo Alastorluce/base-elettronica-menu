@@ -688,25 +688,23 @@ function isScrollable(el) {
 // Attiva un autoscroll lento su `el`
 function setupAutoScroll(el, speed = 11, delay = 9000) {
   let id, last, active = false;
-  let remainder = 0;  // accumulator per i decimali
+  let remainder = 0;  // <-- accumula i decimali
 
-  // nascondi subito la scrollbar
+  // NASCONDI subito la scrollbar, anche prima di partire
   el.classList.add('auto-scroll-hide');
   el.classList.remove('auto-scroll-show');
 
   function step(ts) {
     if (!active) return;
     if (!last) last = ts;
-    const d = ts - last;
+    const d = ts - last; 
     last = ts;
-
-    // calcolo quanti pixel totali (inclusi decimali)
+    // calcolo pixel “reali” da muovere in questo frame
     const raw = (d * speed) / 1000 + remainder;
-    // muovo solo gli interi
+    // arrotondo per intero
     const move = Math.floor(raw);
-    // resto per il frame successivo
+    // tengo il resto per il prossimo frame
     remainder = raw - move;
-
     el.scrollTop += move;
     if (el.scrollTop + el.clientHeight >= el.scrollHeight) return stop();
     id = requestAnimationFrame(step);
@@ -729,15 +727,14 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
-  el.addEventListener('click', start);
+  el.addEventListener('click', () => {
+    if (!active) start();
+  });
   el.addEventListener('wheel', stop, { passive: true });
   el.addEventListener('touchmove', stop, { passive: true });
 
-  const toId = setTimeout(start, delay);
-_scrollTimers.push(toId);
-
+  setTimeout(start, delay);
 }
-
 
 // Inizializzazione minimal: se scrollabile, setta l’autoscroll
 function initScrollOn(root) {
@@ -867,20 +864,6 @@ let currentIndex = null;
 let isTransitioning = false;
 let slideshowAttivo = false;
 let slideshowInterval = null;
-// ————————————————————————
-// Autoscroll management
-let _scrollTimers = [];
-let _scrollFrames = [];
-
-function clearAutoScroll() {
-  // annulla tutti i timer di avvio
-  _scrollTimers.forEach(id => clearTimeout(id));
-  _scrollTimers = [];
-  // annulla tutti i requestAnimationFrame
-  _scrollFrames.forEach(id => cancelAnimationFrame(id));
-  _scrollFrames = [];
-}
-
 
 function apri(index) {
   if (isTransitioning) return;
