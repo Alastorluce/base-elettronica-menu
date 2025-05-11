@@ -1212,6 +1212,7 @@ async function attivaSlideshow() {
   const logo = document.getElementById('logo-btn');
 
   // 1) Nascondi subito il logo (tutta visibilità e opacità)
+  logo.style.transition = 'opacity 1.2s ease-in-out';
   logo.style.visibility = 'hidden';
   logo.style.opacity    = '0';
 
