@@ -1205,20 +1205,17 @@ modalContent.addEventListener('click', (e) => {
   // 3) Pianifica il pop-up di benvenuto
   // --- inizio nuovo blocco welcome ---
 let welcomeTimeout = setTimeout(() => {
-  // 1) mostro il popup
+  // Imposto il contenuto
   modalContent.innerHTML = contenutoHome;
-  modal.classList.add('show');
 
-  // 2) auto‐hide dopo 6 secondi
+  // 1) preparo l’auto-hide a 6 secondi
   const autoHide = setTimeout(() => {
     modal.classList.remove('show');
   }, 8000);
 
-  // 3) su desktop: nascondi al primo click/tap fuori
-  const isDesktop = !window.matchMedia('(max-width: 768px)').matches;
-  if (isDesktop) {
-    const hideOnClick = e => {
-      // se clicco su sidebar, menu-item, modal o logo, non chiudere
+  // 2) registro subito il listener in capture per chiudere al primo click esterno (solo su desktop)
+  if (!window.matchMedia('(max-width: 768px)').matches) {
+    const hideOnPointerDown = (e) => {
       if (
         e.target.closest('#sidebar') ||
         e.target.closest('.menu-item') ||
@@ -1229,11 +1226,13 @@ let welcomeTimeout = setTimeout(() => {
       }
       modal.classList.remove('show');
       clearTimeout(autoHide);
-      document.removeEventListener('pointerdown', hideOnClick, true);
+      document.removeEventListener('pointerdown', hideOnPointerDown, true);
     };
-    // listener in capture phase per intercettare subito
-    document.addEventListener('pointerdown', hideOnClick, { capture: true, once: true });
+    document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
   }
+
+  // 3) mostro il popup
+  modal.classList.add('show');
 }, 500);
 // --- fine nuovo blocco welcome ---
 
