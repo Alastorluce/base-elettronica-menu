@@ -746,7 +746,7 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
-  el.addEventListener('click', start);
+  el.addEventListener('click', () => {if (active) {stop();} else {start();} });
   el.addEventListener('wheel', stop, { passive: true });
   el.addEventListener('touchmove', stop, { passive: true });
 
