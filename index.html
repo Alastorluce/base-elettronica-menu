@@ -23,6 +23,10 @@
     
 
 
+.auto-scroll-hide { scrollbar-width: none; -ms-overflow-style: none; }
+.auto-scroll-hide::-webkit-scrollbar { width: 0; }
+.auto-scroll-show { scrollbar-width: auto; }
+.auto-scroll-show::-webkit-scrollbar { width: 12px; }
 
     
 
@@ -584,29 +588,6 @@ ul.custom-list li > strong {
 
 
 
-
-
-/*   AUTO SCROLL  // 
-
-/* — Autoscroll globale — */
-/* nasconde la scrollbar durante l’autoscroll */
-.auto-scroll-hide {
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE10+ */
-}
-.auto-scroll-hide::-webkit-scrollbar {
-  width: 0;                       /* Chrome, Safari, Opera */
-}
-
-/* mostra la scrollbar quando l’autoscroll è in pausa */
-.auto-scroll-show {
-  scrollbar-width: auto;
-}
-.auto-scroll-show::-webkit-scrollbar {
-  width: 12px;
-}
-
-
 </style>
 </head>
 
@@ -674,6 +655,56 @@ ul.custom-list li > strong {
 
   
     <script>
+
+
+
+// Ritorna true se l'elemento è scrollabile (overflow-y auto|scroll e contenuto più lungo)
+function isScrollable(el) {
+  const cs = getComputedStyle(el);
+  return (cs.overflowY === 'auto' || cs.overflowY === 'scroll')
+         && el.scrollHeight > el.clientHeight;
+}
+
+// Attiva un autoscroll lento su `el`
+function setupAutoScroll(el, speed = 20, delay = 3000) {
+  let id, last, active = false;
+  function step(ts) {
+    if (!active) return;
+    if (!last) last = ts;
+    const d = ts - last; last = ts;
+    el.scrollTop += (d * speed) / 1000;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight) return stop();
+    id = requestAnimationFrame(step);
+  }
+  function start() {
+    if (active) return;
+    active = true; last = null;
+    el.classList.add('auto-scroll-hide');
+    el.classList.remove('auto-scroll-show');
+    id = requestAnimationFrame(step);
+  }
+  function stop() {
+    if (!active) return;
+    active = false;
+    cancelAnimationFrame(id);
+    el.classList.remove('auto-scroll-hide');
+    el.classList.add('auto-scroll-show');
+  }
+  el.addEventListener('click', () => active ? stop() : start());
+  el.addEventListener('touchstart', () => active ? stop() : start());
+  setTimeout(start, delay);
+}
+
+// Se `root` è scrollabile, lo setta; altrimenti cerca solo lui (no deep scan)
+function initScrollOn(root) {
+  if (isScrollable(root)) setupAutoScroll(root);
+}
+
+
+
+
+
+
       const contenuti = [
         `<!-- Chi siamo -->
 <div style="text-align:center;">
@@ -766,57 +797,6 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   </div>
 `;
 
-
-/**
- * Imposta un autoscroll lento su un elemento scrollabile.
- * - Parte dopo `delay` ms.
- * - Scorre a `speed` px/s.
- * - Al primo click/touch dentro, si ferma e mostra la scrollbar.
- * - Al click/touch successivo, riparte e nasconde la scrollbar.
- */
-function setupAutoScroll(el, speed = 20, delay = 3000) {
-  let raf, lastTime, active = false;
-
-  function step(ts) {
-    if (!active) return;
-    if (!lastTime) lastTime = ts;
-    const delta = ts - lastTime;
-    lastTime = ts;
-    el.scrollTop += (delta * speed) / 1000;
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-      stop();
-      return;
-    }
-    raf = requestAnimationFrame(step);
-  }
-
-  function start() {
-    if (active) return;
-    active = true;
-    lastTime = null;
-    el.classList.add('auto-scroll-hide');
-    el.classList.remove('auto-scroll-show');
-    raf = requestAnimationFrame(step);
-  }
-
-  function stop() {
-    if (!active) return;
-    active = false;
-    cancelAnimationFrame(raf);
-    el.classList.remove('auto-scroll-hide');
-    el.classList.add('auto-scroll-show');
-  }
-
-  // toggle al click/touch dentro l'elemento
-  el.addEventListener('click', () => active ? stop() : start());
-  el.addEventListener('touchstart', () => active ? stop() : start());
-
-  // parte in automatico dopo delay
-  setTimeout(start, delay);
-}
-
-
-
 let onMain = true;
 let modal = document.getElementById('modal');
 let modalContent = document.getElementById('modal-content');
@@ -827,32 +807,40 @@ let slideshowInterval = null;
 
 function apri(index) {
   if (isTransitioning) return;
+
+
   isTransitioning = true;
 
-  function showModal() {
-    modalContent.innerHTML = contenuti[index];
-    modal.classList.add('show');
-    currentIndex = index;
-    isTransitioning = false;
-
-    // qui: avvio l’autoscroll sul contenuto della modale
-    setupAutoScroll(modalContent, 20, 3000);
-  }
-
   if (currentIndex === index) {
-    // chiudi…
-  } else if (modal.classList.contains('show')) {
-    // cambio contenuto…
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
     setTimeout(() => {
-      showModal();
       modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      currentIndex = null;
+      isTransitioning = false;
     }, 600);
   } else {
-    // prima apertura
-    showModal();
+    if (modal.classList.contains('show')) {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modalContent.innerHTML = contenuti[index];
+        modal.classList.remove('fade-out');
+        modal.classList.add('show');
+        currentIndex = index;
+        isTransitioning = false;
+          initScrollOn(modal);
+      }, 600);
+    } else {
+      modalContent.innerHTML = contenuti[index];
+      modal.classList.add('show');
+      currentIndex = index;
+      isTransitioning = false;
+        initScrollOn(modal);
+    }
   }
 }
-
 
 
 function toggleSubmenu() {
@@ -1367,8 +1355,6 @@ document.querySelectorAll('.menu-item').forEach(el => {
     el.classList.remove('pressed');
   });
 });
-
-
 
 
 
