@@ -1184,69 +1184,54 @@ modalContent.addEventListener('click', (e) => {
   // in tutti gli altri casi (testo, liste, fuori…) non succede nulla
 });
 
+// === 1. Caricamento dinamico veloce di immagini/video ===
 async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
-  const estensioni = ['.jpg', '.png', '.webp', '.mp4']; // mp4 incluso per futura estensione
-  const immagini = [];
+  const estensioni = ['.jpg', '.png', '.webp', '.mp4'];
+  const tentativi = [];
 
   for (let i = 1; i <= max; i++) {
-    let trovata = false;
-
     for (let ext of estensioni) {
       const url = `${basePath}img${i}${ext}`;
-      try {
-        await new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            immagini.push(url);
-            trovata = true;
-            resolve();
-          };
-          img.onerror = () => resolve(); // ignora se fallisce
-          img.src = url;
-        });
-
-        if (trovata) break; // se trovata un'estensione valida, passa alla successiva
-      } catch (_) {
-        continue;
-      }
+      tentativi.push(new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(url);    // se carica, restituisci l'URL
+        img.onerror = () => resolve(null);  // se fallisce, ignora
+        img.src = url;
+      }));
     }
   }
 
-  return immagini;
+  const risultati = await Promise.all(tentativi);
+  return risultati.filter(Boolean); // elimina i null (file non trovati)
 }
 
-
-   async function attivaSlideshow() {
+// === 2. Avvio dello slideshow ===
+async function attivaSlideshow() {
   if (slideshowAttivo) return;
 
-  // nasconde completamente il pannello menu
   const sidebar = document.getElementById('sidebar');
   sidebar.style.display = 'none';
 
-  // giusto per sicurezza, togli anche eventuale sottomenu
   const submenu = document.getElementById('submenu-servizi');
   submenu.style.display = 'none';
   document.body.style.overflow = 'hidden';
 
   slideshowAttivo = true;
 
-  // MOSTRA IL LOGO WATERMARK
   const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
-  watermark.style.opacity = '1';      // parte opaco
+  watermark.style.opacity = '1';
 
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
-    watermark.style.opacity = '0.05';
-  }, 5);  // 50ms dopo, per far scattare la transition
-
+      watermark.style.opacity = '0.05';
+    }, 5);
   }
 
   const immagini = await caricaImmaginiValidi();
-if (immagini.length === 0) return; // se non trovi nulla, esci
-
+  if (immagini.length === 0) return;
 
   const logo = document.getElementById('logo-btn');
   let idx = Math.floor(Math.random() * immagini.length);
@@ -1268,7 +1253,7 @@ if (immagini.length === 0) return; // se non trovi nulla, esci
   };
 
   changeImage();
-  slideshowInterval = setInterval(changeImage, 5000);
+  slideshowInterval = setInterval(changeImage, 5000); // cambia ogni 5 secondi
 }
 
 
