@@ -1184,9 +1184,39 @@ modalContent.addEventListener('click', (e) => {
   // in tutti gli altri casi (testo, liste, fuori…) non succede nulla
 });
 
+async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
+  const estensioni = ['.jpg', '.png', '.webp', '.mp4']; // mp4 incluso per futura estensione
+  const immagini = [];
+
+  for (let i = 1; i <= max; i++) {
+    let trovata = false;
+
+    for (let ext of estensioni) {
+      const url = `${basePath}img${i}${ext}`;
+      try {
+        await new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            immagini.push(url);
+            trovata = true;
+            resolve();
+          };
+          img.onerror = () => resolve(); // ignora se fallisce
+          img.src = url;
+        });
+
+        if (trovata) break; // se trovata un'estensione valida, passa alla successiva
+      } catch (_) {
+        continue;
+      }
+    }
+  }
+
+  return immagini;
+}
 
 
-    function attivaSlideshow() {
+   async function attivaSlideshow() {
   if (slideshowAttivo) return;
 
   // nasconde completamente il pannello menu
@@ -1214,18 +1244,9 @@ modalContent.addEventListener('click', (e) => {
 
   }
 
-  const immagini = [
-    'image_background/img1.jpg',
-    'image_background/img2.jpg',
-    'image_background/img3.jpg',
-    'image_background/img4.jpg',
-    'image_background/img5.jpg',
-    'image_background/img6.jpg',
-    'image_background/img7.png',
-    'image_background/img8.png',
-    'image_background/img9.png',
-    'image_background/img10.png'
-  ];
+  const immagini = await caricaImmaginiValidi();
+if (immagini.length === 0) return; // se non trovi nulla, esci
+
 
   const logo = document.getElementById('logo-btn');
   let idx = Math.floor(Math.random() * immagini.length);
