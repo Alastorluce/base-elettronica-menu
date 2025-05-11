@@ -1211,11 +1211,11 @@ async function attivaSlideshow() {
 
   const logo = document.getElementById('logo-btn');
 
-  // Nascondi il logo durante il caricamento delle nuove foto,
-  // senza toccare pulse o trasformazioni:
+  // 1) Nascondi subito il logo (tutta visibilità e opacità)
   logo.style.visibility = 'hidden';
+  logo.style.opacity    = '0';
 
-  // Avvio showroom (tutte le tue logiche rimangono uguali)
+  // 2) Avvia showroom (resto inalterato)
   slideshowAttivo = true;
   document.getElementById('sidebar').style.display        = 'none';
   document.getElementById('submenu-servizi').style.display = 'none';
@@ -1225,11 +1225,11 @@ async function attivaSlideshow() {
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
   if (modal.classList.contains('show')) {
-    modal.classList.replace('show', 'fade-out');
+    modal.classList.replace('show','fade-out');
     setTimeout(() => watermark.style.opacity = '0.05', 5);
   }
 
-  // Carica le immagini
+  // 3) Carica immagini
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
 
@@ -1238,28 +1238,33 @@ async function attivaSlideshow() {
     const img = new Image();
     img.src = immagini[idx];
     img.onload = () => {
-      // sfuma via opacità
-      logo.style.opacity = '0';
-      // nascondi del tutto per evitare flicker
-      logo.style.visibility = 'hidden';
+      // 4a) Preparati a cambiare immagine
+      logo.style.visibility = 'hidden';  // garantisci nascondimento
+      logo.style.opacity    = '0';
 
       setTimeout(() => {
-        // cambio src
+        // 4b) Cambia src e riavvia il CSS fade‐in
         logo.src = img.src;
-        logo.classList.remove('loading', 'loaded-img');
-        void logo.offsetWidth;            // forza reflow
-        logo.classList.add('loaded-img'); // la tua @keyframes fadeImage farà il fade-in
-        // riporta visibile e opaco
-        logo.style.visibility = 'visible';
-        logo.style.opacity    = '1';
+        logo.classList.remove('loading','loaded-img');
+        void logo.offsetWidth;
+        logo.classList.add('loaded-img');
+
+        // 4c) Quando il fade‐in finisce, rendi visibile
+        logo.addEventListener('animationend', function handler() {
+          logo.style.visibility = 'visible';
+          logo.style.opacity    = '1';
+          logo.removeEventListener('animationend', handler);
+        }, { once: true });
       }, 50);
     };
     idx = (idx + 1) % immagini.length;
   };
 
+  // 5) Parti subito e poi a intervalli
   changeImage();
   slideshowInterval = setInterval(changeImage, 5000);
 }
+
 
 
 
