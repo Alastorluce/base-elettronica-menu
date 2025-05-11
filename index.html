@@ -915,47 +915,42 @@ function toggleSubmenu() {
 
 function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
-  isTransitioning = true;
 
-  const main        = document.getElementById('main');
-  const sidebar     = document.getElementById('sidebar');
-  const submenu     = document.getElementById('submenu-servizi');
-  const watermark   = document.getElementById('watermark-logo');
-  const smallLogo   = document.getElementById('sidebar-logo');
+  const main      = document.getElementById('main');
+  const sidebar   = document.getElementById('sidebar');
+  const submenu   = document.getElementById('submenu-servizi');
+  const watermark = document.getElementById('watermark-logo');
+  const smallLogo = document.getElementById('sidebar-logo');
   const centralLogo = document.getElementById('logo-btn');
-  const modal       = document.getElementById('modal');
+  const modal     = document.getElementById('modal');
 
-  // Se non c’è nulla da fare, esci
+  // SE SONO GIÀ SUL MAIN (submenu chiuso, nessuna modale e nessuno slideshow), esci
   if (
     submenu.style.display === 'none' &&
     !modal.classList.contains('show') &&
     !slideshowAttivo
   ) {
-    isTransitioning = false;
     return;
   }
 
-  // 0) fade‐out del logo piccolo e del main
+  isTransitioning = true;
+
+  // 0) fade‐out del logo piccolo
   smallLogo.style.opacity = '0';
-  main.style.opacity     = '0';
+  // 1) fade‐out del main
+  main.style.opacity = '0';
 
   setTimeout(() => {
-    // A) Ferma lo slideshow se attivo
+    // A) ferma slideshow
     if (slideshowInterval) {
       clearInterval(slideshowInterval);
       slideshowInterval = null;
     }
     slideshowAttivo = false;
-
-    // Nascondi watermark e ripristina lo scroll
     watermark.style.display = 'none';
     document.body.style.overflow = '';
 
-    // → Riporta subito in vista il logo centrale
-    centralLogo.style.visibility = 'visible';
-    centralLogo.style.opacity    = '1';
-
-    // B) Chiudi eventuale modale aperta
+    // B) chiudi modale se aperta
     if (modal.classList.contains('show')) {
       modal.classList.remove('show');
       modal.classList.add('fade-out');
@@ -966,20 +961,20 @@ function ripristinaMenuPrincipale() {
       }, 600);
     }
 
-    // C) Ripristina sidebar e menu principale
+    // C) ripristina sidebar e menu
     submenu.style.display = 'none';
     document.querySelectorAll('.menu-list > .menu-item')
             .forEach(el => el.style.display = 'flex');
     sidebar.style.display = '';
 
-    // D) Prepara il logo centrale per il preload/fade-in originale
+    // D) reset logo centrale
     centralLogo.classList.remove('loaded-img','loading','pulse');
     centralLogo.style.transition = 'none';
     centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
     centralLogo.style.opacity    = '0';
     centralLogo.style.visibility = 'hidden';
 
-    // Preload e fade-in del logo centrale come prima
+    // preload e fade-in logo centrale
     const preload = new Image();
     preload.src = 'logo.png';
     preload.onload = () => {
@@ -1003,7 +998,6 @@ function ripristinaMenuPrincipale() {
 
   }, 500);
 }
-
 
 
 
@@ -1214,10 +1208,6 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
 // === 2. Avvio dello slideshow ===
 async function attivaSlideshow() {
   if (slideshowAttivo) return;
-  // Nascondi il logo pulsante senza rimuoverlo dal layout
-logo.style.opacity = '0';
-
-
 
   const sidebar = document.getElementById('sidebar');
   sidebar.style.display = 'none';
