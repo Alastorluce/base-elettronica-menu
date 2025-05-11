@@ -990,15 +990,19 @@ function ripristinaMenuPrincipale() {
     document.body.style.overflow = '';
 
     // B) chiudi modale se aperta
-    if (modal.classList.contains('show')) {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
-      setTimeout(() => {
-        modal.classList.remove('fade-out');
-        modalContent.innerHTML = '';
-        showModalWithScroll();
-      }, 600);
-    }
+    // B) chiudi modale se aperta
+if (modal.classList.contains('show')) {
+  modal.classList.remove('show');
+  modal.classList.add('fade-out');
+  setTimeout(() => {
+    modal.classList.remove('fade-out');
+    modalContent.innerHTML = '';
+    currentIndex = null;
+    // Non facciamo più showModalWithScroll() qui!
+    isTransitioning = false;
+  }, 600);
+}
+
 
     // C) ripristina sidebar e menu
     submenu.style.display = 'none';
