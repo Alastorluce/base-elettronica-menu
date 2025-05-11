@@ -1193,92 +1193,96 @@ modalContent.addEventListener('click', (e) => {
   });
 
   // ===== DOMCONTENTLOADED: init generali + SOLO MOBILE welcome & menu =====
-  window.addEventListener('DOMContentLoaded', () => {
-    // 1) Avvia animazioni sidebar/menu
-    document.getElementById('sidebar').classList.add('animated');
-    document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+window.addEventListener('DOMContentLoaded', () => {
+  // 1) Avvia animazioni sidebar/menu
+  document.getElementById('sidebar').classList.add('animated');
+  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
 
-    // 2) SOLO MOBILE: welcome, zoom-in logo, gestione modal e fade-in menu
-    if (window.matchMedia('(max-width: 768px)').matches) {
-      const sidebar      = document.getElementById('sidebar');
-      const modal        = document.getElementById('modal');
-      const modalContent = document.getElementById('modal-content');
-      const logoBtn      = document.getElementById('logo-btn');
+  // 2) SOLO MOBILE: welcome, zoom-in logo, gestione modal e fade-in menu
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    const sidebar      = document.getElementById('sidebar');
+    const modal        = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+    const logoBtn      = document.getElementById('logo-btn');
 
-      // 2.0) nascondi subito la sidebar
-      sidebar.style.display = 'none';
+    // 2.0) nascondi subito la sidebar
+    sidebar.style.display = 'none';
 
-      // 2.1) Zoom-in iniziale del logo (poi pulse)
-      logoBtn.classList.add('zoom-in');
-      logoBtn.addEventListener('animationend', function handler(e) {
-        if (e.animationName === 'zoomInLogo') {
-          logoBtn.classList.remove('zoom-in');
-          logoBtn.classList.add('pulse');
-          logoBtn.removeEventListener('animationend', handler);
-        }
-      });
+    // 2.1) Zoom-in iniziale del logo (poi pulse)
+    logoBtn.classList.add('zoom-in');
+    logoBtn.addEventListener('animationend', function handler(e) {
+      if (e.animationName === 'zoomInLogo') {
+        logoBtn.classList.remove('zoom-in');
+        logoBtn.classList.add('pulse');
+        logoBtn.removeEventListener('animationend', handler);
+      }
+    });
 
-      // 2.2) Dopo 1 secondo, mostra il messaggio di benvenuto
-      setTimeout(() => {
-        modalContent.innerHTML = contenutoHome;
-        modal.classList.add('show');
+    // 2.2) Dopo 1 secondo, mostra il messaggio di benvenuto
+    setTimeout(() => {
+      modalContent.innerHTML = contenutoHome;
+      modal.classList.add('show');
 
-        // 2.2a) Inietta il pulsante “×” di chiusura
-        if (!modal.querySelector('.modal-close')) {
-          const closeBtn = document.createElement('button');
-          closeBtn.className = 'modal-close';
-          closeBtn.setAttribute('aria-label', 'Chiudi');
-          closeBtn.textContent = '×';
-          modal.insertBefore(closeBtn, modalContent);
-          closeBtn.addEventListener('click', () => {
-            modal.classList.remove('show');
-            modal.classList.add('fade-out');
-            setTimeout(() => {
-              modal.classList.remove('fade-out');
-              modalContent.innerHTML = '';
-            }, 600);
-          });
-        }
-
-        // 2.3) Dopo 5 secondi, nascondi il welcome con fade-out
-        setTimeout(() => {
+      // 2.2a) Inietta il pulsante “×” di chiusura
+      if (!modal.querySelector('.modal-close')) {
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'modal-close';
+        closeBtn.setAttribute('aria-label', 'Chiudi');
+        closeBtn.textContent = '×';
+        modal.insertBefore(closeBtn, modalContent);
+        closeBtn.addEventListener('click', () => {
           modal.classList.remove('show');
           modal.classList.add('fade-out');
-
-          // 2.4) Al termine del fade (0.6s), pulisci e fai riapparire la sidebar con fade-in
           setTimeout(() => {
             modal.classList.remove('fade-out');
             modalContent.innerHTML = '';
-            sidebar.style.display    = '';
-            sidebar.style.opacity    = '0';
-            sidebar.style.transition = 'opacity 0.6s ease-in-out';
-            requestAnimationFrame(() => {
-              sidebar.style.opacity = '1';
-
-              // 2.4a) re-animazione dei menu-item
-              const items = document.querySelectorAll('#sidebar .menu-item:not(.sotto-servizio)');
-              items.forEach((el, i) => {
-                el.classList.remove('reanimate');
-                setTimeout(() => {
-                  el.classList.add('reanimate');
-                }, i * 150);
-              });
-            });
           }, 600);
-        }, 5000);
-      }, 1000);
+        });
+      }
 
-      // 2.5) Touch “Clicca qui” → slideshow
-      document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-        el.addEventListener('touchstart', e => {
-          e.preventDefault();
-          attivaSlideshow();
-        }, { passive: false });
-      });
-      // 2.6) (opzionale) attiva showroom subito
-      // attivaSlideshow();
-    }
-  });
+      // 2.3) Dopo 5 secondi, nascondi il welcome con fade-out
+      setTimeout(() => {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+
+        // 2.4) Al termine del fade (0.6s), pulisci e fai riapparire la sidebar con fade-in
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+
+          // mostra la sidebar con fade-in
+          sidebar.style.display    = '';
+          sidebar.style.opacity    = '0';
+          sidebar.style.transition = 'opacity 0.6s ease-in-out';
+          requestAnimationFrame(() => {
+            sidebar.style.opacity = '1';
+          });
+
+          // 2.4a) re-animazione dei menu-item, sfalsata di 150ms l’una dall’altra
+          const items = document.querySelectorAll('#sidebar .menu-item:not(.sotto-servizio)');
+          items.forEach((el, i) => {
+            el.classList.remove('reanimate');
+            setTimeout(() => {
+              el.classList.add('reanimate');
+            }, i * 150);
+          });
+        }, 600); // fine fade-out del welcome
+
+      }, 5000); // fine timeout di 5s per il welcome
+    }, 1000); // fine timeout di 1s per mostrare il welcome
+
+    // 2.5) Touch “Clicca qui” → slideshow
+    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
+      el.addEventListener('touchstart', e => {
+        e.preventDefault();
+        attivaSlideshow();
+      }, { passive: false });
+    });
+    // 2.6) (opzionale) attiva showroom subito
+    // attivaSlideshow();
+  }
+});
+
 
   // 3) CLICK LOGO PICCOLO: chiudi modal/slideshow e ripristina il menu
   (function() {
