@@ -686,11 +686,23 @@ function isScrollable(el) {
 }
 
 // Attiva un autoscroll lento su `el`
-function setupAutoScroll(el, speed = 11, delay = 9000) {
-  let id, last, active = false;
-  let remainder = 0;  // accumulator per i decimali
+// In cima al tuo <script>, prima di ogni altra cosa:
 
-  // nascondi subito la scrollbar
+function clearAutoScroll() {
+  _scrollTimers.forEach(id => clearTimeout(id));
+  _scrollTimers = [];
+  _scrollFrames.forEach(id => cancelAnimationFrame(id));
+  _scrollFrames = [];
+}
+
+// ——————————————
+// Poi, subito dopo, la funzione setupAutoScroll riscritta così:
+function setupAutoScroll(el, speed = 12, delay = 9000) {
+  let last = null;
+  let active = false;
+  let remainder = 0;
+
+  // Nascondi subito la scrollbar
   el.classList.add('auto-scroll-hide');
   el.classList.remove('auto-scroll-show');
 
@@ -700,16 +712,17 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     const d = ts - last;
     last = ts;
 
-    // calcolo quanti pixel totali (inclusi decimali)
+    // calcolo pixel (decimali inclusi)
     const raw = (d * speed) / 1000 + remainder;
-    // muovo solo gli interi
     const move = Math.floor(raw);
-    // resto per il frame successivo
     remainder = raw - move;
 
     el.scrollTop += move;
     if (el.scrollTop + el.clientHeight >= el.scrollHeight) return stop();
-    id = requestAnimationFrame(step);
+
+    // traccio il RAF appena lanciato
+    const rafId = requestAnimationFrame(step);
+    _scrollFrames.push(rafId);
   }
 
   function start() {
@@ -718,23 +731,31 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     last = null;
     el.classList.add('auto-scroll-hide');
     el.classList.remove('auto-scroll-show');
-    id = requestAnimationFrame(step);
+
+    // primo RAF
+    const rafId = requestAnimationFrame(step);
+    _scrollFrames.push(rafId);
   }
 
   function stop() {
     if (!active) return;
     active = false;
-    cancelAnimationFrame(id);
+    // interrompo eventuale RAF in corso
+    _scrollFrames.forEach(id => cancelAnimationFrame(id));
+    _scrollFrames = [];
     el.classList.remove('auto-scroll-hide');
     el.classList.add('auto-scroll-show');
   }
 
-  el.addEventListener('click', start);
+  el.addEventListener('click', () => { if (!active) start(); });
   el.addEventListener('wheel', stop, { passive: true });
   el.addEventListener('touchmove', stop, { passive: true });
 
-  setTimeout(start, delay);
+  // lancio il timer e lo traccio
+  const toId = setTimeout(start, delay);
+  _scrollTimers.push(toId);
 }
+
 
 
 // Inizializzazione minimal: se scrollabile, setta l’autoscroll
@@ -865,6 +886,20 @@ let currentIndex = null;
 let isTransitioning = false;
 let slideshowAttivo = false;
 let slideshowInterval = null;
+// ————————————————————————
+// Autoscroll management
+let _scrollTimers = [];
+let _scrollFrames = [];
+
+function clearAutoScroll() {
+  // annulla tutti i timer di avvio
+  _scrollTimers.forEach(id => clearTimeout(id));
+  _scrollTimers = [];
+  // annulla tutti i requestAnimationFrame
+  _scrollFrames.forEach(id => cancelAnimationFrame(id));
+  _scrollFrames = [];
+}
+
 
 function apri(index) {
   if (isTransitioning) return;
