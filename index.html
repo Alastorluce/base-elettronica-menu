@@ -605,15 +605,26 @@ ul.custom-list li > strong {
 
 
 
-#logo-btn.fadein {
-      opacity: 1 !important;
-      transition: opacity 5s ease-in-out;
-    }
+#logo-btn {
+  opacity: 0;
+  visibility: hidden;
+  transition: none; /* nessuna animazione iniziale */
+}
 
-    #logo-btn {
-      opacity: 0;
-      transition: opacity 0s; /* niente animazione all'avvio */
-    }    
+/* Fade-in a richiesta */
+#logo-btn.fadein {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: opacity 5s ease-in-out;
+}
+
+/* Se vuoi forzare invisibilità immediata (senza transizione) */
+#logo-btn.invisibile {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: none !important;
+}
+
 
 </style>
 </head>
@@ -927,6 +938,8 @@ function toggleSubmenu() {
 
 
 function ripristinaMenuPrincipale() {
+  if (e) e.preventDefault(); // blocca comportamento indesiderato
+
   if (isTransitioning) return;
 
   const main      = document.getElementById('main');
