@@ -728,6 +728,17 @@ function initScrollOn(root) {
   if (isScrollable(root)) setupAutoScroll(root);
 }
 
+/**
+ * Mostra la modale con il contenuto già in `modalContent.innerHTML`
+ * e innesca l'autoscroll sul #modal.
+ */
+function showModalWithScroll() {
+  modal.classList.remove('fade-out');
+  modal.classList.add('show');
+  isTransitioning = false;
+  // inizializza l'autoscroll sempre
+  initScrollOn(modal);
+}
 
 
 
@@ -836,10 +847,9 @@ let slideshowInterval = null;
 
 function apri(index) {
   if (isTransitioning) return;
-
-
   isTransitioning = true;
 
+  // se clicchi la stessa voce, chiudi
   if (currentIndex === index) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -849,27 +859,24 @@ function apri(index) {
       currentIndex = null;
       isTransitioning = false;
     }, 600);
-  } else {
-    if (modal.classList.contains('show')) {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
-      setTimeout(() => {
-        modalContent.innerHTML = contenuti[index];
-        modal.classList.remove('fade-out');
-        modal.classList.add('show');
-        currentIndex = index;
-        isTransitioning = false;
-          initScrollOn(modal);
-      }, 600);
-    } else {
+    return;
+  }
+
+  currentIndex = index;
+  // cambio contenuto
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
       modalContent.innerHTML = contenuti[index];
-      modal.classList.add('show');
-      currentIndex = index;
-      isTransitioning = false;
-        initScrollOn(modal);
-    }
+      showModalWithScroll();
+    }, 600);
+  } else {
+    modalContent.innerHTML = contenuti[index];
+    showModalWithScroll();
   }
 }
+
 
 
 function toggleSubmenu() {
