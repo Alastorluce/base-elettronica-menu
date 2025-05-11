@@ -586,6 +586,20 @@ ul.custom-list li > strong {
   text-align: left;
 }
 
+.auto-scroll-hide {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE10+ */
+}
+.auto-scroll-hide::-webkit-scrollbar {
+  width: 0;                       /* Chrome, Safari, Opera */
+}
+
+.auto-scroll-show {
+  scrollbar-width: auto;
+}
+.auto-scroll-show::-webkit-scrollbar {
+  width: 12px;
+}
 
 
 </style>
