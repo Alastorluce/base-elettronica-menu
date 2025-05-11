@@ -1226,31 +1226,37 @@ modalContent.addEventListener('click', (e) => {
    
   // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
   const logoBtn = document.getElementById('logo-btn');
+  
+  // **Ingrandimento iniziale extra e poi ritorno a scala normale**
+  const logo = document.getElementById('logo-btn');
+// 1) imposta subito un grande zoom
+  logo.style.transform = 'translate(-50%,-50%) scale(4)';
+  logo.style.transition = 'transform 0.8s ease-out';
+// 2) dopo 800ms torna alla scala normale (2.3) e poi appare il pulsare
+setTimeout(() => {
+  logo.style.transform = 'translate(-50%,-50%) scale(2.3)';
+  // al termine del ritorno, aggiungi la classe di pulsing
+  setTimeout(() => logo.classList.add('pulse'), 800);
+}, 800);
+
   logoBtn.style.cursor = 'pointer';
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
-  // 3) Pianifica il pop-up di benvenuto
-  let welcomeTimeout = setTimeout(() => {
-    modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
-    let welcomeShown = true;
+  // 3) Pianifica il pop-up di benvenuto: dopo 2s entra, dura 4s, poi sparisce da solo
+let welcomeTimeout = setTimeout(() => {
+  // Mostra il contenuto di benvenuto
+  modalContent.innerHTML = contenutoHome;
+  modal.classList.add('show');
 
-    const hideWelcome = e => {
-  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
-  if (
-    e.target.closest('#sidebar') ||
-    e.target.closest('.menu-item') ||
-    e.target.closest('#modal') ||
-    e.target.closest('#logo-btn')
-  ) {
-    return;
-  }
-  modal.classList.remove('show');
-  document.removeEventListener('click', hideWelcome);
-};
-document.addEventListener('click', hideWelcome, { once: true });
+  // Dopo 4 secondi, nascondi automaticamente il popup
+  setTimeout(() => {
+    modal.classList.remove('show');
+  }, 4000);
 
-  }, 500);
+  // Non serve più il click-to-hide: rimuovi listener precedenti se esistono
+  // (se avevi aggiunto un hideWelcome, puoi eliminarlo qui, ma non è necessario)
+}, 2000);
+
 });
 
 
