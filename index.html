@@ -10,8 +10,15 @@
 
      /* quando la showroom è attiva, nascondi il logo pulsante */
       .showroom-active #logo-btn {
-      display: none !important;
-    }
+     /* Nascondi il logo idle in showroom */
+.showroom-active #logo-btn:not(.loaded-img) {
+  display: none !important;
+}
+/* Assicurati che lo slideshow (con .loaded-img) rimanga visibile */
+.showroom-active #logo-btn.loaded-img {
+  display: block !important;
+}
+
 
      /* disabilita selezione di testo e immagini */
     *, *::before, *::after {
