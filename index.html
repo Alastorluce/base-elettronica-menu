@@ -1203,27 +1203,37 @@ modalContent.addEventListener('click', (e) => {
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
   // 3) Pianifica il pop-up di benvenuto
-  let welcomeTimeout = setTimeout(() => {
-    modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
-    let welcomeShown = true;
+  // --- inizio nuovo blocco welcome ---
+let welcomeTimeout = setTimeout(() => {
+  // 1) mostro il popup
+  modalContent.innerHTML = contenutoHome;
+  modal.classList.add('show');
 
-    const hideWelcome = e => {
-  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
-  if (
-    e.target.closest('#sidebar') ||
-    e.target.closest('.menu-item') ||
-    e.target.closest('#modal') ||
-    e.target.closest('#logo-btn')
-  ) {
-    return;
+  // 2) auto‐hide dopo 6 secondi
+  const autoHide = setTimeout(() => {
+    modal.classList.remove('show');
+  }, 6000);
+
+  // 3) su desktop (web) nascondi al primo click fuori
+  if (!window.matchMedia('(max-width: 768px)').matches) {
+    const hideOnClick = e => {
+      if (
+        e.target.closest('#sidebar') ||
+        e.target.closest('.menu-item') ||
+        e.target.closest('#modal') ||
+        e.target.closest('#logo-btn')
+      ) {
+        return;
+      }
+      modal.classList.remove('show');
+      clearTimeout(autoHide);
+      document.removeEventListener('click', hideOnClick);
+    };
+    document.addEventListener('click', hideOnClick, { once: true });
   }
-  modal.classList.remove('show');
-  document.removeEventListener('click', hideWelcome);
-};
-document.addEventListener('click', hideWelcome, { once: true });
+}, 500);
+// --- fine nuovo blocco welcome ---
 
-  }, 500);
 });
 
 
