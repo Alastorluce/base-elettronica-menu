@@ -766,6 +766,57 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   </div>
 `;
 
+
+/**
+ * Imposta un autoscroll lento su un elemento scrollabile.
+ * - Parte dopo `delay` ms.
+ * - Scorre a `speed` px/s.
+ * - Al primo click/touch dentro, si ferma e mostra la scrollbar.
+ * - Al click/touch successivo, riparte e nasconde la scrollbar.
+ */
+function setupAutoScroll(el, speed = 20, delay = 3000) {
+  let raf, lastTime, active = false;
+
+  function step(ts) {
+    if (!active) return;
+    if (!lastTime) lastTime = ts;
+    const delta = ts - lastTime;
+    lastTime = ts;
+    el.scrollTop += (delta * speed) / 1000;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+      stop();
+      return;
+    }
+    raf = requestAnimationFrame(step);
+  }
+
+  function start() {
+    if (active) return;
+    active = true;
+    lastTime = null;
+    el.classList.add('auto-scroll-hide');
+    el.classList.remove('auto-scroll-show');
+    raf = requestAnimationFrame(step);
+  }
+
+  function stop() {
+    if (!active) return;
+    active = false;
+    cancelAnimationFrame(raf);
+    el.classList.remove('auto-scroll-hide');
+    el.classList.add('auto-scroll-show');
+  }
+
+  // toggle al click/touch dentro l'elemento
+  el.addEventListener('click', () => active ? stop() : start());
+  el.addEventListener('touchstart', () => active ? stop() : start());
+
+  // parte in automatico dopo delay
+  setTimeout(start, delay);
+}
+
+
+
 let onMain = true;
 let modal = document.getElementById('modal');
 let modalContent = document.getElementById('modal-content');
@@ -776,38 +827,32 @@ let slideshowInterval = null;
 
 function apri(index) {
   if (isTransitioning) return;
-
-
   isTransitioning = true;
 
+  function showModal() {
+    modalContent.innerHTML = contenuti[index];
+    modal.classList.add('show');
+    currentIndex = index;
+    isTransitioning = false;
+
+    // qui: avvio l’autoscroll sul contenuto della modale
+    setupAutoScroll(modalContent, 20, 3000);
+  }
+
   if (currentIndex === index) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
+    // chiudi…
+  } else if (modal.classList.contains('show')) {
+    // cambio contenuto…
     setTimeout(() => {
+      showModal();
       modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-      isTransitioning = false;
     }, 600);
   } else {
-    if (modal.classList.contains('show')) {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
-      setTimeout(() => {
-        modalContent.innerHTML = contenuti[index];
-        modal.classList.remove('fade-out');
-        modal.classList.add('show');
-        currentIndex = index;
-        isTransitioning = false;
-      }, 600);
-    } else {
-      modalContent.innerHTML = contenuti[index];
-      modal.classList.add('show');
-      currentIndex = index;
-      isTransitioning = false;
-    }
+    // prima apertura
+    showModal();
   }
 }
+
 
 
 function toggleSubmenu() {
@@ -1324,94 +1369,6 @@ document.querySelectorAll('.menu-item').forEach(el => {
 });
 
 
-// AUTO SCROLL  //
-
-
-;(function(){
-  const SPEED = 20;      // px al secondo
-  const DELAY = 3000;    // ms prima di partire
-
-  // true se overflowY è auto|scroll e c'è contenuto da scorrere
-  function isScrollable(el) {
-    const cs = getComputedStyle(el);
-    return (cs.overflowY==='auto'||cs.overflowY==='scroll')
-           && el.scrollHeight > el.clientHeight;
-  }
-
-  // imposta autoscroll + toggle click/touch per start/stop
-  function setupAutoScroll(el) {
-    let raf, lastTime, active = false;
-
-    function step(ts) {
-      if (!active) return;
-      if (!lastTime) lastTime = ts;
-      const delta = ts - lastTime;
-      lastTime = ts;
-      el.scrollTop += delta * SPEED / 1000;
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-        stop();
-        return;
-      }
-      raf = requestAnimationFrame(step);
-    }
-
-    function start() {
-      active = true;
-      lastTime = null;
-      el.classList.add('auto-scroll-hide');
-      el.classList.remove('auto-scroll-show');
-      raf = requestAnimationFrame(step);
-    }
-
-    function stop() {
-      active = false;
-      if (raf) cancelAnimationFrame(raf);
-      el.classList.remove('auto-scroll-hide');
-      el.classList.add('auto-scroll-show');
-    }
-
-    // click/touch dentro: toggle start/stop
-    el.addEventListener('click', () => active ? stop() : start());
-    el.addEventListener('touchstart', () => active ? stop() : start());
-
-    // parte in automatico dopo DELAY
-    setTimeout(start, DELAY);
-  }
-
-  // map per non doppiare setup sugli stessi elementi
-  const initialized = new WeakSet();
-
-  // cerca e inizializza TUTTI i scrollable presenti in root
-  function scanAndInit(root) {
-    root.querySelectorAll('*').forEach(el => {
-      if (!initialized.has(el) && isScrollable(el)) {
-        initialized.add(el);
-        setupAutoScroll(el);
-      }
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    // iniziale
-    scanAndInit(document.body);
-
-    // ogni volta che viene aggiunto un nodo, ridetecta
-    new MutationObserver(muts => {
-      muts.forEach(m => {
-        m.addedNodes.forEach(node => {
-          if (node.nodeType === 1) {
-            // se il nodo è scrollable o contiene scrollable
-            if (isScrollable(node)) {
-              scanAndInit(node.parentNode);
-            } else {
-              scanAndInit(node);
-            }
-          }
-        });
-      });
-    }).observe(document.body, { childList: true, subtree: true });
-  });
-})();
 
 
 
