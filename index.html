@@ -6,20 +6,7 @@
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
-
-
-     /* quando la showroom è attiva, nascondi il logo pulsante */
-      .showroom-active #logo-btn {
-     /* Nascondi il logo idle in showroom */
-.showroom-active #logo-btn:not(.loaded-img) {
-  display: none !important;
-}
-/* Assicurati che lo slideshow (con .loaded-img) rimanga visibile */
-.showroom-active #logo-btn.loaded-img {
-  display: block !important;
-}
-
-
+     
      /* disabilita selezione di testo e immagini */
     *, *::before, *::after {
       user-select: none;
@@ -960,8 +947,6 @@ function ripristinaMenuPrincipale() {
       slideshowInterval = null;
     }
     slideshowAttivo = false;
-    document.body.classList.remove('showroom-active');
-
     watermark.style.display = 'none';
     document.body.style.overflow = '';
 
@@ -1232,7 +1217,6 @@ async function attivaSlideshow() {
   document.body.style.overflow = 'hidden';
 
   slideshowAttivo = true;
-  document.body.classList.add('showroom-active');
   
   const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
