@@ -680,7 +680,7 @@ function isScrollable(el) {
 }
 
 // Attiva un autoscroll lento su `el`
-function setupAutoScroll(el, speed = 20, delay = 3000) {
+function setupAutoScroll(el, speed = 20, delay = 8000) {
   let id, last, active = false;
 
   // NASCONDI subito la scrollbar, anche prima di partire
@@ -715,9 +715,15 @@ function setupAutoScroll(el, speed = 20, delay = 3000) {
     el.classList.add('auto-scroll-show');
   }
 
-  // toggle start/stop al click/touch
-  el.addEventListener('click', () => active ? stop() : start());
-  el.addEventListener('touchstart', () => active ? stop() : start());
+ // click/tap singolo per attivare lo scroll
+el.addEventListener('click', () => {
+  if (!active) start();
+});
+
+// rileva scroll manuale (touch o mousewheel), e blocca l’autoscroll
+el.addEventListener('wheel', stop, { passive: true });
+el.addEventListener('touchmove', stop, { passive: true });
+
 
   // parte in automatico dopo il delay
   setTimeout(start, delay);
