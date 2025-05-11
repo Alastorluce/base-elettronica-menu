@@ -1221,60 +1221,63 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
 
 // === 2. Avvio dello slideshow ===
 // fuori dalla funzione, per non ridichiarle ogni volta
+// METTI QUESTA DICHIARAZIONE ALL’INIZIO DEL TUO SCRIPT (una sola volta)
 const logo = document.getElementById('logo-btn');
-let idx;              // indice corrente
+let idx = 0;
 
-// === 2. Avvio dello slideshow ===
+// SOSTITUISCI INTERAMENTE LA TUA VECCHIA funzione attivaSlideshow() CON QUESTA:
 async function attivaSlideshow() {
   if (slideshowAttivo) return;
 
-  // ——— Nascondi subito il logo pulsante ———
-  logo.style.animation = 'none';
-  logo.style.opacity   = '0';
+  // ——— 1) Prepara il #logo-btn per lo slideshow ———
+  logo.style.animation  = 'none';               // stop pulse
+  logo.style.transition = 'none';               // nessuna transizione residua
+  logo.style.transform  = 'translate(-50%,-50%) scale(1)'; // scala 1 fissa
+  logo.style.opacity    = '0';                  // invisibile subito
 
-  // ——— Il tuo codice originale di avvio ———
+  // ——— 2) Le tue logiche di avvio showroom ———
   slideshowAttivo = true;
-  document.getElementById('sidebar').style.display       = 'none';
+  document.getElementById('sidebar').style.display        = 'none';
   document.getElementById('submenu-servizi').style.display = 'none';
-  document.body.style.overflow                            = 'hidden';
+  document.body.style.overflow                              = 'hidden';
 
   const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
-
   if (modal.classList.contains('show')) {
-    modal.classList.replace('show','fade-out');
+    modal.classList.replace('show', 'fade-out');
     setTimeout(() => watermark.style.opacity = '0.05', 5);
   }
 
-  // ——— Carica le immagini valide ———
+  // ——— 3) Carica le immagini della showroom ———
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
 
-  // inizializza l'indice e la funzione che cambia immagine
+  // ——— 4) Imposta l’indice iniziale e la funzione di cambio ———
   idx = Math.floor(Math.random() * immagini.length);
   const changeImage = () => {
     const img = new Image();
     img.src = immagini[idx];
     img.onload = () => {
-      // fade-out
+      // fade‐out attuale
       logo.style.opacity = '0';
       setTimeout(() => {
+        // cambia src
         logo.src = img.src;
-        // reset classi di loading
-        logo.classList.remove('loading','loaded-img');
-        void logo.offsetWidth;              // forza reflow
-        logo.classList.add('loaded-img');   // fa partire il tuo fade-in CSS
-        logo.style.opacity = '1';           // torna visibile
+        logo.classList.remove('loading', 'loaded-img');
+        void logo.offsetWidth;            // forza reflow
+        logo.classList.add('loaded-img'); // applica il tuo fade-in CSS
+        logo.style.opacity = '1';         // torna visibile
       }, 50);
     };
     idx = (idx + 1) % immagini.length;
   };
 
-  // parte subito e poi a intervalli
+  // ——— 5) Avvia subito e poi a intervalli ———
   changeImage();
   slideshowInterval = setInterval(changeImage, 5000);
 }
+
 
 
 
