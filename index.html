@@ -648,7 +648,7 @@ ul.custom-list li > strong {
   
     <script>
       const contenuti = [
-        <!-- Chi siamo -->
+        `<!-- Chi siamo -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Chi siamo</h2>                    
   <h2 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h2>
@@ -664,9 +664,9 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 <p>Collaboriamo con enti pubblici, aziende private, studi di architettura, service per lo spettacolo e broadcaster televisivi, adattando ogni progetto alle esigenze specifiche del cliente con <strong>soluzioni su misura, scalabili e ad alta efficienza</strong>.</p>
 
 <p>Lavoriamo con attrezzature all’avanguardia e standard qualitativi elevati, ponendoci come partner di riferimento per eventi live, showroom, installazioni fisse, studi televisivi, ambienti immersivi e produzioni ad alto impatto tecnologico.</p>
-,
+`,
   
-        <!-- Portfolio -->
+        `<!-- Portfolio -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Portfolio</h2>
 </div>
@@ -689,9 +689,9 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   Clicca qui
 </span></em>&nbsp;&nbsp;per avviare una piccola anteprima nella showroom interattiva.</p>
 
-,
+`,
   
-        <!-- Contattaci -->
+        `<!-- Contattaci -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Contattaci</h2>
 </div>
@@ -722,12 +722,12 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 <p style="margin-top:1em;">
   Preferisci scriverci direttamente? Puoi contattarci via email all’indirizzo: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
 </p>
-
+`
       ];
   
   
 
-    const contenutoHome = 
+    const contenutoHome = `
   <div style="text-align: center; max-width: 700px; margin: 50px auto;">
     <h2 style="margin-bottom: 10px; color: white;">Benvenuti in</h2>
     <h1 style="color: #00aaff; font-size: 2.5em; margin-top: 0;">Base Elettronica Service</h1>
@@ -737,7 +737,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
       Scopri di più esplorando il nostro sito!
     </p>
   </div>
-;
+`;
 
 
     let modal = document.getElementById('modal');
@@ -877,7 +877,7 @@ function apriSubservizio(tipo) {
   let contenuto = '';
   switch (tipo) {
     case 'service':
-  contenuto = 
+  contenuto = `
 
   <div style="text-align:center;">
     <h2 class="radar-glow">Service Tecnico per Eventi e Spettacoli</h2>
@@ -899,11 +899,11 @@ function apriSubservizio(tipo) {
 
 <p>Tutti i tecnici coinvolti sono formati secondo i moduli PES-PAV-PEI, piattaforme aeree (PLE), antincendio rischio elevato e movimentazione carichi in sicurezza, con copertura assicurativa completa.</p>
 
-<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>;
+<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>`;
   break;
 
       case 'antincendio':
-  contenuto = 
+  contenuto = `
    
 
   <div style="text-align:center;">
@@ -920,11 +920,11 @@ function apriSubservizio(tipo) {
       <li><strong>Monitoraggio remoto</strong> e manutenzione predittiva su infrastrutture industriali, civili e per eventi temporanei.</li>
     </ul>
     <p>Ogni progetto viene sviluppato in sinergia con i nostri ingegneri e tecnici certificati, per garantire la massima copertura del rischio e la piena conformità alle normative nazionali ed europee.</p>
-  ;
+  `;
   break;
 
   case 'progettazione':
-  contenuto = 
+  contenuto = `
     
 
   <div style="text-align:center;">
@@ -941,11 +941,11 @@ function apriSubservizio(tipo) {
     </ul>
 
     <p>Ogni progetto è accompagnato da <strong style="color:#00a6ff;">documentazione tecnica dettagliata</strong>, planimetrie esecutive e consulenza dedicata nella fase di cantiere. Il nostro approccio modulare ci consente di soddisfare le esigenze sia di piccoli eventi privati sia di grandi produzioni professionali, garantendo risultati impeccabili e piena coerenza normativa.</p>
-  ;
+  `;
   break;
 
   case 'noleggio':
-  contenuto = 
+  contenuto = `
     
 
   <div style="text-align:center;">
@@ -970,11 +970,11 @@ function apriSubservizio(tipo) {
     <p>È possibile stipulare contratti di <strong>noleggio giornaliero, settimanale, mensile o a lungo termine</strong>, con servizio opzionale di consegna, installazione, supervisione tecnica e smontaggio.</p>
 
     <p>Ogni richiesta viene gestita con analisi tecnica preliminare, scheda materiali dettagliata e supporto nella scelta della configurazione più efficiente rispetto all’ambiente operativo e al tipo di evento.</p>
-  ;
+  `;
   break;
 
   case 'assistenza':
-  contenuto = 
+  contenuto = `
     
 
   <div style="text-align:center;">
@@ -1004,7 +1004,7 @@ function apriSubservizio(tipo) {
     </ul>
 
     <p>Il nostro team è abilitato a operare su installazioni fisse, strutture mobili e rental, con servizio di <strong>supporto tecnico pre e post-evento</strong>, documentazione CE e certificazione di conformità post-intervento.</p>
-  ;
+  `;
   break;
 
   }
@@ -1259,11 +1259,11 @@ document.addEventListener('click', hideWelcome, { once: true });
 document.addEventListener('submit', function(e) {
   if (e.target.matches('#contact-form')) {
     e.preventDefault();
-    modalContent.innerHTML = 
+    modalContent.innerHTML = `
       <div style="text-align:center; padding:1em;">
         <h2>Grazie di averci contattato!</h2>
         <p>Risponderemo entro 24 ore.</p>
-      </div>;
+      </div>`;
     modal.classList.remove('fade-out');
     modal.classList.add('show');
     setTimeout(() => {
