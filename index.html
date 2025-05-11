@@ -688,23 +688,25 @@ function isScrollable(el) {
 // Attiva un autoscroll lento su `el`
 function setupAutoScroll(el, speed = 11, delay = 9000) {
   let id, last, active = false;
-  let remainder = 0;  // <-- accumula i decimali
+  let remainder = 0;  // accumulator per i decimali
 
-  // NASCONDI subito la scrollbar, anche prima di partire
+  // nascondi subito la scrollbar
   el.classList.add('auto-scroll-hide');
   el.classList.remove('auto-scroll-show');
 
   function step(ts) {
     if (!active) return;
     if (!last) last = ts;
-    const d = ts - last; 
+    const d = ts - last;
     last = ts;
-    // calcolo pixel “reali” da muovere in questo frame
+
+    // calcolo quanti pixel totali (inclusi decimali)
     const raw = (d * speed) / 1000 + remainder;
-    // arrotondo per intero
+    // muovo solo gli interi
     const move = Math.floor(raw);
-    // tengo il resto per il prossimo frame
+    // resto per il frame successivo
     remainder = raw - move;
+
     el.scrollTop += move;
     if (el.scrollTop + el.clientHeight >= el.scrollHeight) return stop();
     id = requestAnimationFrame(step);
@@ -727,14 +729,13 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
-  el.addEventListener('click', () => {
-    if (!active) start();
-  });
+  el.addEventListener('click', start);
   el.addEventListener('wheel', stop, { passive: true });
   el.addEventListener('touchmove', stop, { passive: true });
 
   setTimeout(start, delay);
 }
+
 
 // Inizializzazione minimal: se scrollabile, setta l’autoscroll
 function initScrollOn(root) {
