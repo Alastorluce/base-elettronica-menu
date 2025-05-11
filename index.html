@@ -193,8 +193,6 @@
     #logo-btn.loaded-img {   
       animation: fadeImage 1s ease-in-out; 
     }
-    
-     
 
     #modal {
       background: rgba(0, 0, 0, 0.8);
@@ -604,28 +602,6 @@ ul.custom-list li > strong {
 }
 
 
-
-#logo-btn {
-  opacity: 0;
-  visibility: hidden;
-  transition: none; /* nessuna animazione iniziale */
-}
-
-/* Fade-in a richiesta */
-#logo-btn.fadein {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transition: opacity 5s ease-in-out;
-}
-
-/* Se vuoi forzare invisibilità immediata (senza transizione) */
-#logo-btn.invisibile {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  transition: none !important;
-}
-
-
 </style>
 </head>
 
@@ -938,8 +914,6 @@ function toggleSubmenu() {
 
 
 function ripristinaMenuPrincipale() {
-  if (e) e.preventDefault(); // blocca comportamento indesiderato
-
   if (isTransitioning) return;
 
   const main      = document.getElementById('main');
@@ -1260,33 +1234,26 @@ async function attivaSlideshow() {
   if (immagini.length === 0) return;
 
   const logo = document.getElementById('logo-btn');
-logo.classList.add('invisibile');
+  let idx = Math.floor(Math.random() * immagini.length);
 
-let idx = Math.floor(Math.random() * immagini.length);
-
-const changeImage = () => {
-  const img = new Image();
-  img.src = immagini[idx];
-  img.onload = () => {
-    logo.src = img.src;
-    logo.classList.remove('loading', 'loaded-img', 'fadein');
-    void logo.offsetWidth;
-    logo.classList.add('loaded-img');
-    
-    // Attiva visibilità con fade-in solo alla prima immagine
-    if (!logo.classList.contains('fadein')) {
-      logo.classList.remove('invisibile');
-      void logo.offsetWidth;
-      logo.classList.add('fadein');
-    }
+  const changeImage = () => {
+    const img = new Image();
+    img.src = immagini[idx];
+    img.onload = () => {
+      logo.style.opacity = '0';
+      setTimeout(() => {
+        logo.src = img.src;
+        logo.classList.remove('loading', 'loaded-img');
+        void logo.offsetWidth;
+        logo.classList.add('loaded-img');
+        logo.style.opacity = '1';
+      }, 50);
+    };
+    idx = (idx + 1) % immagini.length;
   };
-  idx = (idx + 1) % immagini.length;
-};
 
-changeImage();
-slideshowInterval = setInterval(changeImage, 5000);
-
-
+  changeImage();
+  slideshowInterval = setInterval(changeImage, 5000); // cambia ogni 5 secondi
 }
 
 
