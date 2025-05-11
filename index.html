@@ -692,7 +692,7 @@ function setupAutoScroll(el, speed = 20, delay = 3000) {
     if (!last) last = ts;
     const d = ts - last; 
     last = ts;
-    el.scrollTop += (d * speed) / 100;
+    el.scrollTop += (d * speed) / 1000;
     if (el.scrollTop + el.clientHeight >= el.scrollHeight) return stop();
     id = requestAnimationFrame(step);
   }
