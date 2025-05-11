@@ -654,20 +654,6 @@ ul.custom-list li > strong {
   
     <div id="main">
   <img src="logo.png" id="logo-btn" alt="Logo">
-  <!-- Nuovo container per le immagini in showroom -->
-<img id="slideshow-img"
-     src=""
-     alt="Showroom"
-     style="display:none;
-            position:absolute;
-            top:55%;
-            left:50%;
-            transform:translate(-50%, -50%);
-            max-width:90vw;
-            max-height:80vh;
-            object-fit:contain;
-            opacity:0;
-            transition:opacity 0.4s ease-in-out;">
 
   <!-- Watermark centrato in basso -->
   <div id="watermark-logo">
@@ -929,42 +915,47 @@ function toggleSubmenu() {
 
 function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
+  isTransitioning = true;
 
-  const main      = document.getElementById('main');
-  const sidebar   = document.getElementById('sidebar');
-  const submenu   = document.getElementById('submenu-servizi');
-  const watermark = document.getElementById('watermark-logo');
-  const smallLogo = document.getElementById('sidebar-logo');
+  const main        = document.getElementById('main');
+  const sidebar     = document.getElementById('sidebar');
+  const submenu     = document.getElementById('submenu-servizi');
+  const watermark   = document.getElementById('watermark-logo');
+  const smallLogo   = document.getElementById('sidebar-logo');
   const centralLogo = document.getElementById('logo-btn');
-  const modal     = document.getElementById('modal');
+  const modal       = document.getElementById('modal');
 
-  // SE SONO GIÀ SUL MAIN (submenu chiuso, nessuna modale e nessuno slideshow), esci
+  // Se non c’è nulla da fare, esci
   if (
     submenu.style.display === 'none' &&
     !modal.classList.contains('show') &&
     !slideshowAttivo
   ) {
+    isTransitioning = false;
     return;
   }
 
-  isTransitioning = true;
-
-  // 0) fade‐out del logo piccolo
+  // 0) fade‐out del logo piccolo e del main
   smallLogo.style.opacity = '0';
-  // 1) fade‐out del main
-  main.style.opacity = '0';
+  main.style.opacity     = '0';
 
   setTimeout(() => {
-    // A) ferma slideshow
+    // A) Ferma lo slideshow se attivo
     if (slideshowInterval) {
       clearInterval(slideshowInterval);
       slideshowInterval = null;
     }
     slideshowAttivo = false;
+
+    // Nascondi watermark e ripristina lo scroll
     watermark.style.display = 'none';
     document.body.style.overflow = '';
 
-    // B) chiudi modale se aperta
+    // → Riporta subito in vista il logo centrale
+    centralLogo.style.visibility = 'visible';
+    centralLogo.style.opacity    = '1';
+
+    // B) Chiudi eventuale modale aperta
     if (modal.classList.contains('show')) {
       modal.classList.remove('show');
       modal.classList.add('fade-out');
@@ -975,20 +966,20 @@ function ripristinaMenuPrincipale() {
       }, 600);
     }
 
-    // C) ripristina sidebar e menu
+    // C) Ripristina sidebar e menu principale
     submenu.style.display = 'none';
     document.querySelectorAll('.menu-list > .menu-item')
             .forEach(el => el.style.display = 'flex');
     sidebar.style.display = '';
 
-    // D) reset logo centrale
+    // D) Prepara il logo centrale per il preload/fade-in originale
     centralLogo.classList.remove('loaded-img','loading','pulse');
     centralLogo.style.transition = 'none';
     centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
     centralLogo.style.opacity    = '0';
     centralLogo.style.visibility = 'hidden';
 
-    // preload e fade-in logo centrale
+    // Preload e fade-in del logo centrale come prima
     const preload = new Image();
     preload.src = 'logo.png';
     preload.onload = () => {
@@ -1012,6 +1003,7 @@ function ripristinaMenuPrincipale() {
 
   }, 500);
 }
+
 
 
 
@@ -1220,65 +1212,59 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
 }
 
 // === 2. Avvio dello slideshow ===
-// fuori dalla funzione, per non ridichiarle ogni volta
-// METTI QUESTA DICHIARAZIONE ALL’INIZIO DEL TUO SCRIPT (una sola volta)
-const logo = document.getElementById('logo-btn');
-let idx = 0;
-
-// SOSTITUISCI INTERAMENTE LA TUA VECCHIA funzione attivaSlideshow() CON QUESTA:
 async function attivaSlideshow() {
   if (slideshowAttivo) return;
+  // Nascondi il logo pulsante senza rimuoverlo dal layout
+logo.style.opacity = '0';
 
-  // ——— 1) Prepara il #logo-btn per lo slideshow ———
-  logo.style.animation  = 'none';               // stop pulse
-  logo.style.transition = 'none';               // nessuna transizione residua
-  logo.style.transform  = 'translate(-50%,-50%) scale(1)'; // scala 1 fissa
-  logo.style.opacity    = '0';                  // invisibile subito
 
-  // ——— 2) Le tue logiche di avvio showroom ———
+
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.display = 'none';
+
+  const submenu = document.getElementById('submenu-servizi');
+  submenu.style.display = 'none';
+  document.body.style.overflow = 'hidden';
+
   slideshowAttivo = true;
-  document.getElementById('sidebar').style.display        = 'none';
-  document.getElementById('submenu-servizi').style.display = 'none';
-  document.body.style.overflow                              = 'hidden';
-
+  
   const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
+
   if (modal.classList.contains('show')) {
-    modal.classList.replace('show', 'fade-out');
-    setTimeout(() => watermark.style.opacity = '0.05', 5);
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      watermark.style.opacity = '0.05';
+    }, 5);
   }
 
-  // ——— 3) Carica le immagini della showroom ———
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
 
-  // ——— 4) Imposta l’indice iniziale e la funzione di cambio ———
-  idx = Math.floor(Math.random() * immagini.length);
+  const logo = document.getElementById('logo-btn');
+  let idx = Math.floor(Math.random() * immagini.length);
+
   const changeImage = () => {
     const img = new Image();
     img.src = immagini[idx];
     img.onload = () => {
-      // fade‐out attuale
       logo.style.opacity = '0';
       setTimeout(() => {
-        // cambia src
         logo.src = img.src;
         logo.classList.remove('loading', 'loaded-img');
-        void logo.offsetWidth;            // forza reflow
-        logo.classList.add('loaded-img'); // applica il tuo fade-in CSS
-        logo.style.opacity = '1';         // torna visibile
+        void logo.offsetWidth;
+        logo.classList.add('loaded-img');
+        logo.style.opacity = '1';
       }, 50);
     };
     idx = (idx + 1) % immagini.length;
   };
 
-  // ——— 5) Avvia subito e poi a intervalli ———
   changeImage();
-  slideshowInterval = setInterval(changeImage, 5000);
+  slideshowInterval = setInterval(changeImage, 5000); // cambia ogni 5 secondi
 }
-
-
 
 
 
