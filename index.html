@@ -581,7 +581,10 @@ ul.custom-list li > strong {
 #modal-content ul li {
   text-align: left;
 }
-
+#modal-content {
+  overflow-y: hidden; /* scrollbar nascosta finché non serve */
+  scroll-behavior: auto; /* disabilita qualsiasi comportamento smooth nativo */
+}
 
 
 </style>
@@ -753,11 +756,11 @@ let slideshowInterval = null;
 
 function apri(index) {
   if (isTransitioning) return;
-
-
+  onMain = false;            // esco dal main quando apro una finestra
   isTransitioning = true;
 
   if (currentIndex === index) {
+    // chiudo la stessa finestra
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
@@ -768,6 +771,7 @@ function apri(index) {
     }, 600);
   } else {
     if (modal.classList.contains('show')) {
+      // cambio contenuto con fade
       modal.classList.remove('show');
       modal.classList.add('fade-out');
       setTimeout(() => {
@@ -776,12 +780,15 @@ function apri(index) {
         modal.classList.add('show');
         currentIndex = index;
         isTransitioning = false;
+        setupAutoScroll();     // se serve, chiama qui la funzione di auto‐scroll
       }, 600);
     } else {
+      // apro per la prima volta
       modalContent.innerHTML = contenuti[index];
       modal.classList.add('show');
       currentIndex = index;
       isTransitioning = false;
+      setupAutoScroll();       // e qui subito dopo
     }
   }
 }
@@ -1300,6 +1307,39 @@ document.querySelectorAll('.menu-item').forEach(el => {
   });
 });
 
+let autoScrollTimer, autoScrollInterval;
+
+function setupAutoScroll() {
+  const content = document.getElementById('modal-content');
+  // se non c'è overflow, non fare nulla
+  if (content.scrollHeight <= content.clientHeight) return;
+
+  // nascondi scrollbar
+  content.style.overflowY = 'hidden';
+
+  // dopo 3s parte l’auto‐scroll
+  autoScrollTimer = setTimeout(() => {
+    const maxScroll = content.scrollHeight - content.clientHeight;
+    let pos = 0;
+    autoScrollInterval = setInterval(() => {
+      pos = Math.min(pos + 1, maxScroll);
+      content.scrollTop = pos;
+      if (pos >= maxScroll) {
+        clearInterval(autoScrollInterval);
+      }
+    }, 50); // scorre di 1px ogni 50ms = 20px/s
+  }, 3000);
+
+  // al primo click/tap interrompi tutto e mostra scrollbar
+  content.addEventListener('pointerdown', stopAutoScroll, { once: true });
+}
+
+function stopAutoScroll() {
+  clearTimeout(autoScrollTimer);
+  clearInterval(autoScrollInterval);
+  const content = document.getElementById('modal-content');
+  content.style.overflowY = 'auto'; // riattiva scrollbar
+}
 
 
 </script>
