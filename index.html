@@ -1062,25 +1062,24 @@ function apriSubservizio(tipo) {
 
 
 modalContent.addEventListener('click', (e) => {
-  // Solo chiusura se si clicca in un'area vuota e non ci sono contenuti attivi
-  if (
-    currentIndex === null &&
-    modal.classList.contains('show') &&
-    !isTransitioning &&
-    !e.target.closest('form') && // non chiude se clicco su un form
-    !e.target.closest('.custom-list') && // non chiude se clicco su una lista
-    !e.target.closest('p') // evita chiusura se clicco su un paragrafo
-  ) {
+  // Esci subito se la modale non è visibile o sei in transizione
+  if (!modal.classList.contains('show') || isTransitioning) return;
+
+  // Verifica se ho cliccato sul titolo radar
+  if (e.target.closest('.radar-glow')) {
     isTransitioning = true;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
+      currentIndex = null;  // riportalo allo stato “menu principale”
       isTransitioning = false;
     }, 600);
   }
+  // in tutti gli altri casi (testo, liste, fuori…) non succede nulla
 });
+
 
 
     function attivaSlideshow() {
