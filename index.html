@@ -345,7 +345,11 @@
 #logo-btn.zoom-in {
   animation: zoomInLogo 0.8s ease-out forwards;
 }
-
+.menu-item.reanimate {
+    opacity: 0 !important;
+    transform: translateX(-100%) !important;
+    animation: slideIn 0.5s ease-out forwards !important;
+  }
 }
 
 
@@ -1133,9 +1137,6 @@ modalContent.addEventListener('click', (e) => {
 }
 
 
-
-
-  // ===== CLICK SUL LOGO DEL SIDEBAR (“torna alla Home”) =====
   document.getElementById('sidebar-logo').addEventListener('click', () => {
     if (isTransitioning) return;
     isTransitioning = true;
@@ -1172,7 +1173,7 @@ modalContent.addEventListener('click', (e) => {
       preload.onload = () => {
         logo.src = preload.src;
         logo.style.transform  = 'translate(-50%,-60%) scale(1.8)';
-        void logo.offsetWidth; // forzo reflow
+        void logo.offsetWidth;
         logo.style.transition  = 'opacity 0.6s ease-in-out';
         logo.style.visibility  = 'visible';
         logo.style.opacity     = '1';
@@ -1188,7 +1189,6 @@ modalContent.addEventListener('click', (e) => {
       setTimeout(() => {
         isTransitioning = false;
       }, 600);
-
     }, 500);
   });
 
@@ -1249,15 +1249,23 @@ modalContent.addEventListener('click', (e) => {
           setTimeout(() => {
             modal.classList.remove('fade-out');
             modalContent.innerHTML = '';
-            sidebar.style.display = '';
-            sidebar.style.opacity = '0';
+            sidebar.style.display    = '';
+            sidebar.style.opacity    = '0';
             sidebar.style.transition = 'opacity 0.6s ease-in-out';
             requestAnimationFrame(() => {
               sidebar.style.opacity = '1';
+
+              // 2.4a) re-animazione dei menu-item
+              const items = document.querySelectorAll('#sidebar .menu-item:not(.sotto-servizio)');
+              items.forEach((el, i) => {
+                el.classList.remove('reanimate');
+                setTimeout(() => {
+                  el.classList.add('reanimate');
+                }, i * 150);
+              });
             });
           }, 600);
         }, 5000);
-
       }, 1000);
 
       // 2.5) Touch “Clicca qui” → slideshow
@@ -1270,41 +1278,38 @@ modalContent.addEventListener('click', (e) => {
       // 2.6) (opzionale) attiva showroom subito
       // attivaSlideshow();
     }
-
-    // 3) CLICK LOGO PICCOLO: chiudi modal/slideshow e ripristina il menu
-    (function() {
-      const logoBtn      = document.getElementById('logo-btn');
-      const modal        = document.getElementById('modal');
-      const modalContent = document.getElementById('modal-content');
-      const sidebar      = document.getElementById('sidebar');
-      const watermark    = document.getElementById('watermark-logo');
-
-      logoBtn.style.cursor = 'pointer';
-      logoBtn.addEventListener('click', () => {
-        // 3.1) se c’è un modal aperto, chiudilo con fade
-        if (modal.classList.contains('show')) {
-          modal.classList.remove('show');
-          modal.classList.add('fade-out');
-          setTimeout(() => {
-            modal.classList.remove('fade-out');
-            modalContent.innerHTML = '';
-          }, 600);
-        }
-        // 3.2) ferma slideshow e nascondi watermark
-        if (window.slideshowInterval) {
-          clearInterval(slideshowInterval);
-          slideshowInterval = null;
-          slideshowAttivo   = false;
-          watermark.style.display = 'none';
-        }
-        // 3.3) chiama ripristinaMenuPrincipale() per fade-out/fade-in del menu
-        ripristinaMenuPrincipale();
-      });
-    })();
-
-    // …eventuali altre inizializzazioni comuni…
-
   });
+
+  // 3) CLICK LOGO PICCOLO: chiudi modal/slideshow e ripristina il menu
+  (function() {
+    const logoBtn      = document.getElementById('logo-btn');
+    const modal        = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+    const sidebar      = document.getElementById('sidebar');
+    const watermark    = document.getElementById('watermark-logo');
+
+    logoBtn.style.cursor = 'pointer';
+    logoBtn.addEventListener('click', () => {
+      // 3.1) se c’è un modal aperto, chiudilo con fade
+      if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+        }, 600);
+      }
+      // 3.2) ferma slideshow e nascondi watermark
+      if (window.slideshowInterval) {
+        clearInterval(slideshowInterval);
+        slideshowInterval = null;
+        slideshowAttivo   = false;
+        watermark.style.display = 'none';
+      }
+      // 3.3) chiama ripristinaMenuPrincipale() per fade-out/fade-in del menu
+      ripristinaMenuPrincipale();
+    });
+  })();
 
   // ===== Event delegation per il form di contatto =====
   document.addEventListener('submit', function(e) {
@@ -1360,7 +1365,7 @@ modalContent.addEventListener('click', (e) => {
     el.addEventListener('pointerleave',() => el.classList.remove('pressed'));
     el.addEventListener('pointercancel',() => el.classList.remove('pressed'));
   });
-</script>
+  </script>
 
-</body>
+  </body>
 </html>
