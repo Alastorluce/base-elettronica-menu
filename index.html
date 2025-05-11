@@ -587,6 +587,9 @@ ul.custom-list li > strong {
 </head>
 
 <body>
+
+
+
     <div id="right-glow"></div>
   
     <div id="orientation-warning">
@@ -604,8 +607,8 @@ ul.custom-list li > strong {
   
     <div id="sidebar">
       <div id="sidebar-content">
-        <div id="sidebar-logo">
-          <img src="logo.png" alt="Logo">
+        <div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
+           <img src="logo.png" alt="Logo">
         </div>
   
         <div class="menu-list">
@@ -1116,64 +1119,6 @@ modalContent.addEventListener('click', (e) => {
   slideshowInterval = setInterval(changeImage, 5000);
 }
 
-
-
-
-    document.getElementById('sidebar-logo').addEventListener('click', () => {
-  if (isTransitioning) return;
-  isTransitioning = true;
-
-  const main       = document.getElementById('main');
-  const sidebar    = document.getElementById('sidebar');
-  const watermark  = document.getElementById('watermark-logo');
-  const logo       = document.getElementById('logo-btn');
-
-  // 1) inizio dissolvenza OUT della home
-  main.style.opacity = '0';
-
-  // 2) dopo 500ms (fade-out completo), resettiamo tutto
-  setTimeout(() => {
-    // 2a) ferma lo slideshow
-    if (slideshowInterval) clearInterval(slideshowInterval);
-    slideshowInterval = null;
-    slideshowAttivo   = false;
-
-    // 2b) nascondi watermark
-    watermark.style.display = 'none';
-
-    // 2c) ripristina la sidebar
-    sidebar.style.display = '';
-
-    // 2d) reset del logo centrale (come nel tuo preload)
-    logo.style.transition   = 'none';
-    logo.style.visibility   = 'hidden';
-    logo.style.opacity      = '0';
-    logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
-
-    const preload = new Image();
-    preload.src = 'logo.png';
-    preload.onload = () => {
-      logo.src = preload.src;
-      logo.style.transform    = 'translate(-50%,-60%) scale(1.8)';
-      void logo.offsetWidth; // forzo reflow
-      logo.style.transition   = 'opacity 0.6s ease-in-out';
-      logo.style.visibility   = 'visible';
-      logo.style.opacity      = '1';
-      setTimeout(() => {
-        logo.classList.add('pulse');
-      }, 600);
-    };
-
-    // 3) dissolvenza IN della home
-    main.style.opacity = '1';
-
-    // 4) fine transizione
-    setTimeout(() => {
-      isTransitioning = false;
-    }, 600);
-
-  }, 500); // attendi 0.5s per il fade-out
-});
 
 
  
