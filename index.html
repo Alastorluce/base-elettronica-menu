@@ -1212,11 +1212,13 @@ let welcomeTimeout = setTimeout(() => {
   // 2) auto‐hide dopo 6 secondi
   const autoHide = setTimeout(() => {
     modal.classList.remove('show');
-  }, 6000);
+  }, 8000);
 
-  // 3) su desktop (web) nascondi al primo click fuori
-  if (!window.matchMedia('(max-width: 768px)').matches) {
+  // 3) su desktop: nascondi al primo click/tap fuori
+  const isDesktop = !window.matchMedia('(max-width: 768px)').matches;
+  if (isDesktop) {
     const hideOnClick = e => {
+      // se clicco su sidebar, menu-item, modal o logo, non chiudere
       if (
         e.target.closest('#sidebar') ||
         e.target.closest('.menu-item') ||
@@ -1227,9 +1229,10 @@ let welcomeTimeout = setTimeout(() => {
       }
       modal.classList.remove('show');
       clearTimeout(autoHide);
-      document.removeEventListener('click', hideOnClick);
+      document.removeEventListener('pointerdown', hideOnClick, true);
     };
-    document.addEventListener('click', hideOnClick, { once: true });
+    // listener in capture phase per intercettare subito
+    document.addEventListener('pointerdown', hideOnClick, { capture: true, once: true });
   }
 }, 500);
 // --- fine nuovo blocco welcome ---
