@@ -582,8 +582,8 @@ ul.custom-list li > strong {
   text-align: left;
 }
 #modal-content {
-  overflow-y: hidden; /* scrollbar nascosta finché non serve */
-  scroll-behavior: auto; /* disabilita qualsiasi comportamento smooth nativo */
+  overflow-y: auto;
+  scroll-behavior: auto;
 }
 
 
@@ -754,6 +754,14 @@ let isTransitioning = false;
 let slideshowAttivo = false;
 let slideshowInterval = null;
 
+
+function showModal() {
+  modal.classList.add('show');
+  setupAutoScroll();
+}
+
+
+
 function apri(index) {
   if (isTransitioning) return;
   onMain = false;            // esco dal main quando apro una finestra
@@ -777,7 +785,7 @@ function apri(index) {
       setTimeout(() => {
         modalContent.innerHTML = contenuti[index];
         modal.classList.remove('fade-out');
-        modal.classList.add('show');
+        showModal();
         currentIndex = index;
         isTransitioning = false;
         setupAutoScroll();     // se serve, chiama qui la funzione di auto‐scroll
@@ -785,7 +793,7 @@ function apri(index) {
     } else {
       // apro per la prima volta
       modalContent.innerHTML = contenuti[index];
-      modal.classList.add('show');
+      showModal();
       currentIndex = index;
       isTransitioning = false;
       setupAutoScroll();       // e qui subito dopo
@@ -1055,13 +1063,13 @@ function apriSubservizio(tipo) {
     setTimeout(() => {
       modalContent.innerHTML = contenuto;
       modal.classList.remove('fade-out');
-      modal.classList.add('show');
+      showModal();
       currentIndex = null;
       isTransitioning = false;
     }, 600);
   } else {
     modalContent.innerHTML = contenuto;
-    modal.classList.add('show');
+    showModal();
     currentIndex = null;
     isTransitioning = false;
   }
@@ -1247,7 +1255,7 @@ document.addEventListener('submit', function(e) {
         <p>Risponderemo entro 24 ore.</p>
       </div>`;
     modal.classList.remove('fade-out');
-    modal.classList.add('show');
+    showModal();
     setTimeout(() => {
       modal.classList.remove('show');
       modal.classList.add('fade-out');
@@ -1311,13 +1319,17 @@ let autoScrollTimer, autoScrollInterval;
 
 function setupAutoScroll() {
   const content = document.getElementById('modal-content');
-  // se non c'è overflow, non fare nulla
-  if (content.scrollHeight <= content.clientHeight) return;
+  // 1) se non c'è overflow, esci e lascia scrollbar auto
+  if (content.scrollHeight <= content.clientHeight) {
+    content.style.overflowY = 'auto';
+    return;
+  }
 
-  // nascondi scrollbar
+  // 2) resetta posizione e nascondi scrollbar
+  content.scrollTop      = 0;
   content.style.overflowY = 'hidden';
 
-  // dopo 3s parte l’auto‐scroll
+  // 3) dopo 3s parte lo slow‐scroll
   autoScrollTimer = setTimeout(() => {
     const maxScroll = content.scrollHeight - content.clientHeight;
     let pos = 0;
@@ -1327,19 +1339,22 @@ function setupAutoScroll() {
       if (pos >= maxScroll) {
         clearInterval(autoScrollInterval);
       }
-    }, 50); // scorre di 1px ogni 50ms = 20px/s
+    }, 50); // 20px/s
   }, 3000);
 
-  // al primo click/tap interrompi tutto e mostra scrollbar
-  content.addEventListener('pointerdown', stopAutoScroll, { once: true });
+  // 4) al primo tap/click interrompi tutto e riattiva scrollbar
+  content.addEventListener('pointerdown', () => {
+    stopAutoScroll();
+  }, { once: true });
 }
 
 function stopAutoScroll() {
   clearTimeout(autoScrollTimer);
   clearInterval(autoScrollInterval);
   const content = document.getElementById('modal-content');
-  content.style.overflowY = 'auto'; // riattiva scrollbar
+  content.style.overflowY = 'auto';
 }
+
 
 
 </script>
