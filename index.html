@@ -330,6 +330,22 @@
     cursor: pointer;
     z-index: 1001;
   }
+
+  @keyframes zoomInLogo {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -60%) scale(1.8);
+  }
+}
+
+#logo-btn.zoom-in {
+  animation: zoomInLogo 0.8s ease-out forwards;
+}
+
 }
 
 
@@ -648,7 +664,7 @@ ul.custom-list li > strong {
   
     <script>
       const contenuti = [
-        <!-- Chi siamo -->
+        `<!-- Chi siamo -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Chi siamo</h2>                    
   <h2 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h2>
@@ -664,9 +680,9 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 <p>Collaboriamo con enti pubblici, aziende private, studi di architettura, service per lo spettacolo e broadcaster televisivi, adattando ogni progetto alle esigenze specifiche del cliente con <strong>soluzioni su misura, scalabili e ad alta efficienza</strong>.</p>
 
 <p>Lavoriamo con attrezzature all’avanguardia e standard qualitativi elevati, ponendoci come partner di riferimento per eventi live, showroom, installazioni fisse, studi televisivi, ambienti immersivi e produzioni ad alto impatto tecnologico.</p>
-,
+`,
   
-        <!-- Portfolio -->
+        `<!-- Portfolio -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Portfolio</h2>
 </div>
@@ -689,9 +705,9 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   Clicca qui
 </span></em>&nbsp;&nbsp;per avviare una piccola anteprima nella showroom interattiva.</p>
 
-,
+`,
   
-        <!-- Contattaci -->
+        `<!-- Contattaci -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Contattaci</h2>
 </div>
@@ -722,12 +738,12 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 <p style="margin-top:1em;">
   Preferisci scriverci direttamente? Puoi contattarci via email all’indirizzo: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
 </p>
-
+`
       ];
   
   
 
-    const contenutoHome = 
+    const contenutoHome = `
   <div style="text-align: center; max-width: 700px; margin: 50px auto;">
     <h2 style="margin-bottom: 10px; color: white;">Benvenuti in</h2>
     <h1 style="color: #00aaff; font-size: 2.5em; margin-top: 0;">Base Elettronica Service</h1>
@@ -737,7 +753,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
       Scopri di più esplorando il nostro sito!
     </p>
   </div>
-;
+`;
 
 
     let modal = document.getElementById('modal');
@@ -877,7 +893,7 @@ function apriSubservizio(tipo) {
   let contenuto = '';
   switch (tipo) {
     case 'service':
-  contenuto = 
+  contenuto = `
 
   <div style="text-align:center;">
     <h2 class="radar-glow">Service Tecnico per Eventi e Spettacoli</h2>
@@ -899,11 +915,11 @@ function apriSubservizio(tipo) {
 
 <p>Tutti i tecnici coinvolti sono formati secondo i moduli PES-PAV-PEI, piattaforme aeree (PLE), antincendio rischio elevato e movimentazione carichi in sicurezza, con copertura assicurativa completa.</p>
 
-<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>;
+<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>`;
   break;
 
       case 'antincendio':
-  contenuto = 
+  contenuto = `
    
 
   <div style="text-align:center;">
@@ -920,11 +936,11 @@ function apriSubservizio(tipo) {
       <li><strong>Monitoraggio remoto</strong> e manutenzione predittiva su infrastrutture industriali, civili e per eventi temporanei.</li>
     </ul>
     <p>Ogni progetto viene sviluppato in sinergia con i nostri ingegneri e tecnici certificati, per garantire la massima copertura del rischio e la piena conformità alle normative nazionali ed europee.</p>
-  ;
+  `;
   break;
 
   case 'progettazione':
-  contenuto = 
+  contenuto = `
     
 
   <div style="text-align:center;">
@@ -941,11 +957,11 @@ function apriSubservizio(tipo) {
     </ul>
 
     <p>Ogni progetto è accompagnato da <strong style="color:#00a6ff;">documentazione tecnica dettagliata</strong>, planimetrie esecutive e consulenza dedicata nella fase di cantiere. Il nostro approccio modulare ci consente di soddisfare le esigenze sia di piccoli eventi privati sia di grandi produzioni professionali, garantendo risultati impeccabili e piena coerenza normativa.</p>
-  ;
+  `;
   break;
 
   case 'noleggio':
-  contenuto = 
+  contenuto = `
     
 
   <div style="text-align:center;">
@@ -970,11 +986,11 @@ function apriSubservizio(tipo) {
     <p>È possibile stipulare contratti di <strong>noleggio giornaliero, settimanale, mensile o a lungo termine</strong>, con servizio opzionale di consegna, installazione, supervisione tecnica e smontaggio.</p>
 
     <p>Ogni richiesta viene gestita con analisi tecnica preliminare, scheda materiali dettagliata e supporto nella scelta della configurazione più efficiente rispetto all’ambiente operativo e al tipo di evento.</p>
-  ;
+  `;
   break;
 
   case 'assistenza':
-  contenuto = 
+  contenuto = `
     
 
   <div style="text-align:center;">
@@ -1004,7 +1020,7 @@ function apriSubservizio(tipo) {
     </ul>
 
     <p>Il nostro team è abilitato a operare su installazioni fisse, strutture mobili e rental, con servizio di <strong>supporto tecnico pre e post-evento</strong>, documentazione CE e certificazione di conformità post-intervento.</p>
-  ;
+  `;
   break;
 
   }
@@ -1119,214 +1135,232 @@ modalContent.addEventListener('click', (e) => {
 
 
 
-    document.getElementById('sidebar-logo').addEventListener('click', () => {
-  if (isTransitioning) return;
-  isTransitioning = true;
+  // ===== CLICK SUL LOGO DEL SIDEBAR (“torna alla Home”) =====
+  document.getElementById('sidebar-logo').addEventListener('click', () => {
+    if (isTransitioning) return;
+    isTransitioning = true;
 
-  const main       = document.getElementById('main');
-  const sidebar    = document.getElementById('sidebar');
-  const watermark  = document.getElementById('watermark-logo');
-  const logo       = document.getElementById('logo-btn');
+    const main      = document.getElementById('main');
+    const sidebar   = document.getElementById('sidebar');
+    const watermark = document.getElementById('watermark-logo');
+    const logo      = document.getElementById('logo-btn');
 
-  // 1) inizio dissolvenza OUT della home
-  main.style.opacity = '0';
+    // 1) dissolvenza OUT della home
+    main.style.opacity = '0';
 
-  // 2) dopo 500ms (fade-out completo), resettiamo tutto
-  setTimeout(() => {
-    // 2a) ferma lo slideshow
-    if (slideshowInterval) clearInterval(slideshowInterval);
-    slideshowInterval = null;
-    slideshowAttivo   = false;
-
-    // 2b) nascondi watermark
-    watermark.style.display = 'none';
-
-    // 2c) ripristina la sidebar
-    sidebar.style.display = '';
-
-    // 2d) reset del logo centrale (come nel tuo preload)
-    logo.style.transition   = 'none';
-    logo.style.visibility   = 'hidden';
-    logo.style.opacity      = '0';
-    logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
-
-    const preload = new Image();
-    preload.src = 'logo.png';
-    preload.onload = () => {
-      logo.src = preload.src;
-      logo.style.transform    = 'translate(-50%,-60%) scale(1.8)';
-      void logo.offsetWidth; // forzo reflow
-      logo.style.transition   = 'opacity 0.6s ease-in-out';
-      logo.style.visibility   = 'visible';
-      logo.style.opacity      = '1';
-      setTimeout(() => {
-        logo.classList.add('pulse');
-      }, 600);
-    };
-
-    // 3) dissolvenza IN della home
-    main.style.opacity = '1';
-
-    // 4) fine transizione
+    // 2) dopo 500ms (fade-out completo), resettiamo tutto
     setTimeout(() => {
-      isTransitioning = false;
-    }, 600);
+      // 2a) ferma lo slideshow
+      if (slideshowInterval) clearInterval(slideshowInterval);
+      slideshowInterval = null;
+      slideshowAttivo   = false;
 
-  }, 500); // attendi 0.5s per il fade-out
-});
+      // 2b) nascondi watermark
+      watermark.style.display = 'none';
 
+      // 2c) ripristina la sidebar
+      sidebar.style.display = '';
 
- 
-  // 1. Variabili di controllo
-  let welcomeTimeout;
-  let welcomeShown = false;
+      // 2d) reset del logo centrale (come nel tuo preload)
+      logo.style.transition = 'none';
+      logo.style.visibility = 'hidden';
+      logo.style.opacity    = '0';
+      logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
 
+      const preload = new Image();
+      preload.src = 'logo.png';
+      preload.onload = () => {
+        logo.src = preload.src;
+        logo.style.transform  = 'translate(-50%,-60%) scale(1.8)';
+        void logo.offsetWidth; // forzo reflow
+        logo.style.transition  = 'opacity 0.6s ease-in-out';
+        logo.style.visibility  = 'visible';
+        logo.style.opacity     = '1';
+        setTimeout(() => {
+          logo.classList.add('pulse');
+        }, 600);
+      };
+
+      // 3) dissolvenza IN della home
+      main.style.opacity = '1';
+
+      // 4) fine transizione
+      setTimeout(() => {
+        isTransitioning = false;
+      }, 600);
+
+    }, 500);
+  });
+
+  // ===== DOMCONTENTLOADED: init generali + SOLO MOBILE welcome & menu =====
   window.addEventListener('DOMContentLoaded', () => {
-  // 1) Avvia animazioni sidebar/menu
-  document.getElementById('sidebar').classList.add('animated');
-  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+    // 1) Avvia animazioni sidebar/menu
+    document.getElementById('sidebar').classList.add('animated');
+    document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
 
-  // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
-  if (window.matchMedia('(max-width: 768px)').matches) {
-    const modal        = document.getElementById('modal');
-    const modalContent = document.getElementById('modal-content');
+    // 2) SOLO MOBILE: welcome, zoom-in logo, gestione modal e fade-in menu
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      const sidebar      = document.getElementById('sidebar');
+      const modal        = document.getElementById('modal');
+      const modalContent = document.getElementById('modal-content');
+      const logoBtn      = document.getElementById('logo-btn');
 
-    // 2a) Inietta il pulsante di chiusura, se non esiste già
-    if (!modal.querySelector('.modal-close')) {
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'modal-close';
-      closeBtn.setAttribute('aria-label', 'Chiudi');
-      closeBtn.textContent = '×';
-      modal.insertBefore(closeBtn, modalContent);
+      // 2.0) nascondi subito la sidebar
+      sidebar.style.display = 'none';
+
+      // 2.1) Zoom-in iniziale del logo (poi pulse)
+      logoBtn.classList.add('zoom-in');
+      logoBtn.addEventListener('animationend', function handler(e) {
+        if (e.animationName === 'zoomInLogo') {
+          logoBtn.classList.remove('zoom-in');
+          logoBtn.classList.add('pulse');
+          logoBtn.removeEventListener('animationend', handler);
+        }
+      });
+
+      // 2.2) Dopo 1 secondo, mostra il messaggio di benvenuto
+      setTimeout(() => {
+        modalContent.innerHTML = contenutoHome;
+        modal.classList.add('show');
+
+        // 2.2a) Inietta il pulsante “×” di chiusura
+        if (!modal.querySelector('.modal-close')) {
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'modal-close';
+          closeBtn.setAttribute('aria-label', 'Chiudi');
+          closeBtn.textContent = '×';
+          modal.insertBefore(closeBtn, modalContent);
+          closeBtn.addEventListener('click', () => {
+            modal.classList.remove('show');
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+              modal.classList.remove('fade-out');
+              modalContent.innerHTML = '';
+            }, 600);
+          });
+        }
+
+        // 2.3) Dopo 5 secondi, nascondi il welcome con fade-out
+        setTimeout(() => {
+          modal.classList.remove('show');
+          modal.classList.add('fade-out');
+
+          // 2.4) Al termine del fade (0.6s), pulisci e fai riapparire la sidebar con fade-in
+          setTimeout(() => {
+            modal.classList.remove('fade-out');
+            modalContent.innerHTML = '';
+            sidebar.style.display = '';
+            sidebar.style.opacity = '0';
+            sidebar.style.transition = 'opacity 0.6s ease-in-out';
+            requestAnimationFrame(() => {
+              sidebar.style.opacity = '1';
+            });
+          }, 600);
+        }, 5000);
+
+      }, 1000);
+
+      // 2.5) Touch “Clicca qui” → slideshow
+      document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
+        el.addEventListener('touchstart', e => {
+          e.preventDefault();
+          attivaSlideshow();
+        }, { passive: false });
+      });
+      // 2.6) (opzionale) attiva showroom subito
+      // attivaSlideshow();
     }
 
-    // 2b) Collega il click sulla “×” per chiudere la modale
-    modal.querySelectorAll('.modal-close').forEach(btn => {
-      btn.addEventListener('click', () => {
+    // 3) CLICK LOGO PICCOLO: chiudi modal/slideshow e ripristina il menu
+    (function() {
+      const logoBtn      = document.getElementById('logo-btn');
+      const modal        = document.getElementById('modal');
+      const modalContent = document.getElementById('modal-content');
+      const sidebar      = document.getElementById('sidebar');
+      const watermark    = document.getElementById('watermark-logo');
+
+      logoBtn.style.cursor = 'pointer';
+      logoBtn.addEventListener('click', () => {
+        // 3.1) se c’è un modal aperto, chiudilo con fade
+        if (modal.classList.contains('show')) {
+          modal.classList.remove('show');
+          modal.classList.add('fade-out');
+          setTimeout(() => {
+            modal.classList.remove('fade-out');
+            modalContent.innerHTML = '';
+          }, 600);
+        }
+        // 3.2) ferma slideshow e nascondi watermark
+        if (window.slideshowInterval) {
+          clearInterval(slideshowInterval);
+          slideshowInterval = null;
+          slideshowAttivo   = false;
+          watermark.style.display = 'none';
+        }
+        // 3.3) chiama ripristinaMenuPrincipale() per fade-out/fade-in del menu
+        ripristinaMenuPrincipale();
+      });
+    })();
+
+    // …eventuali altre inizializzazioni comuni…
+
+  });
+
+  // ===== Event delegation per il form di contatto =====
+  document.addEventListener('submit', function(e) {
+    if (e.target.matches('#contact-form')) {
+      e.preventDefault();
+      const modalContent = document.getElementById('modal-content');
+      const modal        = document.getElementById('modal');
+      modalContent.innerHTML = `
+        <div style="text-align:center; padding:1em;">
+          <h2>Grazie di averci contattato!</h2>
+          <p>Risponderemo entro 24 ore.</p>
+        </div>`;
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+      setTimeout(() => {
         modal.classList.remove('show');
         modal.classList.add('fade-out');
         setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
+          modalContent.innerHTML = contenutoHome;
         }, 600);
-      });
-    });
-
-    // 2c) Assicura che su touch “Clicca qui” parta la showroom
-    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-      el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tap
-        attivaSlideshow();
-      }, { passive: false });
-    });
-
-    // 2d) Avvia la showroom automaticamente (se lo desideri)
-    // attivaSlideshow();
-  }
-   
-  // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
-  const logoBtn = document.getElementById('logo-btn');
-  logoBtn.style.cursor = 'pointer';
-  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
-
-  // 3) Pianifica il pop-up di benvenuto
-  let welcomeTimeout = setTimeout(() => {
-    modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
-    let welcomeShown = true;
-
-    const hideWelcome = e => {
-  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
-  if (
-    e.target.closest('#sidebar') ||
-    e.target.closest('.menu-item') ||
-    e.target.closest('#modal') ||
-    e.target.closest('#logo-btn')
-  ) {
-    return;
-  }
-  modal.classList.remove('show');
-  document.removeEventListener('click', hideWelcome);
-};
-document.addEventListener('click', hideWelcome, { once: true });
-
-  }, 500);
-});
-
-
-
-// Event delegation per il form di contatto
-document.addEventListener('submit', function(e) {
-  if (e.target.matches('#contact-form')) {
-    e.preventDefault();
-    modalContent.innerHTML = 
-      <div style="text-align:center; padding:1em;">
-        <h2>Grazie di averci contattato!</h2>
-        <p>Risponderemo entro 24 ore.</p>
-      </div>;
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
-    setTimeout(() => {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
-      setTimeout(() => {
-        modalContent.innerHTML = contenutoHome;
-        currentIndex = null;
-      }, 600);
-    }, 3000);
-  }
-});
-
-
-
-(function() {
-  function checkOrientation() {
-    const w = document.getElementById('orientation-warning');
-    const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
-    const isLandscape = window.innerWidth > window.innerHeight;
-    if (isMobile && isLandscape) {
-      w.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    } else {
-      w.style.display = 'none';
-      document.body.style.overflow = '';
+      }, 3000);
     }
-  }
-  // Chiama subito e rilancia ad ogni resize/orientationchange
-  window.addEventListener('load',           checkOrientation);
-  window.addEventListener('resize',         checkOrientation);
-  window.addEventListener('orientationchange', checkOrientation);
-})();
-
-document.querySelectorAll('.menu-item').forEach(el => {
-  const delay = (Math.random() * 3).toFixed(2) + 's';
-  el.style.setProperty('--delay', delay);
-  const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
-el.style.setProperty('--delay', delay);
-el.style.setProperty('--duration', speed);
-
-});
-
-// ===== gestione “pressed” via Pointer Events con rilascio rallentato =====
-document.querySelectorAll('.menu-item').forEach(el => {
-  el.addEventListener('pointerdown', () => {
-    el.classList.add('pressed');
   });
-  el.addEventListener('pointerup', () => {
-    // aspetta un po' prima di farlo risalire, così l'animazione è ben visibile
-    setTimeout(() => el.classList.remove('pressed'), 300);
-  });
-  el.addEventListener('pointerleave', () => {
-    // se esco dal bottone, tolgo subito
-    el.classList.remove('pressed');
-  });
-  el.addEventListener('pointercancel', () => {
-    el.classList.remove('pressed');
-  });
-});
 
+  // ===== Controllo orientamento =====
+  (function() {
+    function checkOrientation() {
+      const w = document.getElementById('orientation-warning');
+      const isMobile    = /Mobi|Android/i.test(navigator.userAgent);
+      const isLandscape = window.innerWidth > window.innerHeight;
+      if (isMobile && isLandscape) {
+        w.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      } else {
+        w.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+    window.addEventListener('load',           checkOrientation);
+    window.addEventListener('resize',         checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+  })();
 
+  // ===== Animazione menu-item e “pressed” handling =====
+  document.querySelectorAll('.menu-item').forEach(el => {
+    const delay = (Math.random() * 3).toFixed(2) + 's';
+    const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
+    el.style.setProperty('--delay', delay);
+    el.style.setProperty('--duration', speed);
 
+    el.addEventListener('pointerdown', () => el.classList.add('pressed'));
+    el.addEventListener('pointerup',   () => setTimeout(() => el.classList.remove('pressed'), 300));
+    el.addEventListener('pointerleave',() => el.classList.remove('pressed'));
+    el.addEventListener('pointercancel',() => el.classList.remove('pressed'));
+  });
 </script>
+
 </body>
 </html>
