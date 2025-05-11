@@ -999,6 +999,9 @@ function ripristinaMenuPrincipale() {
     centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
     centralLogo.style.opacity    = '0';
     centralLogo.style.visibility = 'hidden';
+    
+    logo.classList.remove('fadein');
+    logo.classList.add('invisibile');
 
     // preload e fade-in logo centrale
     const preload = new Image();
@@ -1260,8 +1263,8 @@ async function attivaSlideshow() {
   if (immagini.length === 0) return;
 
   const logo = document.getElementById('logo-btn');
-logo.classList.remove('fadein'); // reset eventuale precedente
-logo.style.opacity = '0';        // partenza invisibile
+logo.classList.remove('fadein');
+logo.classList.add('invisibile');
 
 let idx = Math.floor(Math.random() * immagini.length);
 
@@ -1272,15 +1275,18 @@ const changeImage = () => {
     logo.src = img.src;
     logo.classList.remove('loading', 'loaded-img');
     void logo.offsetWidth;
-    logo.classList.add('loaded-img', 'fadein'); // innesca fade-in di 5s
+
+    // SOLO alla prima immagine: riattivo con fade-in
+    if (logo.classList.contains('invisibile')) {
+      logo.classList.remove('invisibile');
+      void logo.offsetWidth;
+      logo.classList.add('fadein');
+    } else {
+      logo.classList.add('loaded-img');
+    }
   };
   idx = (idx + 1) % immagini.length;
 };
-
-changeImage();
-slideshowInterval = setInterval(changeImage, 5000);
-
-}
 
 
 
