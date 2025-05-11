@@ -6,6 +6,11 @@
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
+
+
+     /* Fade/transform globali */
+     #main, #sidebar, .menu-item, #modal {transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;}
+
      
      /* disabilita selezione di testo e immagini */
     *, *::before, *::after {
@@ -275,9 +280,6 @@
     max-width: 90vw;
     min-height: 45px;
     text-align: center;
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -1119,19 +1121,32 @@ modalContent.addEventListener('click', (e) => {
 
 
 
-   // Funzione: anima sidebar e menu-item dopo la chiusura del popup
+   // 0) Funzione per animare sidebar e menu-item
 function animateMenu() {
   const sidebar = document.getElementById('sidebar');
-  sidebar.classList.add('animated');
-  document.querySelectorAll('.menu-item').forEach(el => {
-    void el.offsetWidth; // forzo reflow
-    el.classList.add('animated');
+  // fade-in sidebar
+  sidebar.style.opacity = '0';
+  sidebar.style.transform = 'translateX(-100%)';
+  // forzo reflow e poi fade in
+  void sidebar.offsetWidth;
+  sidebar.style.opacity = '1';
+  sidebar.style.transform = 'translateX(0)';
+
+  // ora i bottoni, uno ad uno
+  document.querySelectorAll('.menu-item').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(-100%)';
+    // forzo reflow
+    void el.offsetWidth;
+    // dopo delay in base all’indice
+    setTimeout(() => {
+      el.style.opacity = '1';
+      el.style.transform = 'translateX(0)';
+    }, i * 200);  // 200ms tra ogni bottone
   });
 }
 
-// Listener principale
 window.addEventListener('DOMContentLoaded', () => {
-  // Variabili
   const logoBtn      = document.getElementById('logo-btn');
   const sidebar      = document.getElementById('sidebar');
   const sidebarLogo  = document.getElementById('sidebar-logo');
@@ -1139,55 +1154,38 @@ window.addEventListener('DOMContentLoaded', () => {
   const modalContent = document.getElementById('modal-content');
   let isTransitioning = false;
 
-  // 1) ZOOM INIZIALE SUPER-AMPLIO + PULSING
+  // 1) Zoom super-amplio → ritorno → pulsing
   logoBtn.style.transform  = 'translate(-50%,-50%) scale(4)';
-  logoBtn.style.transition = 'transform 0.8s ease-out';
+  logoBtn.style.opacity    = '0';
+  // forzo reflow
+  void logoBtn.offsetWidth;
+  logoBtn.style.opacity    = '1';
+  logoBtn.style.transition = 'transform 0.8s ease-out, opacity 0.5s ease-in-out';
   setTimeout(() => {
     logoBtn.style.transform = 'translate(-50%,-50%) scale(2.3)';
     setTimeout(() => logoBtn.classList.add('pulse'), 800);
-  }, 800);
+  }, 50);
 
-  // 2) SOLO MOBILE: “×”, touch su “Clicca qui” e showroom (lascia intatto il tuo)
-  if (window.matchMedia('(max-width: 768px)').matches) {
-    // (Il tuo blocco 2a–2d esattamente com’era)
-    const modalLocal        = modal;
-    const modalContentLocal = modalContent;
-    if (!modalLocal.querySelector('.modal-close')) {
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'modal-close';
-      closeBtn.setAttribute('aria-label', 'Chiudi');
-      closeBtn.textContent = '×';
-      modalLocal.insertBefore(closeBtn, modalContentLocal);
-    }
-    modalLocal.querySelectorAll('.modal-close').forEach(btn => {
-      btn.addEventListener('click', () => {
-        modalLocal.classList.remove('show');
-        modalLocal.classList.add('fade-out');
-        setTimeout(() => {
-          modalLocal.classList.remove('fade-out');
-          modalContentLocal.innerHTML = '';
-        }, 600);
-      });
-    });
-    document.querySelectorAll('span[onclick="attivaSlideshow()"]')
-      .forEach(el => el.addEventListener('touchstart', e => {
-        e.preventDefault();
-        attivaSlideshow();
-      }, { passive: false }));
-    // // attivaSlideshow(); // se vuoi partire subito
-  }
-
-  // 3) POPUP BENVENUTO → entra a 2s, dura 4s, poi animateMenu()
+  // 2) Popup welcome 2s → 4s → animateMenu()
   setTimeout(() => {
     modalContent.innerHTML = contenutoHome;
+    modal.style.opacity    = '0';
     modal.classList.add('show');
+    // fade in
+    void modal.offsetWidth;
+    modal.style.opacity = '1';
+
     setTimeout(() => {
-      modal.classList.remove('show');
-      animateMenu();
+      // fade out
+      modal.style.opacity = '0';
+      setTimeout(() => {
+        modal.classList.remove('show');
+        animateMenu();
+      }, 500);
     }, 4000);
   }, 2000);
 
-  // 4) CLICK SUL LOGO (centrale e sidebar) → ripristina home
+  // 3) Click su logo centrale e sidebar-logo: chiudi tutto e rifai fade
   [logoBtn, sidebarLogo].forEach(el => {
     el.style.cursor = 'pointer';
     el.addEventListener('click', () => {
@@ -1197,46 +1195,47 @@ window.addEventListener('DOMContentLoaded', () => {
       const main      = document.getElementById('main');
       const watermark = document.getElementById('watermark-logo');
 
-      // 4.1) fade-out home
-      main.style.opacity = '0';
+      // 3.1) Fade out main & sidebar
+      main.style.opacity    = '0';
+      sidebar.style.opacity = '0';
+      // chiudi eventuali modali
+      modal.classList.remove('show');
 
       setTimeout(() => {
-        // 4.2) stop slideshow e nascondi watermark
+        // 3.2) reset slideshow & watermark
         if (slideshowInterval) clearInterval(slideshowInterval);
         slideshowInterval = null;
         slideshowAttivo   = false;
         watermark.style.display = 'none';
 
-        // 4.3) restore sidebar
-        document.getElementById('submenu-servizi').style.display = 'none';
-        document.querySelectorAll('.menu-list > .menu-item')
-                .forEach(i => i.style.display = 'flex');
-        sidebar.style.display = '';
+        // 3.3) restore sidebar invisibile, poi fade in
+        sidebar.style.display   = '';
+        sidebar.style.opacity   = '0';
+        void sidebar.offsetWidth;
+        sidebar.style.opacity   = '1';
 
-        // 4.4) reset logo centrale
+        // 3.4) reset logo centrale
+        logoBtn.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
         logoBtn.style.transition = 'none';
         logoBtn.style.visibility = 'hidden';
         logoBtn.style.opacity    = '0';
-        logoBtn.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
         const preload = new Image();
         preload.src = 'logo.png';
         preload.onload = () => {
           logoBtn.src = preload.src;
           logoBtn.style.transform  = 'translate(-50%,-60%) scale(1.8)';
-          void logoBtn.offsetWidth;
           logoBtn.style.transition = 'opacity 0.6s ease-in-out';
           logoBtn.style.visibility = 'visible';
           logoBtn.style.opacity    = '1';
           setTimeout(() => logoBtn.classList.add('pulse'), 600);
         };
 
-        // 4.5) fade-in home e fine transizione
+        // 3.5) Fade in main
         main.style.opacity = '1';
         setTimeout(() => { isTransitioning = false; }, 600);
       }, 500);
     });
   });
-
 });
 
 
