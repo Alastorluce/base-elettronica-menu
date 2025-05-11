@@ -1002,12 +1002,7 @@ function apriSubservizio(tipo) {
   let contenuto = '';
   switch (tipo) {
     case 'service':
-      contenuto = `…`;
-      break;
-    // altri case…
-
-
-
+     
   contenuto = `
 
   <div style="text-align:center;">
@@ -1140,8 +1135,8 @@ function apriSubservizio(tipo) {
 
   }
 
-  isTransitioning = true;
 
+  // Mostra contenuto
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -1158,7 +1153,9 @@ function apriSubservizio(tipo) {
     modal.classList.add('show');
     currentIndex = null;
     isTransitioning = false;
+    showModalWithScroll();
   }
+
 }
 
 
