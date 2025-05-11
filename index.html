@@ -585,29 +585,26 @@ ul.custom-list li > strong {
 
 
 
- /* AUTO SCROLL */
 
-/* autoscroll: nasconde la scrollbar */
+/*   AUTOSCROLL  // 
+
+/* ——— Autoscroll globale per ogni overflow ——— */
+/* nasconde la scrollbar quando è in autoscroll */
 .auto-scroll-hide {
-  scrollbar-width: none;               /* Firefox */
-  -ms-overflow-style: none;            /* IE10+ */
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE10+ */
 }
 .auto-scroll-hide::-webkit-scrollbar {
-  width: 0;                            /* Chrome, Safari, Opera */
+  width: 0;                       /* Chrome, Safari, Opera */
 }
 
-/* autoscroll interrotto: mostra la scrollbar */
+/* mostra la scrollbar quando l’autoscroll è in pausa */
 .auto-scroll-show {
   scrollbar-width: auto;
 }
 .auto-scroll-show::-webkit-scrollbar {
   width: 12px;
 }
-
-
-
-
-
 
 </style>
 </head>
@@ -676,57 +673,6 @@ ul.custom-list li > strong {
 
   
     <script>
-
-/**
- * Avvia un autoscroll lento su un elemento con overflow.
- * stoppa al primo click/touch isolato dentro l'elemento e mostra la scrollbar.
- *
- * @param {HTMLElement} el     il contenitore scrollabile
- * @param {number} speed       px/sec
- * @param {number} delay       ms di attesa prima di partire
- */
-function autoScrollOnShow(el, speed = 20, delay = 3000) {
-  let rafId, lastTime, active = false;
-
-  function step(ts) {
-    if (!active) return;
-    if (!lastTime) lastTime = ts;
-    const delta = ts - lastTime;
-    lastTime = ts;
-    el.scrollTop += (delta * speed) / 1000;
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-      stop();
-      return;
-    }
-    rafId = requestAnimationFrame(step);
-  }
-
-  function start() {
-    active = true;
-    lastTime = null;
-    el.classList.add('auto-scroll-hide');
-    el.classList.remove('auto-scroll-show');
-    rafId = requestAnimationFrame(step);
-  }
-
-  function stop() {
-    active = false;
-    if (rafId) cancelAnimationFrame(rafId);
-    el.classList.remove('auto-scroll-hide');
-    el.classList.add('auto-scroll-show');
-  }
-
-  // Stop al primo click o touch **dentro** l'elemento
-  const onceStop = () => stop();
-  el.addEventListener('click', onceStop, { once: true });
-  el.addEventListener('touchstart', onceStop, { once: true });
-
-  // Se l'elemento è già visibile, parte dopo delay
-  setTimeout(start, delay);
-}
-
-
-
       const contenuti = [
         `<!-- Chi siamo -->
 <div style="text-align:center;">
@@ -829,23 +775,11 @@ let slideshowInterval = null;
 
 function apri(index) {
   if (isTransitioning) return;
+
+
   isTransitioning = true;
 
-  // Funzione interna per mostrare la modale e avviare l’autoscroll
-  function showWithAutoScroll() {
-    modalContent.innerHTML = contenuti[index];
-    modal.classList.add('show');
-    currentIndex = index;
-    isTransitioning = false;
-
-    // <-- qui avvii l’autoscroll sul contenuto
-    // Se vuoi che la scrollbar appaia sul container esterno usa `modal`
-    // oppure per farla comparire solo dentro il testo usa `modalContent`
-    autoScrollOnShow(modalContent, 20 /* px/s */, 3000 /* ms */);
-  }
-
   if (currentIndex === index) {
-    // chiudo
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
@@ -854,23 +788,25 @@ function apri(index) {
       currentIndex = null;
       isTransitioning = false;
     }, 600);
-
   } else {
     if (modal.classList.contains('show')) {
-      // cambio contenuto
       modal.classList.remove('show');
       modal.classList.add('fade-out');
       setTimeout(() => {
-        showWithAutoScroll();
+        modalContent.innerHTML = contenuti[index];
         modal.classList.remove('fade-out');
+        modal.classList.add('show');
+        currentIndex = index;
+        isTransitioning = false;
       }, 600);
     } else {
-      // apro per la prima volta
-      showWithAutoScroll();
+      modalContent.innerHTML = contenuti[index];
+      modal.classList.add('show');
+      currentIndex = index;
+      isTransitioning = false;
     }
   }
 }
-
 
 
 function toggleSubmenu() {
@@ -1387,83 +1323,97 @@ document.querySelectorAll('.menu-item').forEach(el => {
 });
 
 
- /* AUTO SCROLL */
+// AUTO SCROLL  //
 
-  ;(function(){
-    const DELAY_START = 3000;    // ms prima di partire
-    const SPEED_PX_S  = 20;      // px/sec, regola a piacere
+;(function(){
+  const SPEED_PX_S = 20;   // velocità in px/s
+  const DELAY_MS   = 3000; // ritardo prima di partire
 
-    // 1) Trova tutti gli elementi scrollabili
-    const elems = Array.from(document.body.querySelectorAll('*'))
-      .filter(el => {
-        const cs = getComputedStyle(el);
-        const ovY = cs.overflowY;
-        return (ovY === 'auto' || ovY === 'scroll')
-               && el.scrollHeight > el.clientHeight;
-      });
+  // restituisce true se l'elemento è scrollabile in Y
+  function isScrollable(el) {
+    const cs = getComputedStyle(el);
+    return (cs.overflowY === 'auto' || cs.overflowY === 'scroll')
+           && el.scrollHeight > el.clientHeight;
+  }
 
-    // 2) Controller per un singolo elemento
-    class ScrollController {
-      constructor(el, speed) {
-        this.el = el;
-        this.speedPxMs = speed / 1000;
-        this.rafId = null;
-        this.lastTime = null;
-        this.active = false;
+  // imposta autoscroll + toggle click
+  function setupAutoScroll(el) {
+    let rafId = null, lastTime = null, active = false;
+
+    function step(ts) {
+      if (!active) return;
+      if (!lastTime) lastTime = ts;
+      const delta = ts - lastTime;
+      lastTime = ts;
+      el.scrollTop += (delta * SPEED_PX_S) / 1000;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+        stop();
+        return;
       }
-      step(ts) {
-        if (!this.active) return;
-        if (!this.lastTime) this.lastTime = ts;
-        const delta = ts - this.lastTime;
-        this.lastTime = ts;
-        this.el.scrollTop += delta * this.speedPxMs;
-        if (this.el.scrollTop + this.el.clientHeight >= this.el.scrollHeight) {
-          this.stop();
-          return;
-        }
-        this.rafId = requestAnimationFrame(this.step.bind(this));
-      }
-      start() {
-        if (this.active) return;
-        this.active = true;
-        this.el.classList.add('auto-scroll-hide');
-        this.el.classList.remove('auto-scroll-show');
-        this.lastTime = null;
-        this.rafId = requestAnimationFrame(this.step.bind(this));
-      }
-      stop() {
-        if (!this.active) return;
-        this.active = false;
-        cancelAnimationFrame(this.rafId);
-        this.el.classList.remove('auto-scroll-hide');
-        this.el.classList.add('auto-scroll-show');
-      }
+      rafId = requestAnimationFrame(step);
     }
 
-    // 3) Istanze per ogni scrollabile
-    const controllers = elems.map(el => new ScrollController(el, SPEED_PX_S));
+    function start() {
+      active = true;
+      lastTime = null;
+      el.classList.add('auto-scroll-hide');
+      el.classList.remove('auto-scroll-show');
+      rafId = requestAnimationFrame(step);
+    }
 
-    // 4) Start/stop collettivi
-    function startAll() { controllers.forEach(c => c.start()); }
-    function stopAll()  { controllers.forEach(c => c.stop());  }
+    function stop() {
+      active = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      el.classList.remove('auto-scroll-hide');
+      el.classList.add('auto-scroll-show');
+    }
 
-    // 5) Al caricamento
-    window.addEventListener('DOMContentLoaded', () => {
-      // parte dopo 3 secondi
-      setTimeout(startAll, DELAY_START);
+    // click dentro: toggle start/stop
+    el.addEventListener('click', () => active ? stop() : start());
+    el.addEventListener('touchstart', () => active ? stop() : start());
 
-      // al primo click o touch, ferma tutto
-      const halt = () => {
-        stopAll();
-        document.removeEventListener('click', halt);
-        document.removeEventListener('touchstart', halt);
-      };
-      document.addEventListener('click', halt);
-      document.addEventListener('touchstart', halt);
+    // parte in automatico dopo il delay
+    setTimeout(start, DELAY_MS);
+  }
+
+  // tiene traccia degli elementi già inizializzati
+  const seen = new WeakSet();
+
+  // cerca e inizializza TUTTI i nodi scrollabili in pagina
+  function scanAndSetup(root) {
+    const els = root.querySelectorAll('*');
+    els.forEach(el => {
+      if (!seen.has(el) && isScrollable(el)) {
+        seen.add(el);
+        setupAutoScroll(el);
+      }
     });
-  })();
+  }
 
+  // scan iniziale al DOMContentLoaded
+  window.addEventListener('DOMContentLoaded', () => {
+    scanAndSetup(document.body);
 
+    // osserva aggiunte di nuovi nodi (es. il tuo #modal quando popoli il contenuto)
+    const mo = new MutationObserver(muts => {
+      for (let m of muts) {
+        if (m.type === 'childList') {
+          m.addedNodes.forEach(node => {
+            if (node.nodeType === 1) {
+              if (isScrollable(node) && !seen.has(node)) {
+                seen.add(node);
+                setupAutoScroll(node);
+              }
+              // e i suoi discendenti
+              scanAndSetup(node);
+            }
+          });
+        }
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  });
+})();
 
 
 </script>
