@@ -688,6 +688,7 @@ function isScrollable(el) {
 // Attiva un autoscroll lento su `el`
 function setupAutoScroll(el, speed = 11, delay = 9000) {
   let id, last, active = false;
+  let remainder = 0;  // <-- accumula i decimali
 
   // NASCONDI subito la scrollbar, anche prima di partire
   el.classList.add('auto-scroll-hide');
@@ -698,7 +699,13 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     if (!last) last = ts;
     const d = ts - last; 
     last = ts;
-    el.scrollTop += (d * speed) / 1000;
+    // calcolo pixel “reali” da muovere in questo frame
+    const raw = (d * speed) / 1000 + remainder;
+    // arrotondo per intero
+    const move = Math.floor(raw);
+    // tengo il resto per il prossimo frame
+    remainder = raw - move;
+    el.scrollTop += move;
     if (el.scrollTop + el.clientHeight >= el.scrollHeight) return stop();
     id = requestAnimationFrame(step);
   }
@@ -707,7 +714,6 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     if (active) return;
     active = true;
     last = null;
-    // già nascosta in apertura, ma ripeti per sicurezza
     el.classList.add('auto-scroll-hide');
     el.classList.remove('auto-scroll-show');
     id = requestAnimationFrame(step);
@@ -721,17 +727,12 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
- // click/tap singolo per attivare lo scroll
-el.addEventListener('click', () => {
-  if (!active) start();
-});
+  el.addEventListener('click', () => {
+    if (!active) start();
+  });
+  el.addEventListener('wheel', stop, { passive: true });
+  el.addEventListener('touchmove', stop, { passive: true });
 
-// rileva scroll manuale (touch o mousewheel), e blocca l’autoscroll
-el.addEventListener('wheel', stop, { passive: true });
-el.addEventListener('touchmove', stop, { passive: true });
-
-
-  // parte in automatico dopo il delay
   setTimeout(start, delay);
 }
 
