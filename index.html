@@ -737,9 +737,15 @@ el.addEventListener('touchmove', stop, { passive: true });
 
 // Inizializzazione minimal: se scrollabile, setta l’autoscroll
 function initScrollOn(root) {
-  if (isScrollable(root)) setupAutoScroll(root);
-}
+  // desktop se larghezza ≥ 769px
+  const isDesktop = window.matchMedia('(min-width: 769px)').matches;
+  // scegli la velocità: 20px/s su desktop, 12px/s su mobile
+  const speed = isDesktop ? 20 : 12;
+  const delay = 9000;
 
+  // NON controllo più isScrollable: parte sempre
+  setupAutoScroll(root, speed, delay);
+}
 /**
  * Mostra la modale con il contenuto già in `modalContent.innerHTML`
  * e innesca l'autoscroll sul #modal.
