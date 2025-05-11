@@ -7,26 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
 
-    /* 1) Riserva sempre lo spazio per la scrollbar su web/desktop
-   così il testo non cambia larghezza quando appare */
-#modal-content {
-  overflow-y: auto;
-  /* mantiene stabile il gutter, evita shift di layout */
-  scrollbar-gutter: stable;
-}
 
-/* 2) Solo su mobile nascondi la scrollbar */
-@media (max-width: 768px) {
-  #modal-content {
-    /* Firefox */
-    scrollbar-width: none;
-    /* Edge/Safari/Chrome */
-    -ms-overflow-style: none;
-  }
-  #modal-content::-webkit-scrollbar {
-    display: none;
-  }
-}
 
 
 
@@ -365,7 +346,19 @@
   }
 }
 
+@media (min-width: 1025px) {
+  #modal-content {
+    /* 1) lascia overflow auto (non scroll) per non mostrare la barra sempre */
+    overflow-y: auto;
 
+    /* 2) riserva spazio per la scrollbar, così il testo non si restringe */
+    scrollbar-gutter: stable;
+
+    /* 3) fallback per browser che non supportano gutter: riserva 12px a destra */
+    padding-right: 12px;
+    margin-right: -12px;
+  }
+}
 
 
 
