@@ -6,7 +6,13 @@
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
-     
+
+
+     /* Solo per web: niente fade-out quando ha la classe instant-hide */
+      #modal.instant-hide {
+      transition: none !important;
+}
+
      /* disabilita selezione di testo e immagini */
     *, *::before, *::after {
       user-select: none;
@@ -1223,8 +1229,13 @@ async function attivaSlideshow() {
   watermark.style.opacity = '1';
 
   if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
+      modal.classList.add('instant-hide');
+      modal.classList.remove('show');
+      modal.style.opacity = '0';
+  // la rimuoviamo subito dopo, così le transition tornano normali
+  setTimeout(() => {
+    modal.classList.remove('instant-hide');
+  }, 0);
     setTimeout(() => {
       watermark.style.opacity = '0.05';
     }, 5);
