@@ -1119,143 +1119,123 @@ modalContent.addEventListener('click', (e) => {
 
 
 
-    document.getElementById('sidebar-logo').addEventListener('click', () => {
-  if (isTransitioning) return;
-  isTransitioning = true;
+   // Funzione: anima sidebar e menu-item dopo la chiusura del popup
+function animateMenu() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.add('animated');
+  document.querySelectorAll('.menu-item').forEach(el => {
+    void el.offsetWidth; // forzo reflow
+    el.classList.add('animated');
+  });
+}
 
-  const main       = document.getElementById('main');
-  const sidebar    = document.getElementById('sidebar');
-  const watermark  = document.getElementById('watermark-logo');
-  const logo       = document.getElementById('logo-btn');
+// Listener principale
+window.addEventListener('DOMContentLoaded', () => {
+  // Variabili
+  const logoBtn      = document.getElementById('logo-btn');
+  const sidebar      = document.getElementById('sidebar');
+  const sidebarLogo  = document.getElementById('sidebar-logo');
+  const modal        = document.getElementById('modal');
+  const modalContent = document.getElementById('modal-content');
+  let isTransitioning = false;
 
-  // 1) inizio dissolvenza OUT della home
-  main.style.opacity = '0';
-
-  // 2) dopo 500ms (fade-out completo), resettiamo tutto
+  // 1) ZOOM INIZIALE SUPER-AMPLIO + PULSING
+  logoBtn.style.transform  = 'translate(-50%,-50%) scale(4)';
+  logoBtn.style.transition = 'transform 0.8s ease-out';
   setTimeout(() => {
-    // 2a) ferma lo slideshow
-    if (slideshowInterval) clearInterval(slideshowInterval);
-    slideshowInterval = null;
-    slideshowAttivo   = false;
+    logoBtn.style.transform = 'translate(-50%,-50%) scale(2.3)';
+    setTimeout(() => logoBtn.classList.add('pulse'), 800);
+  }, 800);
 
-    // 2b) nascondi watermark
-    watermark.style.display = 'none';
-
-    // 2c) ripristina la sidebar
-    sidebar.style.display = '';
-
-    // 2d) reset del logo centrale (come nel tuo preload)
-    logo.style.transition   = 'none';
-    logo.style.visibility   = 'hidden';
-    logo.style.opacity      = '0';
-    logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
-
-    const preload = new Image();
-    preload.src = 'logo.png';
-    preload.onload = () => {
-      logo.src = preload.src;
-      logo.style.transform    = 'translate(-50%,-60%) scale(1.8)';
-      void logo.offsetWidth; // forzo reflow
-      logo.style.transition   = 'opacity 0.6s ease-in-out';
-      logo.style.visibility   = 'visible';
-      logo.style.opacity      = '1';
-      setTimeout(() => {
-        logo.classList.add('pulse');
-      }, 600);
-    };
-
-    // 3) dissolvenza IN della home
-    main.style.opacity = '1';
-
-    // 4) fine transizione
-    setTimeout(() => {
-      isTransitioning = false;
-    }, 600);
-
-  }, 500); // attendi 0.5s per il fade-out
-});
-
-
- 
-  // 1. Variabili di controllo
-  let welcomeTimeout;
-  let welcomeShown = false;
-
-  window.addEventListener('DOMContentLoaded', () => {
-  // 1) Avvia animazioni sidebar/menu
-  document.getElementById('sidebar').classList.add('animated');
-  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
-
-  // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
+  // 2) SOLO MOBILE: “×”, touch su “Clicca qui” e showroom (lascia intatto il tuo)
   if (window.matchMedia('(max-width: 768px)').matches) {
-    const modal        = document.getElementById('modal');
-    const modalContent = document.getElementById('modal-content');
-
-    // 2a) Inietta il pulsante di chiusura, se non esiste già
-    if (!modal.querySelector('.modal-close')) {
+    // (Il tuo blocco 2a–2d esattamente com’era)
+    const modalLocal        = modal;
+    const modalContentLocal = modalContent;
+    if (!modalLocal.querySelector('.modal-close')) {
       const closeBtn = document.createElement('button');
       closeBtn.className = 'modal-close';
       closeBtn.setAttribute('aria-label', 'Chiudi');
       closeBtn.textContent = '×';
-      modal.insertBefore(closeBtn, modalContent);
+      modalLocal.insertBefore(closeBtn, modalContentLocal);
     }
-
-    // 2b) Collega il click sulla “×” per chiudere la modale
-    modal.querySelectorAll('.modal-close').forEach(btn => {
+    modalLocal.querySelectorAll('.modal-close').forEach(btn => {
       btn.addEventListener('click', () => {
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
+        modalLocal.classList.remove('show');
+        modalLocal.classList.add('fade-out');
         setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
+          modalLocal.classList.remove('fade-out');
+          modalContentLocal.innerHTML = '';
         }, 600);
       });
     });
-
-    // 2c) Assicura che su touch “Clicca qui” parta la showroom
-    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-      el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tap
+    document.querySelectorAll('span[onclick="attivaSlideshow()"]')
+      .forEach(el => el.addEventListener('touchstart', e => {
+        e.preventDefault();
         attivaSlideshow();
-      }, { passive: false });
-    });
-
-    // 2d) Avvia la showroom automaticamente (se lo desideri)
-    // attivaSlideshow();
+      }, { passive: false }));
+    // // attivaSlideshow(); // se vuoi partire subito
   }
-   
-  // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
-  const logoBtn = document.getElementById('logo-btn');
-  
-  // **Ingrandimento iniziale extra e poi ritorno a scala normale**
-  const logo = document.getElementById('logo-btn');
-// 1) imposta subito un grande zoom
-  logo.style.transform = 'translate(-50%,-50%) scale(4)';
-  logo.style.transition = 'transform 0.8s ease-out';
-// 2) dopo 800ms torna alla scala normale (2.3) e poi appare il pulsare
-setTimeout(() => {
-  logo.style.transform = 'translate(-50%,-50%) scale(2.3)';
-  // al termine del ritorno, aggiungi la classe di pulsing
-  setTimeout(() => logo.classList.add('pulse'), 800);
-}, 800);
 
-  logoBtn.style.cursor = 'pointer';
-  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
-
-  // 3) Pianifica il pop-up di benvenuto: dopo 2s entra, dura 4s, poi sparisce da solo
-let welcomeTimeout = setTimeout(() => {
-  // Mostra il contenuto di benvenuto
-  modalContent.innerHTML = contenutoHome;
-  modal.classList.add('show');
-
-  // Dopo 4 secondi, nascondi automaticamente il popup
+  // 3) POPUP BENVENUTO → entra a 2s, dura 4s, poi animateMenu()
   setTimeout(() => {
-    modal.classList.remove('show');
-  }, 4000);
+    modalContent.innerHTML = contenutoHome;
+    modal.classList.add('show');
+    setTimeout(() => {
+      modal.classList.remove('show');
+      animateMenu();
+    }, 4000);
+  }, 2000);
 
-  // Non serve più il click-to-hide: rimuovi listener precedenti se esistono
-  // (se avevi aggiunto un hideWelcome, puoi eliminarlo qui, ma non è necessario)
-}, 2000);
+  // 4) CLICK SUL LOGO (centrale e sidebar) → ripristina home
+  [logoBtn, sidebarLogo].forEach(el => {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', () => {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      const main      = document.getElementById('main');
+      const watermark = document.getElementById('watermark-logo');
+
+      // 4.1) fade-out home
+      main.style.opacity = '0';
+
+      setTimeout(() => {
+        // 4.2) stop slideshow e nascondi watermark
+        if (slideshowInterval) clearInterval(slideshowInterval);
+        slideshowInterval = null;
+        slideshowAttivo   = false;
+        watermark.style.display = 'none';
+
+        // 4.3) restore sidebar
+        document.getElementById('submenu-servizi').style.display = 'none';
+        document.querySelectorAll('.menu-list > .menu-item')
+                .forEach(i => i.style.display = 'flex');
+        sidebar.style.display = '';
+
+        // 4.4) reset logo centrale
+        logoBtn.style.transition = 'none';
+        logoBtn.style.visibility = 'hidden';
+        logoBtn.style.opacity    = '0';
+        logoBtn.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
+        const preload = new Image();
+        preload.src = 'logo.png';
+        preload.onload = () => {
+          logoBtn.src = preload.src;
+          logoBtn.style.transform  = 'translate(-50%,-60%) scale(1.8)';
+          void logoBtn.offsetWidth;
+          logoBtn.style.transition = 'opacity 0.6s ease-in-out';
+          logoBtn.style.visibility = 'visible';
+          logoBtn.style.opacity    = '1';
+          setTimeout(() => logoBtn.classList.add('pulse'), 600);
+        };
+
+        // 4.5) fade-in home e fine transizione
+        main.style.opacity = '1';
+        setTimeout(() => { isTransitioning = false; }, 600);
+      }, 500);
+    });
+  });
 
 });
 
