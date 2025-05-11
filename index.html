@@ -1229,17 +1229,21 @@ async function attivaSlideshow() {
   watermark.style.opacity = '1';
 
   if (modal.classList.contains('show')) {
-      modal.classList.add('instant-hide');
-      modal.classList.remove('show');
-      modal.style.opacity = '0';
-  // la rimuoviamo subito dopo, così le transition tornano normali
+  // 1) immediata rimozione
+  modal.classList.add('instant-hide');
+  modal.classList.remove('show');
+  modal.style.opacity = '0';
+
+  // 2) resetto opacità e transitions subito dopo
   setTimeout(() => {
     modal.classList.remove('instant-hide');
+    modal.style.opacity = '';      // <- qui tolgo l'inline style
   }, 0);
-    setTimeout(() => {
-      watermark.style.opacity = '0.05';
-    }, 5);
-  }
+
+  setTimeout(() => {
+    watermark.style.opacity = '0.05';
+  }, 5);
+}
 
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
