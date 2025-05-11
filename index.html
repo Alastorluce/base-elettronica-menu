@@ -6,11 +6,6 @@
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
-
-
-     /* Fade/transform globali */
-     #main, #sidebar, .menu-item, #modal {transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;}
-
      
      /* disabilita selezione di testo e immagini */
     *, *::before, *::after {
@@ -180,6 +175,7 @@
       max-width: 90vw;
       height: auto;
       object-fit: contain;
+      animation: pulse 2s infinite ease-in-out;
       z-index: 1;
       position: absolute;
       top: 55%;
@@ -279,6 +275,9 @@
     max-width: 90vw;
     min-height: 45px;
     text-align: center;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -582,10 +581,6 @@ ul.custom-list li > strong {
   text-align: left;
 }
 
-/* classe per far partire il pulse SOLO dopo lo zoom JS */
-.pulse {
-  animation: pulse 2s infinite ease-in-out;
-}
 
 
 </style>
@@ -653,7 +648,7 @@ ul.custom-list li > strong {
   
     <script>
       const contenuti = [
-        `<!-- Chi siamo -->
+        <!-- Chi siamo -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Chi siamo</h2>                    
   <h2 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h2>
@@ -669,9 +664,9 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 <p>Collaboriamo con enti pubblici, aziende private, studi di architettura, service per lo spettacolo e broadcaster televisivi, adattando ogni progetto alle esigenze specifiche del cliente con <strong>soluzioni su misura, scalabili e ad alta efficienza</strong>.</p>
 
 <p>Lavoriamo con attrezzature all’avanguardia e standard qualitativi elevati, ponendoci come partner di riferimento per eventi live, showroom, installazioni fisse, studi televisivi, ambienti immersivi e produzioni ad alto impatto tecnologico.</p>
-`,
+,
   
-        `<!-- Portfolio -->
+        <!-- Portfolio -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Portfolio</h2>
 </div>
@@ -694,9 +689,9 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   Clicca qui
 </span></em>&nbsp;&nbsp;per avviare una piccola anteprima nella showroom interattiva.</p>
 
-`,
+,
   
-        `<!-- Contattaci -->
+        <!-- Contattaci -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Contattaci</h2>
 </div>
@@ -727,12 +722,12 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 <p style="margin-top:1em;">
   Preferisci scriverci direttamente? Puoi contattarci via email all’indirizzo: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
 </p>
-`
+
       ];
   
   
 
-    const contenutoHome = `
+    const contenutoHome = 
   <div style="text-align: center; max-width: 700px; margin: 50px auto;">
     <h2 style="margin-bottom: 10px; color: white;">Benvenuti in</h2>
     <h1 style="color: #00aaff; font-size: 2.5em; margin-top: 0;">Base Elettronica Service</h1>
@@ -742,7 +737,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
       Scopri di più esplorando il nostro sito!
     </p>
   </div>
-`;
+;
 
 
     let modal = document.getElementById('modal');
@@ -882,7 +877,7 @@ function apriSubservizio(tipo) {
   let contenuto = '';
   switch (tipo) {
     case 'service':
-  contenuto = `
+  contenuto = 
 
   <div style="text-align:center;">
     <h2 class="radar-glow">Service Tecnico per Eventi e Spettacoli</h2>
@@ -904,11 +899,11 @@ function apriSubservizio(tipo) {
 
 <p>Tutti i tecnici coinvolti sono formati secondo i moduli PES-PAV-PEI, piattaforme aeree (PLE), antincendio rischio elevato e movimentazione carichi in sicurezza, con copertura assicurativa completa.</p>
 
-<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>`;
+<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>;
   break;
 
       case 'antincendio':
-  contenuto = `
+  contenuto = 
    
 
   <div style="text-align:center;">
@@ -925,11 +920,11 @@ function apriSubservizio(tipo) {
       <li><strong>Monitoraggio remoto</strong> e manutenzione predittiva su infrastrutture industriali, civili e per eventi temporanei.</li>
     </ul>
     <p>Ogni progetto viene sviluppato in sinergia con i nostri ingegneri e tecnici certificati, per garantire la massima copertura del rischio e la piena conformità alle normative nazionali ed europee.</p>
-  `;
+  ;
   break;
 
   case 'progettazione':
-  contenuto = `
+  contenuto = 
     
 
   <div style="text-align:center;">
@@ -946,11 +941,11 @@ function apriSubservizio(tipo) {
     </ul>
 
     <p>Ogni progetto è accompagnato da <strong style="color:#00a6ff;">documentazione tecnica dettagliata</strong>, planimetrie esecutive e consulenza dedicata nella fase di cantiere. Il nostro approccio modulare ci consente di soddisfare le esigenze sia di piccoli eventi privati sia di grandi produzioni professionali, garantendo risultati impeccabili e piena coerenza normativa.</p>
-  `;
+  ;
   break;
 
   case 'noleggio':
-  contenuto = `
+  contenuto = 
     
 
   <div style="text-align:center;">
@@ -975,11 +970,11 @@ function apriSubservizio(tipo) {
     <p>È possibile stipulare contratti di <strong>noleggio giornaliero, settimanale, mensile o a lungo termine</strong>, con servizio opzionale di consegna, installazione, supervisione tecnica e smontaggio.</p>
 
     <p>Ogni richiesta viene gestita con analisi tecnica preliminare, scheda materiali dettagliata e supporto nella scelta della configurazione più efficiente rispetto all’ambiente operativo e al tipo di evento.</p>
-  `;
+  ;
   break;
 
   case 'assistenza':
-  contenuto = `
+  contenuto = 
     
 
   <div style="text-align:center;">
@@ -1009,7 +1004,7 @@ function apriSubservizio(tipo) {
     </ul>
 
     <p>Il nostro team è abilitato a operare su installazioni fisse, strutture mobili e rental, con servizio di <strong>supporto tecnico pre e post-evento</strong>, documentazione CE e certificazione di conformità post-intervento.</p>
-  `;
+  ;
   break;
 
   }
@@ -1124,108 +1119,138 @@ modalContent.addEventListener('click', (e) => {
 
 
 
-   // 0) Funzione per animare sidebar e menu-item
-function animateMenu() {
-  const sidebar = document.getElementById('sidebar');
-  // fade-in sidebar
-  sidebar.style.opacity = '0';
-  sidebar.style.transform = 'translateX(-100%)';
-  void sidebar.offsetWidth;
-  sidebar.style.opacity = '1';
-  sidebar.style.transform = 'translateX(0)';
+    document.getElementById('sidebar-logo').addEventListener('click', () => {
+  if (isTransitioning) return;
+  isTransitioning = true;
 
-  // faccio partire l'animazione CSS con delay già definiti nei keyframes
-  document.querySelectorAll('.menu-item').forEach(el => {
-    el.classList.add('animated');
-  });
-}
+  const main       = document.getElementById('main');
+  const sidebar    = document.getElementById('sidebar');
+  const watermark  = document.getElementById('watermark-logo');
+  const logo       = document.getElementById('logo-btn');
 
-window.addEventListener('DOMContentLoaded', () => {
-  const logoBtn      = document.getElementById('logo-btn');
-  const sidebar      = document.getElementById('sidebar');
-  const sidebarLogo  = document.getElementById('sidebar-logo');
-  const modal        = document.getElementById('modal');
-  const modalContent = document.getElementById('modal-content');
-  let isTransitioning = false;
+  // 1) inizio dissolvenza OUT della home
+  main.style.opacity = '0';
 
-  // 1) Zoom super-amplio → ritorno → pulsing
-  logoBtn.style.transform  = 'translate(-50%,-50%) scale(4)';
-  logoBtn.style.transition = 'transform 0.8s ease-out, opacity 0.5s ease-in-out';
-  logoBtn.style.opacity    = '0';
-  void logoBtn.offsetWidth;
-  logoBtn.style.opacity    = '1';
+  // 2) dopo 500ms (fade-out completo), resettiamo tutto
   setTimeout(() => {
-    logoBtn.style.transform = 'translate(-50%,-50%) scale(2.3)';
-    setTimeout(() => logoBtn.classList.add('pulse'), 800);
-  }, 50);
+    // 2a) ferma lo slideshow
+    if (slideshowInterval) clearInterval(slideshowInterval);
+    slideshowInterval = null;
+    slideshowAttivo   = false;
 
-  // 2) Popup welcome 2s → 4s → animateMenu()
-  setTimeout(() => {
-    modalContent.innerHTML = contenutoHome;
-    modal.style.opacity = '0';
-    modal.classList.add('show');
-    void modal.offsetWidth;
-    modal.style.opacity = '1';
+    // 2b) nascondi watermark
+    watermark.style.display = 'none';
 
+    // 2c) ripristina la sidebar
+    sidebar.style.display = '';
+
+    // 2d) reset del logo centrale (come nel tuo preload)
+    logo.style.transition   = 'none';
+    logo.style.visibility   = 'hidden';
+    logo.style.opacity      = '0';
+    logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
+
+    const preload = new Image();
+    preload.src = 'logo.png';
+    preload.onload = () => {
+      logo.src = preload.src;
+      logo.style.transform    = 'translate(-50%,-60%) scale(1.8)';
+      void logo.offsetWidth; // forzo reflow
+      logo.style.transition   = 'opacity 0.6s ease-in-out';
+      logo.style.visibility   = 'visible';
+      logo.style.opacity      = '1';
+      setTimeout(() => {
+        logo.classList.add('pulse');
+      }, 600);
+    };
+
+    // 3) dissolvenza IN della home
+    main.style.opacity = '1';
+
+    // 4) fine transizione
     setTimeout(() => {
-      modal.style.opacity = '0';
-      setTimeout(() => {
+      isTransitioning = false;
+    }, 600);
+
+  }, 500); // attendi 0.5s per il fade-out
+});
+
+
+ 
+  // 1. Variabili di controllo
+  let welcomeTimeout;
+  let welcomeShown = false;
+
+  window.addEventListener('DOMContentLoaded', () => {
+  // 1) Avvia animazioni sidebar/menu
+  document.getElementById('sidebar').classList.add('animated');
+  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+
+  // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    const modal        = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+
+    // 2a) Inietta il pulsante di chiusura, se non esiste già
+    if (!modal.querySelector('.modal-close')) {
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'modal-close';
+      closeBtn.setAttribute('aria-label', 'Chiudi');
+      closeBtn.textContent = '×';
+      modal.insertBefore(closeBtn, modalContent);
+    }
+
+    // 2b) Collega il click sulla “×” per chiudere la modale
+    modal.querySelectorAll('.modal-close').forEach(btn => {
+      btn.addEventListener('click', () => {
         modal.classList.remove('show');
-        animateMenu();
-      }, 500);
-    }, 4000);
-  }, 2000);
-
-  // 3) Click su logo centrale e sidebar-logo: chiudi tutto e rifai fade
-  [logoBtn, sidebarLogo].forEach(el => {
-    el.style.cursor = 'pointer';
-    el.addEventListener('click', () => {
-      if (isTransitioning) return;
-      isTransitioning = true;
-
-      const main      = document.getElementById('main');
-      const watermark = document.getElementById('watermark-logo');
-
-      // 3.1) Fade out main & sidebar
-      main.style.opacity    = '0';
-      sidebar.style.opacity = '0';
-      modal.classList.remove('show');
-
-      setTimeout(() => {
-        // 3.2) reset slideshow & watermark
-        if (slideshowInterval) clearInterval(slideshowInterval);
-        slideshowInterval = null;
-        slideshowAttivo   = false;
-        watermark.style.display = 'none';
-
-        // 3.3) restore + fade-in sidebar
-        sidebar.style.display = '';
-        sidebar.style.opacity = '0';
-        void sidebar.offsetWidth;
-        sidebar.style.opacity = '1';
-
-        // 3.4) reset logo centrale
-        logoBtn.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
-        logoBtn.style.transition = 'none';
-        logoBtn.style.visibility = 'hidden';
-        logoBtn.style.opacity    = '0';
-        const preload = new Image();
-        preload.src = 'logo.png';
-        preload.onload = () => {
-          logoBtn.src = preload.src;
-          logoBtn.style.transform  = 'translate(-50%,-60%) scale(1.8)';
-          logoBtn.style.transition = 'opacity 0.6s ease-in-out';
-          logoBtn.style.visibility = 'visible';
-          logoBtn.style.opacity    = '1';
-          setTimeout(() => logoBtn.classList.add('pulse'), 600);
-        };
-
-        // 3.5) Fade in main e fine
-        main.style.opacity = '1';
-        setTimeout(() => { isTransitioning = false; }, 600);
-      }, 500);
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+        }, 600);
+      });
     });
-  });
+
+    // 2c) Assicura che su touch “Clicca qui” parta la showroom
+    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
+      el.addEventListener('touchstart', e => {
+        e.preventDefault();  // evita doppio tap
+        attivaSlideshow();
+      }, { passive: false });
+    });
+
+    // 2d) Avvia la showroom automaticamente (se lo desideri)
+    // attivaSlideshow();
+  }
+   
+  // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
+  const logoBtn = document.getElementById('logo-btn');
+  logoBtn.style.cursor = 'pointer';
+  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
+
+  // 3) Pianifica il pop-up di benvenuto
+  let welcomeTimeout = setTimeout(() => {
+    modalContent.innerHTML = contenutoHome;
+    modal.classList.add('show');
+    let welcomeShown = true;
+
+    const hideWelcome = e => {
+  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
+  if (
+    e.target.closest('#sidebar') ||
+    e.target.closest('.menu-item') ||
+    e.target.closest('#modal') ||
+    e.target.closest('#logo-btn')
+  ) {
+    return;
+  }
+  modal.classList.remove('show');
+  document.removeEventListener('click', hideWelcome);
+};
+document.addEventListener('click', hideWelcome, { once: true });
+
+  }, 500);
 });
 
 
@@ -1234,11 +1259,11 @@ window.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('submit', function(e) {
   if (e.target.matches('#contact-form')) {
     e.preventDefault();
-    modalContent.innerHTML = `
+    modalContent.innerHTML = 
       <div style="text-align:center; padding:1em;">
         <h2>Grazie di averci contattato!</h2>
         <p>Risponderemo entro 24 ore.</p>
-      </div>`;
+      </div>;
     modal.classList.remove('fade-out');
     modal.classList.add('show');
     setTimeout(() => {
