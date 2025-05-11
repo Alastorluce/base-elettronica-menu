@@ -1235,6 +1235,8 @@ async function attivaSlideshow() {
   document.body.style.overflow = 'hidden';
 
   slideshowAttivo = true;
+  const logo = document.getElementById('logo-btn');
+  logo.style.opacity = '0';
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
 
@@ -1262,20 +1264,21 @@ async function attivaSlideshow() {
   let idx = Math.floor(Math.random() * immagini.length);
 
   const changeImage = () => {
-    const img = new Image();
-    img.src = immagini[idx];
-    img.onload = () => {
-      logoBtn.style.opacity = '0';
-      setTimeout(() => {
-        logoBtn.src = img.src;
-        logoBtn.classList.remove('loading', 'loaded-img');
-        void logoBtn.offsetWidth;
-        logoBtn.classList.add('loaded-img');
-        logoBtn.style.opacity = '1';
-      }, 50);
-    };
-    idx = (idx + 1) % immagini.length;
+  const nuova = new Image();
+  nuova.src = immagini[idx];
+  nuova.onload = () => {
+    logo.classList.remove('loaded-img');       // reset classe fade precedente
+    logo.style.opacity = '0';                  // fa partire il fade-out
+    setTimeout(() => {
+      logo.src = nuova.src;
+      void logo.offsetWidth;
+      logo.classList.add('loaded-img');        // fa partire il fade-in
+      logo.style.opacity = '1';
+    }, 100); // leggero ritardo per evitare scatti
   };
+  idx = (idx + 1) % immagini.length;
+};
+
 
   changeImage();
   slideshowInterval = setInterval(changeImage, 5000);
