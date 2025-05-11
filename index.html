@@ -951,6 +951,7 @@ function ripristinaMenuPrincipale() {
       setTimeout(() => {
         modal.classList.remove('fade-out');
         modalContent.innerHTML = '';
+        showModalWithScroll();
       }, 600);
     }
 
@@ -994,13 +995,19 @@ function ripristinaMenuPrincipale() {
 
 
 
-
 function apriSubservizio(tipo) {
   if (isTransitioning) return;
+  isTransitioning = true;
 
   let contenuto = '';
   switch (tipo) {
     case 'service':
+      contenuto = `…`;
+      break;
+    // altri case…
+
+
+
   contenuto = `
 
   <div style="text-align:center;">
@@ -1144,6 +1151,7 @@ function apriSubservizio(tipo) {
       modal.classList.add('show');
       currentIndex = null;
       isTransitioning = false;
+      showModalWithScroll();
     }, 600);
   } else {
     modalContent.innerHTML = contenuto;
