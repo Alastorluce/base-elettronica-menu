@@ -743,8 +743,8 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   </div>
 `;
 
-
-    let modal = document.getElementById('modal');
+let onMain = true;
+let modal = document.getElementById('modal');
 let modalContent = document.getElementById('modal-content');
 let currentIndex = null;
 let isTransitioning = false;
@@ -788,6 +788,7 @@ function apri(index) {
 
 
 function toggleSubmenu() {
+  onMain = false;          // <-- esco dal main
   const logo      = document.getElementById('sidebar-logo');
   const submenu   = document.getElementById('submenu-servizi');
   const menuItems = document.querySelectorAll('.menu-list > .menu-item');
@@ -814,8 +815,10 @@ function toggleSubmenu() {
 
 
 function ripristinaMenuPrincipale() {
-  if (isTransitioning) return;
+  // se già nel main, non fare nulla
+  if (onMain || isTransitioning) return;
   isTransitioning = true;
+  onMain = true;           // <-- torno al main
 
   const main        = document.getElementById('main');
   const sidebar     = document.getElementById('sidebar');
