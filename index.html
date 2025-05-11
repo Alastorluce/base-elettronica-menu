@@ -586,10 +586,10 @@ ul.custom-list li > strong {
 
 
 
-/*   AUTOSCROLL  // 
+/*   AUTO SCROLL  // 
 
-/* ——— Autoscroll globale per ogni overflow ——— */
-/* nasconde la scrollbar quando è in autoscroll */
+/* — Autoscroll globale — */
+/* nasconde la scrollbar durante l’autoscroll */
 .auto-scroll-hide {
   scrollbar-width: none;          /* Firefox */
   -ms-overflow-style: none;       /* IE10+ */
@@ -605,6 +605,7 @@ ul.custom-list li > strong {
 .auto-scroll-show::-webkit-scrollbar {
   width: 12px;
 }
+
 
 </style>
 </head>
@@ -1325,32 +1326,33 @@ document.querySelectorAll('.menu-item').forEach(el => {
 
 // AUTO SCROLL  //
 
-;(function(){
-  const SPEED_PX_S = 20;   // velocità in px/s
-  const DELAY_MS   = 3000; // ritardo prima di partire
 
-  // restituisce true se l'elemento è scrollabile in Y
+;(function(){
+  const SPEED = 20;      // px al secondo
+  const DELAY = 3000;    // ms prima di partire
+
+  // true se overflowY è auto|scroll e c'è contenuto da scorrere
   function isScrollable(el) {
     const cs = getComputedStyle(el);
-    return (cs.overflowY === 'auto' || cs.overflowY === 'scroll')
+    return (cs.overflowY==='auto'||cs.overflowY==='scroll')
            && el.scrollHeight > el.clientHeight;
   }
 
-  // imposta autoscroll + toggle click
+  // imposta autoscroll + toggle click/touch per start/stop
   function setupAutoScroll(el) {
-    let rafId = null, lastTime = null, active = false;
+    let raf, lastTime, active = false;
 
     function step(ts) {
       if (!active) return;
       if (!lastTime) lastTime = ts;
       const delta = ts - lastTime;
       lastTime = ts;
-      el.scrollTop += (delta * SPEED_PX_S) / 1000;
+      el.scrollTop += delta * SPEED / 1000;
       if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
         stop();
         return;
       }
-      rafId = requestAnimationFrame(step);
+      raf = requestAnimationFrame(step);
     }
 
     function start() {
@@ -1358,62 +1360,59 @@ document.querySelectorAll('.menu-item').forEach(el => {
       lastTime = null;
       el.classList.add('auto-scroll-hide');
       el.classList.remove('auto-scroll-show');
-      rafId = requestAnimationFrame(step);
+      raf = requestAnimationFrame(step);
     }
 
     function stop() {
       active = false;
-      if (rafId) cancelAnimationFrame(rafId);
+      if (raf) cancelAnimationFrame(raf);
       el.classList.remove('auto-scroll-hide');
       el.classList.add('auto-scroll-show');
     }
 
-    // click dentro: toggle start/stop
+    // click/touch dentro: toggle start/stop
     el.addEventListener('click', () => active ? stop() : start());
     el.addEventListener('touchstart', () => active ? stop() : start());
 
-    // parte in automatico dopo il delay
-    setTimeout(start, DELAY_MS);
+    // parte in automatico dopo DELAY
+    setTimeout(start, DELAY);
   }
 
-  // tiene traccia degli elementi già inizializzati
-  const seen = new WeakSet();
+  // map per non doppiare setup sugli stessi elementi
+  const initialized = new WeakSet();
 
-  // cerca e inizializza TUTTI i nodi scrollabili in pagina
-  function scanAndSetup(root) {
-    const els = root.querySelectorAll('*');
-    els.forEach(el => {
-      if (!seen.has(el) && isScrollable(el)) {
-        seen.add(el);
+  // cerca e inizializza TUTTI i scrollable presenti in root
+  function scanAndInit(root) {
+    root.querySelectorAll('*').forEach(el => {
+      if (!initialized.has(el) && isScrollable(el)) {
+        initialized.add(el);
         setupAutoScroll(el);
       }
     });
   }
 
-  // scan iniziale al DOMContentLoaded
-  window.addEventListener('DOMContentLoaded', () => {
-    scanAndSetup(document.body);
+  document.addEventListener('DOMContentLoaded', () => {
+    // iniziale
+    scanAndInit(document.body);
 
-    // osserva aggiunte di nuovi nodi (es. il tuo #modal quando popoli il contenuto)
-    const mo = new MutationObserver(muts => {
-      for (let m of muts) {
-        if (m.type === 'childList') {
-          m.addedNodes.forEach(node => {
-            if (node.nodeType === 1) {
-              if (isScrollable(node) && !seen.has(node)) {
-                seen.add(node);
-                setupAutoScroll(node);
-              }
-              // e i suoi discendenti
-              scanAndSetup(node);
+    // ogni volta che viene aggiunto un nodo, ridetecta
+    new MutationObserver(muts => {
+      muts.forEach(m => {
+        m.addedNodes.forEach(node => {
+          if (node.nodeType === 1) {
+            // se il nodo è scrollable o contiene scrollable
+            if (isScrollable(node)) {
+              scanAndInit(node.parentNode);
+            } else {
+              scanAndInit(node);
             }
-          });
-        }
-      }
-    });
-    mo.observe(document.body, { childList: true, subtree: true });
+          }
+        });
+      });
+    }).observe(document.body, { childList: true, subtree: true });
   });
 })();
+
 
 
 </script>
