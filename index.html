@@ -601,6 +601,11 @@ ul.custom-list li > strong {
   width: 12px;
 }
 
+#logo-btn.fadeout {
+  opacity: 0;
+  transition: opacity 5s ease-in-out;
+  pointer-events: none; /* così non riceve click durante il fade */
+}
 
 </style>
 </head>
@@ -1218,6 +1223,8 @@ async function attivaSlideshow() {
 
   slideshowAttivo = true;
   
+  document.getElementById('logo-btn').classList.add('fadeout');
+
   const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
