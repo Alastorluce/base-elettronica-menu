@@ -676,6 +676,57 @@ ul.custom-list li > strong {
 
   
     <script>
+
+/**
+ * Avvia un autoscroll lento su un elemento con overflow.
+ * stoppa al primo click/touch isolato dentro l'elemento e mostra la scrollbar.
+ *
+ * @param {HTMLElement} el     il contenitore scrollabile
+ * @param {number} speed       px/sec
+ * @param {number} delay       ms di attesa prima di partire
+ */
+function autoScrollOnShow(el, speed = 20, delay = 3000) {
+  let rafId, lastTime, active = false;
+
+  function step(ts) {
+    if (!active) return;
+    if (!lastTime) lastTime = ts;
+    const delta = ts - lastTime;
+    lastTime = ts;
+    el.scrollTop += (delta * speed) / 1000;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+      stop();
+      return;
+    }
+    rafId = requestAnimationFrame(step);
+  }
+
+  function start() {
+    active = true;
+    lastTime = null;
+    el.classList.add('auto-scroll-hide');
+    el.classList.remove('auto-scroll-show');
+    rafId = requestAnimationFrame(step);
+  }
+
+  function stop() {
+    active = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    el.classList.remove('auto-scroll-hide');
+    el.classList.add('auto-scroll-show');
+  }
+
+  // Stop al primo click o touch **dentro** l'elemento
+  const onceStop = () => stop();
+  el.addEventListener('click', onceStop, { once: true });
+  el.addEventListener('touchstart', onceStop, { once: true });
+
+  // Se l'elemento è già visibile, parte dopo delay
+  setTimeout(start, delay);
+}
+
+
+
       const contenuti = [
         `<!-- Chi siamo -->
 <div style="text-align:center;">
@@ -778,11 +829,23 @@ let slideshowInterval = null;
 
 function apri(index) {
   if (isTransitioning) return;
-
-
   isTransitioning = true;
 
+  // Funzione interna per mostrare la modale e avviare l’autoscroll
+  function showWithAutoScroll() {
+    modalContent.innerHTML = contenuti[index];
+    modal.classList.add('show');
+    currentIndex = index;
+    isTransitioning = false;
+
+    // <-- qui avvii l’autoscroll sul contenuto
+    // Se vuoi che la scrollbar appaia sul container esterno usa `modal`
+    // oppure per farla comparire solo dentro il testo usa `modalContent`
+    autoScrollOnShow(modalContent, 20 /* px/s */, 3000 /* ms */);
+  }
+
   if (currentIndex === index) {
+    // chiudo
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
@@ -791,25 +854,23 @@ function apri(index) {
       currentIndex = null;
       isTransitioning = false;
     }, 600);
+
   } else {
     if (modal.classList.contains('show')) {
+      // cambio contenuto
       modal.classList.remove('show');
       modal.classList.add('fade-out');
       setTimeout(() => {
-        modalContent.innerHTML = contenuti[index];
+        showWithAutoScroll();
         modal.classList.remove('fade-out');
-        modal.classList.add('show');
-        currentIndex = index;
-        isTransitioning = false;
       }, 600);
     } else {
-      modalContent.innerHTML = contenuti[index];
-      modal.classList.add('show');
-      currentIndex = index;
-      isTransitioning = false;
+      // apro per la prima volta
+      showWithAutoScroll();
     }
   }
 }
+
 
 
 function toggleSubmenu() {
