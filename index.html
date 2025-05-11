@@ -7,6 +7,28 @@
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
 
+    /* 1) Riserva sempre lo spazio per la scrollbar su web/desktop
+   così il testo non cambia larghezza quando appare */
+#modal-content {
+  overflow-y: auto;
+  /* mantiene stabile il gutter, evita shift di layout */
+  scrollbar-gutter: stable;
+}
+
+/* 2) Solo su mobile nascondi la scrollbar */
+@media (max-width: 768px) {
+  #modal-content {
+    /* Firefox */
+    scrollbar-width: none;
+    /* Edge/Safari/Chrome */
+    -ms-overflow-style: none;
+  }
+  #modal-content::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
 
      /* Solo per web: niente fade-out quando ha la classe instant-hide */
       #modal.instant-hide {
