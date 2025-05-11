@@ -587,26 +587,25 @@ ul.custom-list li > strong {
 
  /* AUTO SCROLL */
 
-html.auto-scroll-hide,
+/* autoscroll: nasconde la scrollbar */
 .auto-scroll-hide {
   scrollbar-width: none;               /* Firefox */
   -ms-overflow-style: none;            /* IE10+ */
 }
-html.auto-scroll-hide::-webkit-scrollbar,
 .auto-scroll-hide::-webkit-scrollbar {
   width: 0;                            /* Chrome, Safari, Opera */
 }
 
-html.auto-scroll-show,
+/* autoscroll interrotto: mostra la scrollbar */
 .auto-scroll-show {
   scrollbar-width: auto;
 }
-html.auto-scroll-show::-webkit-scrollbar,
 .auto-scroll-show::-webkit-scrollbar {
   width: 12px;
 }
 
-/* ———————————————— */
+
+
 
 
 
@@ -1327,78 +1326,84 @@ document.querySelectorAll('.menu-item').forEach(el => {
 });
 
 
- // — AUTO SCROLL — // 
+ /* AUTO SCROLL */
 
-;(function(){
-  // — CONFIGURAZIONE —
-  const DELAY_START = 3000;    // ms prima di partire
-  const SPEED_PX_S  = 30;      // px al secondo
-  const selectorsScroll = ['html','body','#main']; 
-  // → inserisci qui eventuali altri contenitori scrollabili
+  ;(function(){
+    const DELAY_START = 3000;    // ms prima di partire
+    const SPEED_PX_S  = 20;      // px/sec, regola a piacere
 
-  class ScrollController {
-    constructor(el, speed) {
-      this.el = el;
-      this.speedPxMs = speed / 1000;
-      this.rafId = null;
-      this.lastTime = null;
-      this.paused = false;
-    }
-    step(timestamp) {
-      if (this.paused) return;
-      if (!this.lastTime) this.lastTime = timestamp;
-      const delta = timestamp - this.lastTime;
-      this.lastTime = timestamp;
-      this.el.scrollTop += delta * this.speedPxMs;
-      if (this.el.scrollTop + this.el.clientHeight >= this.el.scrollHeight) {
-        this.stop();
-        return;
+    // 1) Trova tutti gli elementi scrollabili
+    const elems = Array.from(document.body.querySelectorAll('*'))
+      .filter(el => {
+        const cs = getComputedStyle(el);
+        const ovY = cs.overflowY;
+        return (ovY === 'auto' || ovY === 'scroll')
+               && el.scrollHeight > el.clientHeight;
+      });
+
+    // 2) Controller per un singolo elemento
+    class ScrollController {
+      constructor(el, speed) {
+        this.el = el;
+        this.speedPxMs = speed / 1000;
+        this.rafId = null;
+        this.lastTime = null;
+        this.active = false;
       }
-      this.rafId = requestAnimationFrame(this.step.bind(this));
+      step(ts) {
+        if (!this.active) return;
+        if (!this.lastTime) this.lastTime = ts;
+        const delta = ts - this.lastTime;
+        this.lastTime = ts;
+        this.el.scrollTop += delta * this.speedPxMs;
+        if (this.el.scrollTop + this.el.clientHeight >= this.el.scrollHeight) {
+          this.stop();
+          return;
+        }
+        this.rafId = requestAnimationFrame(this.step.bind(this));
+      }
+      start() {
+        if (this.active) return;
+        this.active = true;
+        this.el.classList.add('auto-scroll-hide');
+        this.el.classList.remove('auto-scroll-show');
+        this.lastTime = null;
+        this.rafId = requestAnimationFrame(this.step.bind(this));
+      }
+      stop() {
+        if (!this.active) return;
+        this.active = false;
+        cancelAnimationFrame(this.rafId);
+        this.el.classList.remove('auto-scroll-hide');
+        this.el.classList.add('auto-scroll-show');
+      }
     }
-    start() {
-      if (this.rafId) return;
-      this.paused = false;
-      this.lastTime = null;
-      this.rafId = requestAnimationFrame(this.step.bind(this));
-    }
-    stop() {
-      this.paused = true;
-      if (this.rafId) cancelAnimationFrame(this.rafId);
-      this.rafId = null;
-    }
-  }
 
-  // Crea i controller solo sugli elementi scrollabili
-  const controllers = selectorsScroll
-    .map(sel => document.querySelector(sel))
-    .filter(el => el && el.scrollHeight > el.clientHeight)
-    .map(el => {
-      el.classList.add('auto-scroll-hide');
-      return new ScrollController(el, SPEED_PX_S);
+    // 3) Istanze per ogni scrollabile
+    const controllers = elems.map(el => new ScrollController(el, SPEED_PX_S));
+
+    // 4) Start/stop collettivi
+    function startAll() { controllers.forEach(c => c.start()); }
+    function stopAll()  { controllers.forEach(c => c.stop());  }
+
+    // 5) Al caricamento
+    window.addEventListener('DOMContentLoaded', () => {
+      // parte dopo 3 secondi
+      setTimeout(startAll, DELAY_START);
+
+      // al primo click o touch, ferma tutto
+      const halt = () => {
+        stopAll();
+        document.removeEventListener('click', halt);
+        document.removeEventListener('touchstart', halt);
+      };
+      document.addEventListener('click', halt);
+      document.addEventListener('touchstart', halt);
     });
+  })();
 
-  function startAll() {
-    document.documentElement.classList.add('auto-scroll-hide');
-    controllers.forEach(c => c.start());
-  }
-  function stopAll() {
-    document.documentElement.classList.remove('auto-scroll-hide');
-    document.documentElement.classList.add('auto-scroll-show');
-    controllers.forEach(c => c.stop());
-  }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(startAll, DELAY_START);
-    const stopHandler = () => {
-      stopAll();
-      document.removeEventListener('click', stopHandler);
-      document.removeEventListener('touchstart', stopHandler);
-    };
-    document.addEventListener('click', stopHandler);
-    document.addEventListener('touchstart', stopHandler);
-  });
-})();
+
 
 </script>
 </body>
