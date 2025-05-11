@@ -141,6 +141,15 @@
       transform: translateX(-100%);
       animation: slideIn 0.5s ease-out forwards;
     }
+
+    
+/* — Qui, **dopo** le regole base, definisci la re-animazione — */
+.menu-item.reanimate {
+  opacity: 0 !important;
+  transform: translateX(-100%) !important;
+  animation: slideIn 0.5s ease-out forwards !important;
+}
+
     .menu-item.animated { animation: slideIn 0.5s ease-out forwards; }
     .menu-list .menu-item:nth-child(1) { animation-delay: 0s; }
     .menu-list .menu-item:nth-child(2) { animation-delay: 0.2s; }
@@ -223,22 +232,27 @@
   }
 }
 
-
-    /* — Responsive — */
-    @media (max-width: 768px) {
-  #sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+/* — Responsive mobile (max-width:768px) — */
+@media (max-width: 768px) {
+  .menu-item {
+    font-size: 1em;
+    padding: 0.6em 0.8em;
+    margin: 0.3em auto;
+    width: 90vw;
+    max-width: 90vw;
+    min-height: 45px;
+    text-align: center;
+    /* Disattiva l’animazione iniziale su tutti i menu-item */
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    box-sizing: border-box;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 1em 0;
-    background: #111;
-    z-index: 999;
+    align-items: center;
+    justify-content: center;
   }
+  
+  
 
   #sidebar-content {
   justify-content: flex-start;
