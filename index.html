@@ -676,6 +676,19 @@ ul.custom-list li > strong {
   
     <script>
 
+/**
+ * Ferma qualunque timeout o RAF pendente sul container `el`
+ */
+function clearAutoScroll(el) {
+  if (el._scrollTimeout) {
+    clearTimeout(el._scrollTimeout);
+    el._scrollTimeout = null;
+  }
+  if (el._scrollRaf) {
+    cancelAnimationFrame(el._scrollRaf);
+    el._scrollRaf = null;
+  }
+}
 
 
 // Ritorna true se l'elemento è scrollabile (overflow-y auto|scroll e contenuto più lungo)
@@ -687,54 +700,60 @@ function isScrollable(el) {
 
 // Attiva un autoscroll lento su `el`
 function setupAutoScroll(el, speed = 11, delay = 9000) {
-  let id, last, active = false;
-  let remainder = 0;  // <-- accumula i decimali
+  // ① ferma scroll pendenti
+  clearAutoScroll(el);
 
-  // NASCONDI subito la scrollbar, anche prima di partire
+  let last = null, active = false, remainder = 0;
+
   el.classList.add('auto-scroll-hide');
   el.classList.remove('auto-scroll-show');
 
   function step(ts) {
     if (!active) return;
     if (!last) last = ts;
-    const d = ts - last; 
+    const d = ts - last;
     last = ts;
-    // calcolo pixel “reali” da muovere in questo frame
-    const raw = (d * speed) / 1000 + remainder;
-    // arrotondo per intero
+
+    const raw  = (d * speed) / 1000 + remainder;
     const move = Math.floor(raw);
-    // tengo il resto per il prossimo frame
-    remainder = raw - move;
+    remainder    = raw - move;
+
     el.scrollTop += move;
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight) return stop();
-    id = requestAnimationFrame(step);
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+      active = false;
+      return;
+    }
+    // ② memorizza il RAF
+    el._scrollRaf = requestAnimationFrame(step);
   }
 
   function start() {
     if (active) return;
     active = true;
-    last = null;
+    last   = null;
     el.classList.add('auto-scroll-hide');
     el.classList.remove('auto-scroll-show');
-    id = requestAnimationFrame(step);
+    el._scrollRaf = requestAnimationFrame(step);
   }
 
   function stop() {
-    if (!active) return;
     active = false;
-    cancelAnimationFrame(id);
+    if (el._scrollRaf) {
+      cancelAnimationFrame(el._scrollRaf);
+      el._scrollRaf = null;
+    }
     el.classList.remove('auto-scroll-hide');
     el.classList.add('auto-scroll-show');
   }
 
-  el.addEventListener('click', () => {
-    if (!active) start();
-  });
+  el.addEventListener('click', start);
   el.addEventListener('wheel', stop, { passive: true });
   el.addEventListener('touchmove', stop, { passive: true });
 
-  setTimeout(start, delay);
+  // ③ memorizza il timeout
+  el._scrollTimeout = setTimeout(start, delay);
 }
+
 
 // Inizializzazione minimal: se scrollabile, setta l’autoscroll
 function initScrollOn(root) {
@@ -752,10 +771,17 @@ function initScrollOn(root) {
  * e innesca l'autoscroll sul #modal.
  */
 function showModalWithScroll() {
+  // ——— reset completo prima di riaprire la modale ———
+  clearAutoScroll(modal);
+  clearAutoScroll(modalContent);
+  modal.scrollTop        = 0;
+  modalContent.scrollTop = 0;
+
   modal.classList.remove('fade-out');
   modal.classList.add('show');
   isTransitioning = false;
-  // inizializza l'autoscroll sempre
+
+  // adesso riattivi l’autoscroll con initScrollOn
   initScrollOn(modal);
   initScrollOn(modalContent);
 }
