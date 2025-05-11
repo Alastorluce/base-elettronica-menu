@@ -601,10 +601,19 @@ ul.custom-list li > strong {
   width: 12px;
 }
 
+#logo-btn {
+  opacity: 1;
+  transition: opacity 5s ease-in-out;
+}
+
+#logo-btn.fadeout-istantaneo {
+  opacity: 0 !important;
+  transition: none !important;
+}
+
 #logo-btn.fadeout {
   opacity: 0;
-  transition: opacity 5s ease-in-out;
-  pointer-events: none; /* così non riceve click durante il fade */
+  pointer-events: none;
 }
 
 </style>
@@ -1211,56 +1220,65 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
 }
 
 // === 2. Avvio dello slideshow ===
+// === 2. Avvio dello slideshow ===
 async function attivaSlideshow() {
   if (slideshowAttivo) return;
 
-  const sidebar = document.getElementById('sidebar');
-  sidebar.style.display = 'none';
+  const sidebar   = document.getElementById('sidebar');
+  const submenu   = document.getElementById('submenu-servizi');
+  const watermark = document.getElementById('watermark-logo');
+  const modal     = document.getElementById('modal');
+  const logoBtn   = document.getElementById('logo-btn'); // USIAMO QUESTO SEMPRE
 
-  const submenu = document.getElementById('submenu-servizi');
+  sidebar.style.display = 'none';
   submenu.style.display = 'none';
   document.body.style.overflow = 'hidden';
 
   slideshowAttivo = true;
-  
-  document.getElementById('logo-btn').classList.add('fadeout');
-
-  const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
+
+  // 1. Nasconde SUBITO il logo (senza transizione)
+  logoBtn.classList.add('fadeout-istantaneo');
 
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
+
     setTimeout(() => {
       watermark.style.opacity = '0.05';
-    }, 5);
+
+      // 2. Dopo fade modale, avvia fade reale del logo
+      logoBtn.classList.remove('fadeout-istantaneo');
+      void logoBtn.offsetWidth; // forza reflow
+      logoBtn.classList.add('fadeout');
+
+    }, 50);
   }
 
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
 
-  const logo = document.getElementById('logo-btn');
   let idx = Math.floor(Math.random() * immagini.length);
 
   const changeImage = () => {
     const img = new Image();
     img.src = immagini[idx];
     img.onload = () => {
-      logo.style.opacity = '0';
+      logoBtn.style.opacity = '0';
       setTimeout(() => {
-        logo.src = img.src;
-        logo.classList.remove('loading', 'loaded-img');
-        void logo.offsetWidth;
-        logo.classList.add('loaded-img');
-        logo.style.opacity = '1';
+        logoBtn.src = img.src;
+        logoBtn.classList.remove('loading', 'loaded-img');
+        void logoBtn.offsetWidth;
+        logoBtn.classList.add('loaded-img');
+        logoBtn.style.opacity = '1';
       }, 50);
     };
     idx = (idx + 1) % immagini.length;
   };
 
   changeImage();
-  slideshowInterval = setInterval(changeImage, 5000); // cambia ogni 5 secondi
+  slideshowInterval = setInterval(changeImage, 5000);
 }
 
 
