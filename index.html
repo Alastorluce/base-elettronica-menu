@@ -138,31 +138,23 @@
       width: 100%;
     }
     .menu-item {
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(0, 166, 255, 0.4);
-  color: #00a6ff;
-  padding: 0.5em 0.8em;
-  margin-bottom: 1em;
-  border-radius: 6px;
-  cursor: pointer;
-  will-change: transform, box-shadow;
-  transition: transform 0.4s cubic-bezier(0.25,0.1,0.25,1),box-shadow 0.4s cubic-bezier(0.25,0.1,0.25,1);
-  text-shadow: 1px 0.5px 1px #1900ff;
-  text-align: center;
-  width: 60%;
-  font-size: 0.9em;
-  opacity: 0;
-  transform: translateX(-100%);
-  animation: slideIn 0.5s ease-out forwards;
-
-  pointer-events: none; /* 👈 aggiunto qui */
-}
-
-/* ✅ Abilita click solo a fine animazione */
-.menu-item.attivo {
-  pointer-events: auto !important;
-}
-
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(0, 166, 255, 0.4);
+      color: #00a6ff;
+      padding: 0.5em 0.8em;
+      margin-bottom: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      will-change: transform, box-shadow;
+      transition: transform 0.4s cubic-bezier(0.25,0.1,0.25,1),box-shadow 0.4s cubic-bezier(0.25,0.1,0.25,1);
+      text-shadow: 1px 0.5px 1px #1900ff;
+      text-align: center;
+      width: 60%;
+      font-size: 0.9em;
+      opacity: 0;
+      transform: translateX(-100%);
+      animation: slideIn 0.5s ease-out forwards;
+    }
   /* ANIMAZIONE: Menu principale */
 .menu-list > .menu-item:nth-of-type(1) { animation-delay: 0s; }
 .menu-list > .menu-item:nth-of-type(2) { animation-delay: 0.2s; }
