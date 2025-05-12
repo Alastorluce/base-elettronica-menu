@@ -232,34 +232,6 @@
   pointer-events: none;
 }
 
-
-/* Scrollbar stile per Chrome, Edge, Safari */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.5); /* sfondo della traccia */
-  border-radius: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #00a6ff; /* colore della barra */
-  border-radius: 8px;
-  border: 2px solid #000; /* contorno per creare contrasto */
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #00ffb3; /* colore al passaggio */
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #00a6ff rgba(0, 0, 0, 0.5);
-}
-    
 #modal-content {
   text-align: left;
   max-width: 800px;
@@ -268,23 +240,20 @@
   overflow-y: auto;
   max-height: 70vh;
 
-  /* Firefox: scrollbar sottile */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,166,255,0.8) transparent;
+  /* riserva lo spazio per la scrollbar quando compare */
+  scrollbar-gutter: stable;
 }
 
-/* Chrome/Edge/Safari: scrollbar sottile personalizzata */
-#modal-content::-webkit-scrollbar {
-  width: 6px;
+/* fallback per browser che non supportano scrollbar-gutter */
+@media (min-width: 769px) {
+  #modal-content {
+    padding-right: 12px;
+  }
 }
-#modal-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-#modal-content::-webkit-scrollbar-thumb {
-  background-color: rgba(0,166,255,0.8);
-  border-radius: 3px;
-  border: none;
-}
+
+
+  
+
 
 
 
@@ -567,7 +536,32 @@ ul.custom-list li > strong {
 
 
 
+/* Scrollbar stile per Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
 
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.5); /* sfondo della traccia */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00a6ff; /* colore della barra */
+  border-radius: 8px;
+  border: 2px solid #000; /* contorno per creare contrasto */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ffb3; /* colore al passaggio */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00a6ff rgba(0, 0, 0, 0.5);
+}
 
 
 
