@@ -1484,6 +1484,8 @@ async function attivaSlideshow() {
     newMedia.style.opacity = '0';
 
     container.replaceWith(newMedia);
+    newMedia.addEventListener('click', ripristinaMenuPrincipale);
+
 
     setTimeout(() => {
       newMedia.style.opacity = '1';
