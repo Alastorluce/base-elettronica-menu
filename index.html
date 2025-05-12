@@ -203,7 +203,7 @@
       animation: fadeImage 2s ease-in-out; 
     }
 
-    #modal {
+   #modal {
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
   padding: 2em;
@@ -235,26 +235,18 @@
 #modal-content {
   text-align: left;
   max-width: 800px;
-
-  /* scroll solo quando serve */
-  overflow-y: auto;
+  
+  /* overlay scrollbar sopra il testo */
+  overflow-y: overlay;
   max-height: 70vh;
-
-  /* riserva lo spazio per la scrollbar quando compare */
-  scrollbar-gutter: stable;
 }
 
-/* Desktop only: scrollbar sottile dentro la modale */
+/* Desktop only: scrollbar sottilissima e overlay */
 @media (min-width: 769px) {
-  /* fallback per browser che non supportano scrollbar-gutter */
-  #modal-content {
-    padding-right: 12px;
-  }
-
   /* Chrome/Edge/Safari */
   #modal-content::-webkit-scrollbar {
     width: 3px;
-    background: transparent;
+    background: transparent; /* mai visibile dietro */
   }
   #modal-content::-webkit-scrollbar-track {
     background: transparent;
@@ -270,10 +262,12 @@
 
   /* Firefox */
   #modal-content {
+    /* “thin” fa già overlay su FF, e non riserva spazio */
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 166, 255, 0.8) transparent;
+    scrollbar-color: rgba(0,166,255,0.8) transparent;
   }
 }
+
 
 
 
