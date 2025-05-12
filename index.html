@@ -755,15 +755,14 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
   }
 
   function stop() {
-    if (!active) return;
-    active = false;
-    if (el._scrollRaf) {
-      cancelAnimationFrame(el._scrollRaf);
-      el._scrollRaf = null;
-    }
-    el.classList.remove('auto-scroll-hide');
-    el.classList.add('auto-scroll-show');
-  }
+  // Ferma qualunque start pendente o RAF in corso
+  clearAutoScroll(el);
+  // e marca lo stato come “non attivo”
+  active = false;
+  el.classList.remove('auto-scroll-hide');
+  el.classList.add('auto-scroll-show');
+}
+
 
   // 1) Prepara un unico clickHandler nominato
   el._clickHandler = () => {
