@@ -224,13 +224,19 @@
     #modal.show { opacity: 1; pointer-events: auto; }
     #modal.fade-out { opacity: 0; pointer-events: none; }
     #modal-content {
-  text-align: left;
-  max-width: 800px;
+      text-align: left;
+      max-width: 800px;
 
   /* queste due righe ti danno lo scroll interno */
-  overflow-y: auto;
-  max-height: 70vh;
+      overflow-y: auto;
+      max-height: 70vh;
+ 
+  /* riserva sempre lo spazio della scrollbar su desktop */
+      scrollbar-gutter: stable both-edges;
+  /* in alternativa/fallback: forza sempre la scrollbar */
+      overflow-y: scroll;
 }
+
 
 
 
