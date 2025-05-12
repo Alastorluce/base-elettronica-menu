@@ -711,38 +711,38 @@ function isScrollable(el) {
 
 // Attiva un autoscroll lento su `el`
 function setupAutoScroll(el, speed = 11, delay = 9000) {
-  // ① ferma scroll pendenti
+  // ① ferma eventuali scroll pendenti
   clearAutoScroll(el);
 
-  let last = null, active = false, remainder = 0;
+  let last = null;
+  let active = false;
+  let remainder = 0;
 
   el.classList.add('auto-scroll-hide');
   el.classList.remove('auto-scroll-show');
 
   function step(ts) {
-  if (!active) return;
-  if (!last) last = ts;
-  const d = ts - last;
-  last = ts;
+    if (!active) return;
+    if (!last) last = ts;
+    const d = ts - last;
+    last = ts;
 
-  const raw  = (d*speed)/1000 + remainder;
-  // almeno 1px ogni volta
-  const move = Math.max(1, Math.floor(raw));
-  remainder    = raw - move;
+    const raw  = (d * speed) / 1000 + remainder;
+    const move = Math.max(1, Math.floor(raw));
+    remainder = raw - move;
 
-  el.scrollTop += move;
-  if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-    active = false;
-    return;
+    el.scrollTop += move;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+      active = false;
+      return;
+    }
+    el._scrollRaf = requestAnimationFrame(step);
   }
-  el._scrollRaf = requestAnimationFrame(step);
-}
-
 
   function start() {
     if (active) return;
     active = true;
-    last   = null;
+    last = null;
     el.classList.add('auto-scroll-hide');
     el.classList.remove('auto-scroll-show');
     el._scrollRaf = requestAnimationFrame(step);
@@ -758,13 +758,20 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
-  el.addEventListener('click', () => {if (active) {stop();} else {start();} });
-  el.addEventListener('wheel', stop, { passive: true });
-  el.addEventListener('touchmove', stop, { passive: true });
+  // ATTENZIONE: non registriamo ancora il click qui!
 
-  // ③ memorizza il timeout
-  el._scrollTimeout = setTimeout(start, delay);
+  // ③ memorizza il timeout e, quando scade,
+  //    avvia scroll e aggiunge il listener per il click
+  el._scrollTimeout = setTimeout(() => {
+    // avvia l’autoscroll
+    start();
+    // ora che lo scroll è “pronto”, il click diventa toggle
+    el.addEventListener('click', () => {
+      active ? stop() : start();
+    });
+  }, delay);
 }
+
 
 
 // Inizializzazione minimal: se scrollabile, setta l’autoscroll
