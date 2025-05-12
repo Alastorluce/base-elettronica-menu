@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- già presente -->
   <title>Base Elettronica Service - Menu</title>
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">ù
+  <!-- 🔹 Icona desktop / favicon per tutti i browser -->
+<link rel="icon" type="image/x-icon" href="logo_multires.ico">
+
+<!-- 🔹 Icona PNG moderna per browser e retina -->
+<link rel="icon" type="image/png" sizes="256x256" href="logo_256.png">
+<link rel="apple-touch-icon" sizes="512x512" href="logo_512.png">
+
+<!-- 🔹 Manifest per Android (shortcut con icona corretta) -->
+<link rel="manifest" href="/manifest.json">
+
   <style>
 
 
@@ -694,6 +705,19 @@ ul.custom-list li > strong {
 }
 .auto-scroll-show #modal-content::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0,255,179,0.8);
+}
+
+
+video#logo-btn {
+  object-fit: cover;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100%;
+  max-height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+  transform: none !important;
+  z-index: 1;
 }
 
 
@@ -1447,7 +1471,13 @@ async function attivaSlideshow() {
   let idx = Math.floor(Math.random() * immagini.length);
 
   const changeImage = () => {
+  if (slideshowInterval) {
+    clearInterval(slideshowInterval);
+    slideshowInterval = null;
+  }
+
   const url = immagini[idx];
+
   const isVideo = url.endsWith('.mp4');
   const media = mediaCache[url];
   if (!media) return;
@@ -1495,7 +1525,14 @@ async function attivaSlideshow() {
 
 
   changeImage();
-  slideshowInterval = setInterval(changeImage, 5000);
+  if (url.endsWith('.mp4')) {
+  // quando il video finisce, passa al prossimo
+  media.onended = () => changeImage();
+  media.play(); // forza l'autoplay in modo esplicito
+} else {
+  slideshowInterval = setTimeout(changeImage, 5000);
+}
+
 }
 
 
