@@ -949,8 +949,13 @@ document.body.style.overflow = 'hidden';
 
   window.addEventListener('DOMContentLoaded', () => {
   // 1) Avvia animazioni sidebar/menu
+  // SOLO desktop (>768 px) parte subito
+if (!window.matchMedia('(max-width: 768px)').matches) {
   document.getElementById('sidebar').classList.add('animated');
-  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+  document.querySelectorAll('.menu-item')
+          .forEach(el => el.classList.add('animated'));
+}
+
 
   // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
   if (window.matchMedia('(max-width: 768px)').matches) {
