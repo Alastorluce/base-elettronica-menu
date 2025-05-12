@@ -1441,32 +1441,49 @@ async function attivaSlideshow() {
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
 
-  // Precarica i media
-  const mediaCache = {};
-  await Promise.all(
-    immagini.map(url => new Promise(resolve => {
-      if (url.endsWith('.mp4')) {
-        const video = document.createElement('video');
-        video.src = url;
-        video.muted = true;
-        video.loop = false;
-        video.preload = 'auto';
-        video.onloadeddata = () => {
-          mediaCache[url] = video;
-          resolve();
-        };
-        video.onerror = resolve;
-      } else {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-          mediaCache[url] = img;
-          resolve();
-        };
-        img.onerror = resolve;
-      }
-    }))
-  );
+  /// Precarica i media
+const mediaCache = {};
+await Promise.all(
+  immagini.map(url => new Promise(resolve => {
+    if (url.endsWith('.mp4')) {
+      const video = document.createElement('video');
+      video.src = url;
+      video.muted = true;
+      video.loop = false;
+      video.playsInline = true;
+      video.preload = 'auto';
+      video.style.display = 'none'; // 👈 invisibile
+
+      // 👇 forza il preload reale
+      document.body.appendChild(video);
+
+      let timeout = setTimeout(() => {
+        mediaCache[url] = video;
+        resolve();
+      }, 1500);
+
+      video.onloadeddata = () => {
+        clearTimeout(timeout);
+        mediaCache[url] = video;
+        resolve();
+      };
+
+      video.onerror = () => {
+        clearTimeout(timeout);
+        resolve();
+      };
+    } else {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        mediaCache[url] = img;
+        resolve();
+      };
+      img.onerror = resolve;
+    }
+  }))
+);
+
 
   let idx = Math.floor(Math.random() * immagini.length);
 
