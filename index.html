@@ -373,7 +373,27 @@
   }
 }
 
+/* applicato direttamente al contenitore scrollabile */
+#modal-content::-webkit-scrollbar {
+  width: 3px;    /* spessore “thumb” */
+  height: 3px;   /* per l’orizzontale */
+}
 
+#modal-content::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);
+}
+
+#modal-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0,166,255,0.5);
+  border-radius: 1.5px;
+  border: 1px solid transparent;
+  background-clip: content-box;
+}
+
+#modal-content {
+  scrollbar-width: thin;  /* è il massimo di sottile che ti lascia fare */
+  scrollbar-color: rgba(0,166,255,0.5) transparent;
+}
 
 
 
@@ -566,26 +586,6 @@ html {
   padding-right: 6px; /* Compensa lo spazio della scrollbar */
 }
 
-/* — override desktop solo per la modale e il suo content — */
-@media (hover: hover) and (pointer: fine) {
-  /* nascondi scrollbar finché c’è auto-scroll-hide */
-  #modal.auto-scroll-hide,
-  #modal-content.auto-scroll-hide {
-    /* Firefox e IE */
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
-  }
-  #modal.auto-scroll-hide::-webkit-scrollbar,
-  #modal-content.auto-scroll-hide::-webkit-scrollbar {
-    width: 0 !important;
-  }
-
-  /* fai ricomparire scrollbar spessa solo quando c’è auto-scroll-show */
-  #modal.auto-scroll-show::-webkit-scrollbar,
-  #modal-content.auto-scroll-show::-webkit-scrollbar {
-    width: 3px !important;
-  }
-}
 
 
 .radar-glow {
