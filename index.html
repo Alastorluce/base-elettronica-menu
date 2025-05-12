@@ -218,9 +218,10 @@
       top: 0; left: 0;
       width: 100%;
       height: 100%;
-      z-index: 2; /* sotto il #modal (z-index: 3), sopra tutto il resto */
+      z-index: 3; /* sotto il #modal (z-index: 3), sopra tutto il resto */
       background: transparent;
     }
+
 
     #modal {
       background: rgba(0, 0, 0, 0.8);
@@ -237,7 +238,7 @@
       overflow: hidden;
       backdrop-filter: blur(10px);
       transition: opacity 0.6s ease;
-      z-index: 3;
+      z-index: 4;
       position: relative;
     }
     #modal.show { opacity: 1; pointer-events: auto; }
