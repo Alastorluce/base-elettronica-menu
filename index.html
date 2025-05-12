@@ -726,9 +726,8 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     const d = ts - last;
     last = ts;
 
-    // pixel da spostare in questo intervallo (incluso il resto)
+    // pixel da spostare in questo intervallo (incluse le frazioni accumulate)
     const raw = (d * speed) / 1000 + remainder;
-    // muovi solo la parte intera; la frazione resta in remainder
     const move = Math.floor(raw);
     remainder = raw - move;
 
@@ -744,14 +743,17 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
 
   function start() {
     if (active) return;
-    active = true;
+    // **Resetta il frazionamento** ogni volta che riparti
+    remainder = 0;
     last = null;
+    active = true;
     el.classList.add('auto-scroll-hide');
     el.classList.remove('auto-scroll-show');
     el._scrollRaf = requestAnimationFrame(step);
   }
 
   function stop() {
+    if (!active) return;
     active = false;
     if (el._scrollRaf) {
       cancelAnimationFrame(el._scrollRaf);
@@ -801,6 +803,7 @@ function showModalWithScroll() {
   initScrollOn(modal);
   initScrollOn(modalContent);
 }
+
 
 
 
