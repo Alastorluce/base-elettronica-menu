@@ -6,16 +6,7 @@
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
-
-
-
-
-
-     /* Solo per web: niente fade-out quando ha la classe instant-hide */
-      #modal.instant-hide {
-      transition: none !important;
-}
-
+     
      /* disabilita selezione di testo e immagini */
     *, *::before, *::after {
       user-select: none;
@@ -32,10 +23,6 @@
     
 
 
-.auto-scroll-hide { scrollbar-width: none; -ms-overflow-style: none; }
-.auto-scroll-hide::-webkit-scrollbar { width: 0; }
-.auto-scroll-show { scrollbar-width: auto; }
-.auto-scroll-show::-webkit-scrollbar { width: 2px; }
 
     
 
@@ -47,6 +34,7 @@
   width: 100%; height: 100%;
   background: #000;
   z-index: 99999;
+  display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -102,8 +90,7 @@
       width: 180px;                /* container sempre 120px */
       height: auto;
       cursor: pointer;
-      transition: transform 0.3s ease, opacity 0.5s ease-in-out;
-      opacity: 1; /* stato di default */
+      transition: transform 0.3s ease;
   
     }
 
@@ -145,8 +132,7 @@
       margin-bottom: 1em;
       border-radius: 6px;
       cursor: pointer;
-      will-change: transform, box-shadow;
-      transition: transform 0.4s cubic-bezier(0.25,0.1,0.25,1),box-shadow 0.4s cubic-bezier(0.25,0.1,0.25,1);
+      transition: all 0.3s ease;
       text-shadow: 1px 0.5px 1px #1900ff;
       text-align: center;
       width: 60%;
@@ -179,9 +165,6 @@
       overflow: hidden;
       padding: 2em;
       box-sizing: border-box;
-      overflow: hidden;
-      opacity: 1;                                   /* stato visibile */
-      transition: opacity 0.5s ease-in-out;         /* dissolvenza morbida */
     }
 
     #logo-btn {
@@ -195,12 +178,12 @@
       top: 55%;
       left: 50%;
       transform: translate(-50%, -50%) scale(2.3);
-      transition: transform 0.4s ease-in-out, opacity 1s ease-in-out;
+      transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
       
     }
    
     #logo-btn.loaded-img {   
-      animation: fadeImage 2s ease-in-out; 
+      animation: fadeImage 1s ease-in-out; 
     }
 
     #modal {
@@ -215,7 +198,7 @@
       margin: auto 10px;
       max-width: 900px;
       max-height: 70vh;
-      overflow: hidden;
+      overflow-y: auto;
       backdrop-filter: blur(10px);
       transition: opacity 0.6s ease;
       z-index: 3;
@@ -223,15 +206,7 @@
     }
     #modal.show { opacity: 1; pointer-events: auto; }
     #modal.fade-out { opacity: 0; pointer-events: none; }
-    #modal-content {
-  text-align: left;
-  max-width: 800px;
-
-  /* queste due righe ti danno lo scroll interno */
-  overflow-y: auto;
-  max-height: 70vh;
-}
-
+    #modal-content { text-align: left; max-width: 800px; }
 
 
     @media (max-width: 400px) {
@@ -268,11 +243,7 @@
   flex-grow: 1;
 }
 
-#watermark-logo {
-    bottom: 12px;
-    opacity: 0.1; /* se vuoi visibile sempre a bassa opacità */
-    display: block !important;
-  }
+
 
 #sidebar-logo {
   display: block !important;
@@ -481,178 +452,14 @@ ul.custom-list li > strong {
   }
 }
 
-
-
-#watermark-logo {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  opacity: 0;                      /* invisibile all’avvio */
-  pointer-events: none;
-  filter: drop-shadow(0 0 4px #000);
-  transition: opacity 0.02s ease;   /* solo transition, niente animation */
-}
-
-#watermark-logo img {
-  max-width: 400px;   /* dimensione piccola fissa */
-  height: auto;
-  display: block;
-  filter: brightness(120%) contrast(90%);
-}
-
-
 .menu-item {
   border-color: transparent !important;
 }
-
-
-
-/* Scrollbar stile per Chrome, Edge, Safari */
-::-webkit-scrollbar {
-  width: 2px;
-  height: 2px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.5); /* sfondo della traccia */
-  border-radius: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #00a6ff; /* colore della barra */
-  border-radius: 8px;
-  border: 2px solid #000; /* contorno per creare contrasto */
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #00ffb3; /* colore al passaggio */
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #00a6ff rgba(0, 0, 0, 0.5);
-}
-
-
-
-.radar-glow {
-  font-size: 2em;
-  font-weight: bold;
-  color: transparent;
-  background-image: linear-gradient(
-    90deg,
-    #444343 0%,
-    #727272 40%,
-    #ffffff 50%,
-    #727272 60%,
-    #444343 80%
-  );
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: radarTextScan 6s linear infinite;
-  display: inline-block;
-}
-
-@keyframes radarTextScan {
-  0% {
-    background-position: 100% center;
-  }
-  100% {
-    background-position: -100% center;
-  }
-}
-
-
-
-* {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-
-
-
-  /* effetto “abbassamento” via classe pressed */
-.menu-item.pressed,
-.menu-item.sotto-servizio.pressed {
-  /* mantieni la traslazione a 0 e aggiungi lo shrink */
-  transform: translateX(0) scale(0.90) !important;
-  box-shadow: inset 0 0 5px #00a6ff !important;
-}
-
-/* centra solo heading, paragrafi e liste nel modal */
-#modal-content,
-#modal-content h2,
-#modal-content h3,
-#modal-content p,
-#modal-content ul {
-  text-align: center;
-}
-
-/* escludi gli item della lista: rimangono left-aligned */
-#modal-content ul li {
-  text-align: left;
-}
-
-.auto-scroll-hide {
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE10+ */
-}
-.auto-scroll-hide::-webkit-scrollbar {
-  width: 0;                       /* Chrome, Safari, Opera */
-}
-
-.auto-scroll-show {
-  scrollbar-width: auto;
-}
-.auto-scroll-show::-webkit-scrollbar {
-  width: 2px;
-}
-/* prima, annulla TUTTE le scrollbar su #modal-content */
-#modal-content {
-  scrollbar-width: none;           /* Firefox */
-}
-#modal-content::-webkit-scrollbar { 
-  width: 0;                        /* Chrome/Edge/Safari */
-}
-
-/* quando entra in gioco .auto-scroll-show, mostra una scrollbar sottilissima */
-.auto-scroll-show #modal-content {
-  /* Firefox: “thin” è il minimo che puoi ottenere */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,166,255,0.8) transparent;
-}
-.auto-scroll-show #modal-content::-webkit-scrollbar {
-  width: 2px;
-}
-.auto-scroll-show #modal-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-.auto-scroll-show #modal-content::-webkit-scrollbar-thumb {
-  background-color: rgba(0,166,255,0.8);
-  border-radius: 2px;
-}
-.auto-scroll-show #modal-content::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0,255,179,0.8);
-}
-
 
 </style>
 </head>
 
 <body>
-
-
-
     <div id="right-glow"></div>
   
     <div id="orientation-warning">
@@ -670,8 +477,8 @@ ul.custom-list li > strong {
   
     <div id="sidebar">
       <div id="sidebar-content">
-        <div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
-           <img src="logo.png" alt="Logo">
+        <div id="sidebar-logo" onclick="location.reload();">
+          <img src="logo.png" alt="Logo">
         </div>
   
         <div class="menu-list">
@@ -697,152 +504,18 @@ ul.custom-list li > strong {
     </div>
   
     <div id="main">
-  <img src="logo.png" id="logo-btn" alt="Logo">
-
-  <!-- Watermark centrato in basso -->
-  <div id="watermark-logo">
-    <img src="logo.png" alt="Watermark Logo">
-  </div>
-
-  <div id="modal" class="modal">
-    <div id="modal-content"><h2>Caricamento...</h2></div>
-  </div>
-</div>
-
-
-
+      <img src="logo.png" id="logo-btn" alt="Logo">
+      <div id="modal" class="modal">
+        <div id="modal-content"><h2>Caricamento...</h2></div>
+      </div>
+    </div>
   
     <script>
-
-/**
- * Ferma qualunque timeout o RAF pendente sul container `el`
- */
-function clearAutoScroll(el) {
-  if (el._scrollTimeout) {
-    clearTimeout(el._scrollTimeout);
-    el._scrollTimeout = null;
-  }
-  if (el._scrollRaf) {
-    cancelAnimationFrame(el._scrollRaf);
-    el._scrollRaf = null;
-  }
-}
-
-function isScrollable(el) {
-  const cs = getComputedStyle(el);
-  return (cs.overflowY === 'auto' || cs.overflowY === 'scroll')
-         && el.scrollHeight > el.clientHeight;
-}
-
-function setupAutoScroll(el, speed = 11, delay = 9000) {
-  // 0) Stoppa qualunque scroll in corso
-  clearAutoScroll(el);
-
-  // 0.1) Se c'era già un listener, lo rimuoviamo
-  if (el._clickHandler) {
-    el.removeEventListener('click', el._clickHandler);
-    el._clickHandler = null;
-  }
-
-  let last = null;
-  let active = false;
-  let remainder = 0;
-
-  el.classList.add('auto-scroll-hide');
-  el.classList.remove('auto-scroll-show');
-
-  function step(ts) {
-    if (!active) return;
-    if (!last) last = ts;
-    const d = ts - last;
-    last = ts;
-
-    const raw = (d * speed) / 1000 + remainder;
-    const move = Math.floor(raw);
-    remainder = raw - move;
-
-    if (move > 0) {
-      el.scrollTop += move;
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-        active = false;
-        return;
-      }
-    }
-    el._scrollRaf = requestAnimationFrame(step);
-  }
-
-  function start() {
-    if (active) return;
-    remainder = 0;   // resetta le frazioni accumulate
-    last = null;
-    active = true;
-    el.classList.add('auto-scroll-hide');
-    el.classList.remove('auto-scroll-show');
-    el._scrollRaf = requestAnimationFrame(step);
-  }
-
-  function stop() {
-  // Ferma qualunque start pendente o RAF in corso
-  clearAutoScroll(el);
-  // e marca lo stato come “non attivo”
-  active = false;
-  el.classList.remove('auto-scroll-hide');
-  el.classList.add('auto-scroll-show');
-}
-
-
-  // 1) Prepara un unico clickHandler nominato
-  el._clickHandler = () => {
-    active ? stop() : start();
-  };
-
-  // 2) Solo al termine del delay: avvia lo scroll e collega il clickHandler
-  el._scrollTimeout = setTimeout(() => {
-    start();
-    el.addEventListener('click', el._clickHandler);
-  }, delay);
-}
-
-function initScrollOn(root) {
-  clearAutoScroll(root);
-  root.scrollTop = 0;
-
-  const isDesktop = window.matchMedia('(min-width: 769px)').matches;
-  const speed = isDesktop ? 20 : 11;
-  const delay = 9000;
-
-  if (root.scrollHeight > root.clientHeight) {
-    setupAutoScroll(root, speed, delay);
-  }
-}
-
-function showModalWithScroll() {
-  [modal, modalContent].forEach(el => {
-    clearAutoScroll(el);
-    el.scrollTop = 0;
-  });
-
-  modal.classList.remove('fade-out');
-  modal.classList.add('show');
-  isTransitioning = false;
-
-  initScrollOn(modal);
-  initScrollOn(modalContent);
-}
-
-
-
-
-
-
-
-
-
       const contenuti = [
         `<!-- Chi siamo -->
 <div style="text-align:center;">
-  <h2 class="radar-glow">Chi siamo</h2>                    
-  <h2 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h2>
+  <h2>Chi siamo</h2>
+  <h3 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h3>
 </div>
 
 <p style="text-align:justify;">
@@ -858,10 +531,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 `,
   
         `<!-- Portfolio -->
-<div style="text-align:center;">
-  <h2 class="radar-glow">Portfolio</h2>
-</div>
-
+<h2>Portfolio</h2>
 <p>Nel corso degli anni abbiamo contribuito alla realizzazione tecnica e progettuale di numerosi eventi, installazioni e ambienti professionali in tutta Italia. Il nostro portfolio riflette la varietà e l’elevato standard qualitativo dei servizi offerti.</p>
 
 <ul>
@@ -883,10 +553,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 `,
   
         `<!-- Contattaci -->
-<div style="text-align:center;">
-  <h2 class="radar-glow">Contattaci</h2>
-</div>
-
+<h2>Contattaci</h2>
 <p>Hai un progetto da realizzare, un evento da organizzare o necessiti di assistenza tecnica? Il nostro team è a tua disposizione per consulenze, preventivi gratuiti e sopralluoghi personalizzati.</p>
 <p>Compila il modulo sottostante per essere ricontattato dal nostro CEO <strong>Fabrizio Di Filippo</strong> o da un nostro tecnico incaricato.</p>
 
@@ -919,19 +586,13 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   
 
     const contenutoHome = `
-  <div style="text-align: center; max-width: 700px; margin: 50px auto;">
-    <h2 style="margin-bottom: 10px; color: white;">Benvenuti in</h2>
-    <h1 style="color: #00aaff; font-size: 2.5em; margin-top: 0;">Base Elettronica Service</h1>
-    <p style="font-size: 1.2em; color: white;">
-      Siamo il partner ideale per progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi e installazioni professionali.
-      <br><br>
+      <h2>Benvenuti in Base Elettronica Service</h2>
+      <p>Siamo il partner ideale per progettazione, noleggio e gestione tecnica di impianti audio, video, luci e sicurezza per eventi e installazioni professionali.<br><br>
       Scopri di più esplorando il nostro sito!
-    </p>
-  </div>
-`;
+      </p>
+    `;
 
-let onMain = true;
-let modal = document.getElementById('modal');
+    let modal = document.getElementById('modal');
 let modalContent = document.getElementById('modal-content');
 let currentIndex = null;
 let isTransitioning = false;
@@ -940,9 +601,10 @@ let slideshowInterval = null;
 
 function apri(index) {
   if (isTransitioning) return;
+
+
   isTransitioning = true;
 
-  // se clicchi la stessa voce, chiudi
   if (currentIndex === index) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -952,159 +614,95 @@ function apri(index) {
       currentIndex = null;
       isTransitioning = false;
     }, 600);
-    return;
-  }
-
-  currentIndex = index;
-  // cambio contenuto
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modalContent.innerHTML = contenuti[index];
-      showModalWithScroll();
-    }, 600);
   } else {
-    modalContent.innerHTML = contenuti[index];
-    showModalWithScroll();
+    if (modal.classList.contains('show')) {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modalContent.innerHTML = contenuti[index];
+        modal.classList.remove('fade-out');
+        modal.classList.add('show');
+        currentIndex = index;
+        isTransitioning = false;
+      }, 600);
+    } else {
+      modalContent.innerHTML = contenuti[index];
+      modal.classList.add('show');
+      currentIndex = index;
+      isTransitioning = false;
+    }
   }
 }
-
 
 
 function toggleSubmenu() {
-  onMain = false;          // <-- esco dal main
-  const logo      = document.getElementById('sidebar-logo');
-  const submenu   = document.getElementById('submenu-servizi');
+  const submenu = document.getElementById('submenu-servizi');
   const menuItems = document.querySelectorAll('.menu-list > .menu-item');
 
-  // 1) fade-out del logo
-  logo.style.opacity = '0';
+  menuItems.forEach(el => {
+    // Nascondi solo quelli che NON stanno dentro il sottomenu
+    if (!el.closest('#submenu-servizi')) {
+      el.style.display = 'none';
+    }
+  });
 
-  setTimeout(() => {
-    // 2) nascondi i menu principali
-    menuItems.forEach(el => {
-      if (!el.closest('#submenu-servizi')) {
-        el.style.display = 'none';
-      }
-    });
-
-    // 3) mostra il sottomenù
-    submenu.style.display = 'flex';
-
-    // 4) fade-in del logo
-    logo.style.opacity = '1';
-  }, 500); // deve corrispondere al tuo transition-duration in CSS
+  submenu.style.display = 'flex';
 }
-
 
 
 function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
-
-  const main      = document.getElementById('main');
-  const sidebar   = document.getElementById('sidebar');
-  const submenu   = document.getElementById('submenu-servizi');
-  const watermark = document.getElementById('watermark-logo');
-  const smallLogo = document.getElementById('sidebar-logo');
-  const centralLogo = document.getElementById('logo-btn');
-  const modal     = document.getElementById('modal');
-
-  // SE SONO GIÀ SUL MAIN (submenu chiuso, nessuna modale e nessuno slideshow), esci
-  if (
-    submenu.style.display === 'none' &&
-    !modal.classList.contains('show') &&
-    !slideshowAttivo
-  ) {
-    return;
-  }
-
   isTransitioning = true;
 
-  // 0) fade‐out del logo piccolo
-  smallLogo.style.opacity = '0';
-  // 1) fade‐out del main
-  main.style.opacity = '0';
-
-  setTimeout(() => {
-    // A) ferma slideshow
-    if (slideshowInterval) {
-      clearInterval(slideshowInterval);
-      slideshowInterval = null;
-    }
-    slideshowAttivo = false;
-    watermark.style.display = 'none';
-    document.body.style.overflow = '';
-
-    // B) chiudi modale se aperta
-    // B) chiudi modale se aperta
-if (modal.classList.contains('show')) {
-  modal.classList.remove('show');
-  modal.classList.add('fade-out');
-  setTimeout(() => {
-    modal.classList.remove('fade-out');
-    modalContent.innerHTML = '';
-    currentIndex = null;
-    // Non facciamo più showModalWithScroll() qui!
-    isTransitioning = false;
-  }, 600);
-}
-
-
-    // C) ripristina sidebar e menu
-    submenu.style.display = 'none';
-    document.querySelectorAll('.menu-list > .menu-item')
-            .forEach(el => el.style.display = 'flex');
-    sidebar.style.display = '';
-
-    // D) reset logo centrale
-    centralLogo.classList.remove('loaded-img','loading','pulse');
-    centralLogo.style.transition = 'none';
-    centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
-    centralLogo.style.opacity    = '0';
-    centralLogo.style.visibility = 'hidden';
-
-    // preload e fade-in logo centrale
-    const preload = new Image();
-    preload.src = 'logo.png';
-    preload.onload = () => {
-      centralLogo.src = preload.src;
-      void centralLogo.offsetWidth; 
-      centralLogo.style.transition  = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
-      centralLogo.style.visibility  = 'visible';
-      centralLogo.style.opacity     = '1';
-      centralLogo.style.transform   = 'translate(-50%,-50%) scale(2.3)';
-      setTimeout(() => centralLogo.classList.add('pulse'), 600);
-    };
-
-    // 3) fade-in di main e logo piccolo
-    main.style.opacity      = '1';
-    smallLogo.style.opacity = '1';
-
-    // 4) fine transizione
+  // 1) Chiudi la modale se c’è
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
     setTimeout(() => {
-      isTransitioning = false;
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
     }, 600);
+  }
 
-  }, 500);
+  // 2) Ferma slideshow e rimuovi overflow nascosto
+  if (slideshowInterval) {
+    clearInterval(slideshowInterval);
+    slideshowInterval = null;
+  }
+  slideshowAttivo = false;
+  document.body.style.overflow = '';
+
+  // 3) Ripristina sidebar e menu principali
+  document.getElementById('submenu-servizi').style.display = 'none';
+  document.querySelectorAll('.menu-list > .menu-item')
+          .forEach(el => el.style.display = 'flex');
+  document.getElementById('sidebar').style.display = '';
+
+  // 4) Ripristina logo centrale “pulse”
+  const logo = document.getElementById('logo-btn');
+  logo.classList.remove('loaded-img','loading');
+  logo.src = 'logo.png';
+  logo.style.transition = 'none';
+  logo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
+  logo.style.opacity    = '1';
+  logo.style.visibility = 'visible';
+  void logo.offsetWidth;  // forzo reflow
+  logo.style.transition = 'transform 0.4s ease-in-out, opacity 0.4s ease-in-out';
+  logo.classList.add('pulse');
+
+  // 5) Fine transizione
+  setTimeout(() => { isTransitioning = false; }, 600);
 }
-
 
 
 function apriSubservizio(tipo) {
   if (isTransitioning) return;
-  isTransitioning = true;
 
   let contenuto = '';
   switch (tipo) {
     case 'service':
-     
   contenuto = `
-
-  <div style="text-align:center;">
-    <h2 class="radar-glow">Service Tecnico per Eventi e Spettacoli</h2>
-  </div>
-
+    <h2>Service Tecnico per Eventi e Spettacoli</h2>
 <p>Offriamo un servizio integrato per l’allestimento tecnico di eventi di qualsiasi scala, in conformità al <strong>D.Lgs. 81/08</strong> e alle normative vigenti in materia di sicurezza, acustica e compatibilità elettromagnetica.</p>
 
 <p>La nostra struttura operativa è progettata per garantire continuità, affidabilità e tempestività nelle seguenti aree:</p>
@@ -1126,12 +724,7 @@ function apriSubservizio(tipo) {
 
       case 'antincendio':
   contenuto = `
-   
-
-  <div style="text-align:center;">
-    <h2 class="radar-glow">Sistemi di Sicurezza Antincendio</h2>
-  </div>
-
+    <h2>Sistemi di Sicurezza Antincendio</h2>
     <p>Progettiamo e installiamo impianti antincendio conformi alle normative vigenti, con particolare attenzione alla certificazione <strong>UNI EN 54</strong>, garantendo affidabilità, integrazione e tempestività d'intervento.</p>
     <p>Le nostre soluzioni comprendono:</p>
     <ul class="custom-list">
@@ -1147,12 +740,7 @@ function apriSubservizio(tipo) {
 
   case 'progettazione':
   contenuto = `
-    
-
-  <div style="text-align:center;">
-    <h2 class="radar-glow">Progettazione Ambienti e Soluzioni su Misura</h2>
-  </div>
-
+    <h2>Progettazione Ambienti e Soluzioni su Misura</h2>
     <p>Forniamo un servizio completo di progettazione tecnica per ambienti professionali, eventi e installazioni fisse, combinando <strong style="color:#00a6ff;">esperienza ingegneristica</strong>, <strong style="color:#00a6ff;">tecnologie CAD 3D</strong> e <strong style="color:#00a6ff;">modellazione acustico-visiva</strong> ad alta precisione.</p>
 
     <ul class="custom-list">
@@ -1168,12 +756,7 @@ function apriSubservizio(tipo) {
 
   case 'noleggio':
   contenuto = `
-    
-
-  <div style="text-align:center;">
-    <h2 class="radar-glow">Noleggio di Attrezzature Professionali</h2>
-  </div>
-
+    <h2>Noleggio di Attrezzature Professionali</h2>
     <p>Offriamo un servizio di noleggio completo per impianti e attrezzature di alta gamma nel settore <strong>audio, video, luci, strutture e controllo scenotecnico</strong>, con disponibilità immediata, contratti flessibili e assistenza tecnica qualificata.</p>
 
     <p>Il nostro parco attrezzature è regolarmente revisionato, aggiornato e conforme alle normative CE, EN 60598-2-17 (illuminotecnica), CEI 64-8 (impiantistica elettrica) e D.Lgs. 81/08 per la sicurezza nei luoghi di lavoro.</p>
@@ -1197,12 +780,7 @@ function apriSubservizio(tipo) {
 
   case 'assistenza':
   contenuto = `
-    
-
-  <div style="text-align:center;">
-    <h2 class="radar-glow">Centro Assistenza Tecnica e Riparazioni</h2>
-  </div>
-
+    <h2>Centro Assistenza Tecnica e Riparazioni</h2>
     <p>Il nostro centro tecnico offre un servizio specializzato di assistenza e riparazione su attrezzature <strong>audio, luci, video, strutture elettroniche e digitali</strong>, con interventi tempestivi sia <strong>on-site</strong> che in <strong>laboratorio interno certificato</strong>.</p>
 
     <p>Siamo in grado di eseguire <strong>riparazioni elettroniche su qualsiasi componente</strong>, anche a livello microelettronico e SMT, grazie a un reparto dotato di strumentazione avanzata per diagnostica, collaudo e ricostruzione circuitale.</p>
@@ -1231,8 +809,8 @@ function apriSubservizio(tipo) {
 
   }
 
+  isTransitioning = true;
 
-  // Mostra contenuto
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -1242,142 +820,143 @@ function apriSubservizio(tipo) {
       modal.classList.add('show');
       currentIndex = null;
       isTransitioning = false;
-      showModalWithScroll();
     }, 600);
   } else {
     modalContent.innerHTML = contenuto;
     modal.classList.add('show');
     currentIndex = null;
     isTransitioning = false;
-    showModalWithScroll();
   }
-
 }
 
 
 modalContent.addEventListener('click', (e) => {
-  // Esci subito se la modale non è visibile o sei in transizione
-  if (!modal.classList.contains('show') || isTransitioning) return;
-
-  // Verifica se ho cliccato sul titolo radar
-  if (e.target.closest('.radar-glow')) {
+  // Solo chiusura se si clicca in un'area vuota e non ci sono contenuti attivi
+  if (
+    currentIndex === null &&
+    modal.classList.contains('show') &&
+    !isTransitioning &&
+    !e.target.closest('form') && // non chiude se clicco su un form
+    !e.target.closest('.custom-list') && // non chiude se clicco su una lista
+    !e.target.closest('p') // evita chiusura se clicco su un paragrafo
+  ) {
     isTransitioning = true;
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
-      currentIndex = null;  // riportalo allo stato “menu principale”
       isTransitioning = false;
     }, 600);
   }
-  // in tutti gli altri casi (testo, liste, fuori…) non succede nulla
 });
 
-// === 1. Caricamento dinamico veloce di immagini/video ===
-async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
-  const estensioni = ['.jpg', '.png', '.webp', '.mp4'];
-  const tentativi = [];
 
-  for (let i = 1; i <= max; i++) {
-    for (let ext of estensioni) {
-      const url = `${basePath}img${i}${ext}`;
-      tentativi.push(new Promise(resolve => {
+    function attivaSlideshow() {
+      if (slideshowAttivo) return;
+      // nasconde completamente il pannello menu
+const sidebar = document.getElementById('sidebar');
+sidebar.style.display = 'none';
+// giusto per sicurezza, togli anche eventuale sottomenu
+const submenu = document.getElementById('submenu-servizi');
+submenu.style.display = 'none';
+document.body.style.overflow = 'hidden';
+
+      slideshowAttivo = true;
+      if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+          isTransitioning = false;
+        }, 600);
+      }
+      const immagini = [
+        'image_background/img1.jpg',
+        'image_background/img2.jpg',
+        'image_background/img3.jpg',
+        'image_background/img4.jpg',
+        'image_background/img5.jpg',
+        'image_background/img6.jpg',
+        'image_background/img7.png',
+        'image_background/img8.png',
+        'image_background/img9.png',
+        'image_background/img10.png'
+      ];
+      const logo = document.getElementById('logo-btn');
+      let idx = Math.floor(Math.random() * immagini.length);
+      const changeImage = () => {
         const img = new Image();
-        img.onload = () => resolve(url);    // se carica, restituisci l'URL
-        img.onerror = () => resolve(null);  // se fallisce, ignora
-        img.src = url;
-      }));
+        img.src = immagini[idx];
+        img.onload = () => {
+          logo.style.opacity = '0';
+          setTimeout(() => {
+            logo.src = img.src;
+            logo.classList.remove('loading','loaded-img');
+            void logo.offsetWidth;
+            logo.classList.add('loaded-img');
+            logo.style.opacity = '1';
+          },50);
+        };
+        idx = (idx + 1) % immagini.length;
+      };
+      changeImage();
+      slideshowInterval = setInterval(changeImage, 5000);
     }
-  }
 
-  const risultati = await Promise.all(tentativi);
-  return risultati.filter(Boolean); // elimina i null (file non trovati)
-}
 
-// === 2. Avvio dello slideshow ===
-async function attivaSlideshow() {
-  if (slideshowAttivo) return;
 
-  const sidebar = document.getElementById('sidebar');
-  sidebar.style.display = 'none';
-
-  const submenu = document.getElementById('submenu-servizi');
-  submenu.style.display = 'none';
-  document.body.style.overflow = 'hidden';
-
-  slideshowAttivo = true;
-  
-  const watermark = document.getElementById('watermark-logo');
-  watermark.style.display = 'block';
-  watermark.style.opacity = '1';
-
-  if (modal.classList.contains('show')) {
-  // 1) immediata rimozione
-  modal.classList.add('instant-hide');
-  modal.classList.remove('show');
-  modal.style.opacity = '0';
-
-  // 2) resetto opacità e transitions subito dopo
-  setTimeout(() => {
-    modal.classList.remove('instant-hide');
-    modal.style.opacity = '';      // <- qui tolgo l'inline style
-  }, 0);
-
-  setTimeout(() => {
-    watermark.style.opacity = '0.05';
-  }, 5);
-}
-
-  const immagini = await caricaImmaginiValidi();
-  if (immagini.length === 0) return;
-
-  const logo = document.getElementById('logo-btn');
-  let idx = Math.floor(Math.random() * immagini.length);
-
-  const changeImage = () => {
-    const img = new Image();
-    img.src = immagini[idx];
-    img.onload = () => {
+    document.getElementById('sidebar-logo').addEventListener('click', () => {
+      if (isTransitioning) return;
+      if (slideshowInterval) clearInterval(slideshowInterval);
+      slideshowAttivo = false;
+      const logo = document.getElementById('logo-btn');
+      logo.style.transition = 'none';
+      logo.style.visibility = 'hidden';
       logo.style.opacity = '0';
-      setTimeout(() => {
-        logo.src = img.src;
-        logo.classList.remove('loading', 'loaded-img');
+      logo.classList.remove('pulse','loaded-img','fade-in-logo','fade-out-logo');
+      isTransitioning = true;
+      const preload = new Image();
+      preload.src = 'logo.png';
+      preload.onload = () => {
+        logo.src = preload.src;
+        logo.style.transform = 'translate(-50%,-60%) scale(1.8)';
         void logo.offsetWidth;
-        logo.classList.add('loaded-img');
+        logo.style.transition = 'opacity 0.6s ease-in-out';
+        logo.style.visibility = 'visible';
         logo.style.opacity = '1';
-      }, 1000);
-    };
-    idx = (idx + 1) % immagini.length;
-  };
-
-  changeImage();
-  slideshowInterval = setInterval(changeImage, 5000); // cambia ogni 5 secondi
-}
-
-
-
+        setTimeout(() => {
+          logo.classList.add('pulse');
+          isTransitioning = false;
+        },600);
+      };
+      if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+          modal.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+        },600);
+      }
+    });
  
   // 1. Variabili di controllo
   let welcomeTimeout;
   let welcomeShown = false;
 
-
-window.addEventListener('DOMContentLoaded', () => {
-  const modal        = document.getElementById('modal');
-  const modalContent = document.getElementById('modal-content');
-  const logoBtn      = document.getElementById('logo-btn');
-  const isMobile     = window.matchMedia('(max-width: 768px)').matches;
-
-  // 1) Avvia animazioni sidebar/menu SOLO MOBILE
-  if (isMobile) {
-    document.getElementById('sidebar').classList.add('animated');
-    document.querySelectorAll('.menu-item')
-            .forEach(el => el.classList.add('animated'));
-  }
+  window.addEventListener('DOMContentLoaded', () => {
+  // 1) Avvia animazioni sidebar/menu
+  document.getElementById('sidebar').classList.add('animated');
+  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
 
   // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
-  if (isMobile) {
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    const modal        = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+
     // 2a) Inietta il pulsante di chiusura, se non esiste già
     if (!modal.querySelector('.modal-close')) {
       const closeBtn = document.createElement('button');
@@ -1410,103 +989,35 @@ window.addEventListener('DOMContentLoaded', () => {
     // 2d) Avvia la showroom automaticamente (se lo desideri)
     // attivaSlideshow();
   }
-
+   
   // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
+  const logoBtn = document.getElementById('logo-btn');
   logoBtn.style.cursor = 'pointer';
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
-  // helper: ri-animare sidebar+menu-item SOLO MOBILE
-  function animateMenuMobile() {
-    if (!isMobile) return;
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.add('animated');
-    document.querySelectorAll('.menu-item').forEach(el => {
-      el.classList.remove('animated');
-      // calcola delay e duration
-      const rndDelay    = (Math.random() * 3).toFixed(2) + 's';
-      const rndDuration = (5 + Math.random() * 1.5).toFixed(2) + 's';
-      el.style.setProperty('--delay',    rndDelay);
-      el.style.setProperty('--duration', rndDuration);
-      void el.offsetWidth;  // forza reflow
-      el.classList.add('animated');
-    });
-  }
-
   // 3) Pianifica il pop-up di benvenuto
-  setTimeout(() => {
-    // (3.1) Mostro il popup di benvenuto dopo 1s
+  let welcomeTimeout = setTimeout(() => {
     modalContent.innerHTML = contenutoHome;
     modal.classList.add('show');
+    let welcomeShown = true;
 
-    // (3.2) Preparo l’auto-hide a 8 secondi
-    const autoHide = setTimeout(() => {
-      modal.classList.remove('show');
-      // (3.2a) Ri-animazione SOLO MOBILE
-      animateMenuMobile();
-    }, 8000);
-
-    // (3.3) Listener per chiusura anticipata al primo pointerdown
-    const hideOnPointerDown = () => {
-      clearTimeout(autoHide);
-      modal.classList.remove('show');
-      // (3.3a) Ri-animazione SOLO MOBILE
-      animateMenuMobile();
-      document.removeEventListener('pointerdown', hideOnPointerDown, true);
-    };
-    document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
+    const hideWelcome = e => {
+  // ignoro click su sidebar, su menu-item, su modal o sul logo principale
+  if (
+    e.target.closest('#sidebar') ||
+    e.target.closest('.menu-item') ||
+    e.target.closest('#modal') ||
+    e.target.closest('#logo-btn')
+  ) {
+    return;
+  }
+  modal.classList.remove('show');
+  document.removeEventListener('click', hideWelcome);
+};
+document.addEventListener('click', hideWelcome, { once: true });
 
   }, 500);
-
 });
-
-// Event delegation per il form di contatto
-document.addEventListener('submit', function(e) {
-  if (e.target.matches('#contact-form')) {
-    e.preventDefault();
-    modalContent.innerHTML = `
-      <div style="text-align:center; padding:1em;">
-        <h2>Grazie di averci contattato!</h2>
-        <p>Risponderemo entro 24 ore.</p>
-      </div>`;
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
-    setTimeout(() => {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
-      setTimeout(() => {
-        modalContent.innerHTML = contenutoHome;
-        currentIndex = null;
-      }, 600);
-    }, 3000);
-  }
-});
-
-
-// Event delegation per il form di contatto
-document.addEventListener('submit', function(e) {
-  if (e.target.matches('#contact-form')) {
-    e.preventDefault();
-    modalContent.innerHTML = `
-      <div style="text-align:center; padding:1em;">
-        <h2>Grazie di averci contattato!</h2>
-        <p>Risponderemo entro 24 ore.</p>
-      </div>`;
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
-    setTimeout(() => {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
-      setTimeout(() => {
-        modalContent.innerHTML = contenutoHome;
-        currentIndex = null;
-      }, 600);
-    }, 3000);
-  }
-});
-
-
-
-
 
 
 
@@ -1561,25 +1072,6 @@ el.style.setProperty('--delay', delay);
 el.style.setProperty('--duration', speed);
 
 });
-
-// ===== gestione “pressed” via Pointer Events con rilascio rallentato =====
-document.querySelectorAll('.menu-item').forEach(el => {
-  el.addEventListener('pointerdown', () => {
-    el.classList.add('pressed');
-  });
-  el.addEventListener('pointerup', () => {
-    // aspetta un po' prima di farlo risalire, così l'animazione è ben visibile
-    setTimeout(() => el.classList.remove('pressed'), 300);
-  });
-  el.addEventListener('pointerleave', () => {
-    // se esco dal bottone, tolgo subito
-    el.classList.remove('pressed');
-  });
-  el.addEventListener('pointercancel', () => {
-    el.classList.remove('pressed');
-  });
-});
-
 
 
 </script>
