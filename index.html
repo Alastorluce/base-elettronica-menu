@@ -1381,36 +1381,37 @@ async function attivaSlideshow() {
   document.body.style.overflow = 'hidden';
 
   slideshowAttivo = true;
-
+  
   const watermark = document.getElementById('watermark-logo');
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
 
   if (modal.classList.contains('show')) {
-    modal.classList.add('instant-hide');
-    modal.classList.remove('show');
-    modal.style.opacity = '0';
-    setTimeout(() => {
-      modal.classList.remove('instant-hide');
-      modal.style.opacity = '';
-    }, 0);
-    setTimeout(() => {
-      watermark.style.opacity = '0.05';
-    }, 5);
-  }
+  // 1) immediata rimozione
+  modal.classList.add('instant-hide');
+  modal.classList.remove('show');
+  modal.style.opacity = '0';
 
-  const tutte = await caricaImmaginiValidi();
-  if (tutte.length === 0) return;
+  // 2) resetto opacità e transitions subito dopo
+  setTimeout(() => {
+    modal.classList.remove('instant-hide');
+    modal.style.opacity = '';      // <- qui tolgo l'inline style
+  }, 0);
 
-  const immaginiPrioritarie = tutte.slice(0, 5); // carica solo le prime 5
-  const immaginiSecondarie = tutte.slice(5);     // carica il resto dopo
+  setTimeout(() => {
+    watermark.style.opacity = '0.05';
+  }, 5);
+}
+
+  const immagini = await caricaImmaginiValidi();
+  if (immagini.length === 0) return;
 
   const logo = document.getElementById('logo-btn');
-  let idx = Math.floor(Math.random() * immaginiPrioritarie.length);
+  let idx = Math.floor(Math.random() * immagini.length);
 
   const changeImage = () => {
     const img = new Image();
-    img.src = immaginiPrioritarie[idx];
+    img.src = immagini[idx];
     img.onload = () => {
       logo.style.opacity = '0';
       setTimeout(() => {
@@ -1419,23 +1420,14 @@ async function attivaSlideshow() {
         void logo.offsetWidth;
         logo.classList.add('loaded-img');
         logo.style.opacity = '1';
-      }, 1000); // effetto scenico preservato
+      }, 1000);
     };
-    idx = (idx + 1) % immaginiPrioritarie.length;
+    idx = (idx + 1) % immagini.length;
   };
 
   changeImage();
-  slideshowInterval = setInterval(changeImage, 5000);
-
-  // Carica in background le altre immagini
-  setTimeout(() => {
-    for (let url of immaginiSecondarie) {
-      const img = new Image();
-      img.src = url;
-    }
-  }, 2000); // preload asincrono ritardato
+  slideshowInterval = setInterval(changeImage, 5000); // cambia ogni 5 secondi
 }
-
 
 
 
