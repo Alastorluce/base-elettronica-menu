@@ -235,36 +235,19 @@
 #modal-content {
   text-align: left;
   max-width: 800px;
-  
-  /* overlay scrollbar sopra il testo */
-  overflow-y: overlay;
+
+  /* scroll solo quando serve */
+  overflow-y: auto;
   max-height: 70vh;
+
+  /* riserva lo spazio per la scrollbar quando compare */
+  scrollbar-gutter: stable;
 }
 
-/* Desktop only: scrollbar sottilissima e overlay */
+/* fallback per browser che non supportano scrollbar-gutter */
 @media (min-width: 769px) {
-  /* Chrome/Edge/Safari */
-  #modal-content::-webkit-scrollbar {
-    width: 3px;
-    background: transparent; /* mai visibile dietro */
-  }
-  #modal-content::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  #modal-content::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 166, 255, 0.8);
-    border-radius: 2px;
-    border: none;
-  }
-  #modal-content::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 255, 179, 0.8);
-  }
-
-  /* Firefox */
   #modal-content {
-    /* “thin” fa già overlay su FF, e non riserva spazio */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,166,255,0.8) transparent;
+    padding-right: 3px;
   }
 }
 
@@ -557,18 +540,18 @@ ul.custom-list li > strong {
 
 /* Scrollbar stile per Chrome, Edge, Safari */
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 3px;
+  height: 3px;
 }
 
 ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.5); /* sfondo della traccia */
-  border-radius: 8px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #00a6ff; /* colore della barra */
-  border-radius: 8px;
+  border-radius: 3px;
   border: 2px solid #000; /* contorno per creare contrasto */
 }
 
