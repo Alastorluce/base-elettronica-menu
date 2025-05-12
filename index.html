@@ -1472,9 +1472,18 @@ async function attivaSlideshow() {
 
   function changeImage() {
     const url = immagini[idx];
-    const isVideo = url.endsWith('.mp4');
-    const media = mediaCache[url];
-    if (!media) return;
+const isVideo = url.endsWith('.mp4');
+const media = mediaCache[url];
+
+// ⚠️ Se non è pronto, aspetta massimo 1 secondo e poi salta al prossimo
+if (!media) {
+  setTimeout(() => {
+    idx = (idx + 1) % immagini.length;
+    changeImage();  // riprova con il prossimo
+  }, 1000);
+  return;
+}
+
 
     const container = document.getElementById('logo-btn');
     container.style.opacity = '0';
