@@ -1364,15 +1364,18 @@ async function attivaSlideshow() {
 
 
 window.addEventListener('DOMContentLoaded', () => {
-  const modal        = document.getElementById('modal');
-  const modalContent = document.getElementById('modal-content');
-  const logoBtn      = document.getElementById('logo-btn');
-
-  // 1) RIMOSSO: nessuna animazione del sidebar/menu al caricamento
+  // 1) Avvia animazioni sidebar/menu SOLO MOBILE
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    document.getElementById('sidebar').classList.add('animated');
+    document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+  }
 
   // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
   if (window.matchMedia('(max-width: 768px)').matches) {
-    // 2a) Inietta il pulsante di chiusura
+    const modal        = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+
+    // 2a) Inietta il pulsante di chiusura, se non esiste già
     if (!modal.querySelector('.modal-close')) {
       const closeBtn = document.createElement('button');
       closeBtn.className = 'modal-close';
@@ -1380,7 +1383,8 @@ window.addEventListener('DOMContentLoaded', () => {
       closeBtn.textContent = '×';
       modal.insertBefore(closeBtn, modalContent);
     }
-    // 2b) Collega click “×”
+
+    // 2b) Collega il click sulla “×” per chiudere la modale
     modal.querySelectorAll('.modal-close').forEach(btn => {
       btn.addEventListener('click', () => {
         modal.classList.remove('show');
@@ -1391,61 +1395,70 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 600);
       });
     });
-    // 2c) Touch “Clicca qui”
+
+    // 2c) Assicura che su touch “Clicca qui” parta la showroom
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
       el.addEventListener('touchstart', e => {
-        e.preventDefault();
+        e.preventDefault();  // evita doppio tap
         attivaSlideshow();
       }, { passive: false });
     });
-    // 2d) Avvio showroom opzionale
+
+    // 2d) Avvia la showroom automaticamente (se lo desideri)
     // attivaSlideshow();
   }
 
-  // click sul logo centrale
+  // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
+  const logoBtn = document.getElementById('logo-btn');
   logoBtn.style.cursor = 'pointer';
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
-  // helper SOLO MOBILE: ri-animare sidebar+menu-item
-  function animateMenuItemsMobile() {
-    if (!window.matchMedia('(max-width: 768px)').matches) return;
-    // animazione del sidebar (slide-in)
-    document.getElementById('sidebar').classList.add('animated');
-    // animazione delle voci con delay casuale
-    document.querySelectorAll('.menu-item').forEach(el => {
-      el.classList.remove('animated');
-      const rndDelay    = (Math.random() * 3).toFixed(2) + 's';
-      const rndDuration = (5 + Math.random() * 1.5).toFixed(2) + 's';
-      el.style.setProperty('--delay',    rndDelay);
-      el.style.setProperty('--duration', rndDuration);
-      void el.offsetWidth;
-      el.classList.add('animated');
-    });
-  }
-
-  // 3) Pop-up di benvenuto
-  setTimeout(() => {
-    // mostra dopo 1s
+  // 3) Pianifica il pop-up di benvenuto
+  // --- inizio nuovo blocco welcome ---
+  // --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
+  let welcomeTimeout = setTimeout(() => {
+    // Imposto il contenuto
     modalContent.innerHTML = contenutoHome;
-    modal.classList.add('show');
 
-    // auto-hide dopo 8s
+    // 1) preparo l’auto‐hide a 6 secondi
     const autoHide = setTimeout(() => {
       modal.classList.remove('show');
-      // SOLO MOBILE: ri-animazione menu
-      animateMenuItemsMobile();
     }, 8000);
 
-    // chiusura anticipata al primo click/tap
+    // 2) registro subito il listener in capture per chiudere al primo pointerdown (desktop e mobile)
     const hideOnPointerDown = () => {
-      clearTimeout(autoHide);
       modal.classList.remove('show');
-      // SOLO MOBILE: ri-animazione menu
-      animateMenuItemsMobile();
+      clearTimeout(autoHide);
       document.removeEventListener('pointerdown', hideOnPointerDown, true);
     };
     document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
-  }, 1000);
+
+    // 3) mostro il popup
+    modal.classList.add('show');
+  }, 500);
+  // --- fine blocco welcome definitivo ---
+});
+
+// Event delegation per il form di contatto
+document.addEventListener('submit', function(e) {
+  if (e.target.matches('#contact-form')) {
+    e.preventDefault();
+    modalContent.innerHTML = `
+      <div style="text-align:center; padding:1em;">
+        <h2>Grazie di averci contattato!</h2>
+        <p>Risponderemo entro 24 ore.</p>
+      </div>`;
+    modal.classList.remove('fade-out');
+    modal.classList.add('show');
+    setTimeout(() => {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modalContent.innerHTML = contenutoHome;
+        currentIndex = null;
+      }, 600);
+    }, 3000);
+  }
 });
 
 
