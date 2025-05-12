@@ -701,7 +701,6 @@ function clearAutoScroll(el) {
   }
 }
 
-
 // Ritorna true se l'elemento è scrollabile (overflow-y auto|scroll e contenuto più lungo)
 function isScrollable(el) {
   const cs = getComputedStyle(el);
@@ -727,14 +726,18 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     const d = ts - last;
     last = ts;
 
-    const raw  = (d * speed) / 1000 + remainder;
-    const move = Math.max(1, Math.floor(raw));
+    // pixel da spostare in questo intervallo (incluso il resto)
+    const raw = (d * speed) / 1000 + remainder;
+    // muovi solo la parte intera; la frazione resta in remainder
+    const move = Math.floor(raw);
     remainder = raw - move;
 
-    el.scrollTop += move;
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-      active = false;
-      return;
+    if (move > 0) {
+      el.scrollTop += move;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+        active = false;
+        return;
+      }
     }
     el._scrollRaf = requestAnimationFrame(step);
   }
@@ -758,34 +761,24 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
-  // ATTENZIONE: non registriamo ancora il click qui!
-
-  // ③ memorizza il timeout e, quando scade,
-  //    avvia scroll e aggiunge il listener per il click
+  // ③ solo al termine del delay: avvia lo scroll e registra il click
   el._scrollTimeout = setTimeout(() => {
-    // avvia l’autoscroll
     start();
-    // ora che lo scroll è “pronto”, il click diventa toggle
     el.addEventListener('click', () => {
       active ? stop() : start();
     });
   }, delay);
 }
 
-
-
 // Inizializzazione minimal: se scrollabile, setta l’autoscroll
 function initScrollOn(root) {
-  // reset
   clearAutoScroll(root);
   root.scrollTop = 0;
 
   const isDesktop = window.matchMedia('(min-width: 769px)').matches;
-  // desktop = 20px/s, mobile = 11px/s
   const speed = isDesktop ? 20 : 11;
   const delay = 9000;
 
-  // solo se c’è overflow vero
   if (root.scrollHeight > root.clientHeight) {
     setupAutoScroll(root, speed, delay);
   }
@@ -793,10 +786,9 @@ function initScrollOn(root) {
 
 /**
  * Mostra la modale con il contenuto già in `modalContent.innerHTML`
- * e innesca l'autoscroll sul #modal.
+ * e innesca l'autoscroll su #modal e #modal-content.
  */
 function showModalWithScroll() {
-  // reset completo
   [modal, modalContent].forEach(el => {
     clearAutoScroll(el);
     el.scrollTop = 0;
@@ -806,7 +798,6 @@ function showModalWithScroll() {
   modal.classList.add('show');
   isTransitioning = false;
 
-  // riavvia lo scroll su entrambi
   initScrollOn(modal);
   initScrollOn(modalContent);
 }
