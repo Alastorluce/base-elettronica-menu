@@ -1525,13 +1525,36 @@ async function attivaSlideshow() {
 
 
   changeImage();
-  if (url.endsWith('.mp4')) {
-  // quando il video finisce, passa al prossimo
-  media.onended = () => changeImage();
-  media.play(); // forza l'autoplay in modo esplicito
-} else {
-  slideshowInterval = setTimeout(changeImage, 5000);
+
+function pianificaProssimo() {
+  const nextUrl = immagini[idx];
+  const isVideo = nextUrl.endsWith('.mp4');
+  const media = mediaCache[nextUrl];
+
+  if (isVideo && media) {
+    media.onended = () => {
+      media.onended = null;
+      changeImage();
+      pianificaProssimo();
+    };
+    media.play().catch(() => {
+      // fallback: se autoplay fallisce, avanza comunque
+      setTimeout(() => {
+        changeImage();
+        pianificaProssimo();
+      }, 5000);
+    });
+  } else {
+    slideshowInterval = setTimeout(() => {
+      changeImage();
+      pianificaProssimo();
+    }, 5000);
+  }
 }
+
+pianificaProssimo();
+
+
 
 }
 
