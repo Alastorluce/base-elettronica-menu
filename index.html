@@ -946,7 +946,8 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   
   
 
-    const contenutoHome = `
+    // 1. Messaggio di benvenuto pronto
+const contenutoHome = `
   <div id="benvenuto" style="
     text-align: center;
     max-width: 700px;
@@ -974,15 +975,18 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   </div>
 `;
 
+// 2. Inserimento nel DOM (sostituisci 'box' col tuo contenitore reale)
+document.getElementById('box').innerHTML = contenutoHome;
 
-  const benv = document.getElementById('benvenuto');
+// 3. Subito dopo: aggancia l'evento di chiusura
+const benv = document.getElementById('benvenuto');
 
 if (benv) {
   benv.addEventListener('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
 
-    // Crea lo scudo temporaneo anti-click
+    // Scudo per bloccare click passanti
     const shield = document.createElement('div');
     shield.style.position = 'fixed';
     shield.style.top = 0;
@@ -992,6 +996,7 @@ if (benv) {
     shield.style.zIndex = 9999;
     document.body.appendChild(shield);
 
+    // Effetto fade
     benv.style.opacity = '0';
     benv.style.pointerEvents = 'none';
 
@@ -1001,6 +1006,7 @@ if (benv) {
     }, 300);
   });
 }
+
 
 
 let onMain = true;
