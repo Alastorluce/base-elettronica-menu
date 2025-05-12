@@ -701,17 +701,21 @@ function clearAutoScroll(el) {
   }
 }
 
-// Ritorna true se l'elemento è scrollabile (overflow-y auto|scroll e contenuto più lungo)
 function isScrollable(el) {
   const cs = getComputedStyle(el);
   return (cs.overflowY === 'auto' || cs.overflowY === 'scroll')
          && el.scrollHeight > el.clientHeight;
 }
 
-// Attiva un autoscroll lento su `el`
 function setupAutoScroll(el, speed = 11, delay = 9000) {
-  // ① ferma eventuali scroll pendenti
+  // 0) Stoppa qualunque scroll in corso
   clearAutoScroll(el);
+
+  // 0.1) Se c'era già un listener, lo rimuoviamo
+  if (el._clickHandler) {
+    el.removeEventListener('click', el._clickHandler);
+    el._clickHandler = null;
+  }
 
   let last = null;
   let active = false;
@@ -726,7 +730,6 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     const d = ts - last;
     last = ts;
 
-    // pixel da spostare in questo intervallo (incluse le frazioni accumulate)
     const raw = (d * speed) / 1000 + remainder;
     const move = Math.floor(raw);
     remainder = raw - move;
@@ -743,8 +746,7 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
 
   function start() {
     if (active) return;
-    // **Resetta il frazionamento** ogni volta che riparti
-    remainder = 0;
+    remainder = 0;   // resetta le frazioni accumulate
     last = null;
     active = true;
     el.classList.add('auto-scroll-hide');
@@ -763,16 +765,18 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
-  // ③ solo al termine del delay: avvia lo scroll e registra il click
+  // 1) Prepara un unico clickHandler nominato
+  el._clickHandler = () => {
+    active ? stop() : start();
+  };
+
+  // 2) Solo al termine del delay: avvia lo scroll e collega il clickHandler
   el._scrollTimeout = setTimeout(() => {
     start();
-    el.addEventListener('click', () => {
-      active ? stop() : start();
-    });
+    el.addEventListener('click', el._clickHandler);
   }, delay);
 }
 
-// Inizializzazione minimal: se scrollabile, setta l’autoscroll
 function initScrollOn(root) {
   clearAutoScroll(root);
   root.scrollTop = 0;
@@ -786,10 +790,6 @@ function initScrollOn(root) {
   }
 }
 
-/**
- * Mostra la modale con il contenuto già in `modalContent.innerHTML`
- * e innesca l'autoscroll su #modal e #modal-content.
- */
 function showModalWithScroll() {
   [modal, modalContent].forEach(el => {
     clearAutoScroll(el);
@@ -803,6 +803,7 @@ function showModalWithScroll() {
   initScrollOn(modal);
   initScrollOn(modalContent);
 }
+
 
 
 
