@@ -720,23 +720,24 @@ function setupAutoScroll(el, speed = 12, delay = 9000) {
   el.classList.remove('auto-scroll-show');
 
   function step(ts) {
-    if (!active) return;
-    if (!last) last = ts;
-    const d = ts - last;
-    last = ts;
+  if (!active) return;
+  if (!last) last = ts;
+  const d = ts - last;
+  last = ts;
 
-    const raw  = (d * speed) / 1000 + remainder;
-    const move = Math.floor(raw);
-    remainder    = raw - move;
+  const raw  = (d*speed)/1000 + remainder;
+  // almeno 1px ogni volta
+  const move = Math.max(1, Math.floor(raw));
+  remainder    = raw - move;
 
-    el.scrollTop += move;
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-      active = false;
-      return;
-    }
-    // ② memorizza il RAF
-    el._scrollRaf = requestAnimationFrame(step);
+  el.scrollTop += move;
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+    active = false;
+    return;
   }
+  el._scrollRaf = requestAnimationFrame(step);
+}
+
 
   function start() {
     if (active) return;
@@ -774,7 +775,7 @@ function initScrollOn(root) {
 
   const isDesktop = window.matchMedia('(min-width: 769px)').matches;
   // desktop = 20px/s, mobile = 11px/s
-  const speed = isDesktop ? 20 : 11;
+  const speed = isDesktop ? 20 : 12;
   const delay = 9000;
 
   // solo se c’è overflow vero
