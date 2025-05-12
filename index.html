@@ -155,19 +155,12 @@
       transform: translateX(-100%);
       animation: slideIn 0.5s ease-out forwards;
     }
-  /* ANIMAZIONE: Menu principale */
-.menu-list > .menu-item:nth-of-type(1) { animation-delay: 0s; }
-.menu-list > .menu-item:nth-of-type(2) { animation-delay: 0.2s; }
-.menu-list > .menu-item:nth-of-type(3) { animation-delay: 0.4s; }
-.menu-list > .menu-item:nth-of-type(4) { animation-delay: 0.6s; }
-
-/* ANIMAZIONE: Submenu servizi */
-#submenu-servizi .menu-item:nth-of-type(1) { animation-delay: 0s; }
-#submenu-servizi .menu-item:nth-of-type(2) { animation-delay: 0.2s; }
-#submenu-servizi .menu-item:nth-of-type(3) { animation-delay: 0.4s; }
-#submenu-servizi .menu-item:nth-of-type(4) { animation-delay: 0.6s; }
-#submenu-servizi .menu-item:nth-of-type(5) { animation-delay: 0.8s; }
-#submenu-servizi .menu-item:nth-of-type(6) { animation-delay: 1s; }
+    .menu-item.animated { animation: slideIn 0.5s ease-out forwards; }
+    .menu-list .menu-item:nth-child(1) { animation-delay: 0s; }
+    .menu-list .menu-item:nth-child(2) { animation-delay: 0.2s; }
+    .menu-list .menu-item:nth-child(3) { animation-delay: 0.4s; }
+    .menu-list .menu-item:nth-child(4) { animation-delay: 0.6s; }
+    .menu-list .menu-item:nth-child(5) { animation-delay: 0.8s; }
     .menu-item:hover {
       background: rgba(0, 0, 0, 0.8);
       color: #00ffb3;
@@ -303,29 +296,15 @@
     width: 90vw;
     max-width: 90vw;
     min-height: 45px;
-    opacity: 0;
-    transform: translateX(-100%);
-    animation: slideIn 0.5s ease-out forwards;
     text-align: center;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-/* ANIMAZIONE: Menu principale */
-.menu-list > .menu-item:nth-of-type(1) { animation-delay: 0s; }
-.menu-list > .menu-item:nth-of-type(2) { animation-delay: 0.2s; }
-.menu-list > .menu-item:nth-of-type(3) { animation-delay: 0.4s; }
-.menu-list > .menu-item:nth-of-type(4) { animation-delay: 0.6s; }
-
-/* ANIMAZIONE: Submenu servizi */
-#submenu-servizi .menu-item:nth-of-type(1) { animation-delay: 0s; }
-#submenu-servizi .menu-item:nth-of-type(2) { animation-delay: 0.2s; }
-#submenu-servizi .menu-item:nth-of-type(3) { animation-delay: 0.4s; }
-#submenu-servizi .menu-item:nth-of-type(4) { animation-delay: 0.6s; }
-#submenu-servizi .menu-item:nth-of-type(5) { animation-delay: 0.8s; }
-#submenu-servizi .menu-item:nth-of-type(6) { animation-delay: 1s; }
-
 
   .menu-item.sotto-servizio:last-child {
     font-size: 0.9em;
@@ -994,40 +973,29 @@ function apri(index) {
 
 
 function toggleSubmenu() {
-  onMain = false;
-  const logo = document.getElementById('sidebar-logo');
-  const submenu = document.getElementById('submenu-servizi');
+  onMain = false;          // <-- esco dal main
+  const logo      = document.getElementById('sidebar-logo');
+  const submenu   = document.getElementById('submenu-servizi');
   const menuItems = document.querySelectorAll('.menu-list > .menu-item');
 
+  // 1) fade-out del logo
   logo.style.opacity = '0';
 
   setTimeout(() => {
-    // Nascondi i principali
+    // 2) nascondi i menu principali
     menuItems.forEach(el => {
       if (!el.closest('#submenu-servizi')) {
         el.style.display = 'none';
-        el.classList.remove('animated');
       }
     });
 
-    // Mostra submenu (ma SENZA .animated)
+    // 3) mostra il sottomenù
     submenu.style.display = 'flex';
 
-    // Poi, DOPO un ciclo di rendering, aggiungila
-    setTimeout(() => {
-      submenu.querySelectorAll('.menu-item').forEach((el, i) => {
-        el.classList.remove('animated'); // per sicurezza
-        el.style.animation = 'none';     // resetta animazione
-        void el.offsetWidth;             // forza reflow
-        el.style.animation = '';         // riattiva
-        el.classList.add('animated');
-      });
-    }, 30); // sufficiente per far partire l'animazione pulita
-
+    // 4) fade-in del logo
     logo.style.opacity = '1';
-  }, 500);
+  }, 500); // deve corrispondere al tuo transition-duration in CSS
 }
-
 
 
 
@@ -1290,8 +1258,7 @@ function apriSubservizio(tipo) {
 modalContent.addEventListener('click', (e) => {
   // Esci subito se la modale non è visibile o sei in transizione
   if (!modal.classList.contains('show') || isTransitioning) return;
-  
-  e.stopPropagation(); // 👈 impedisce che il click trapassi
+
   // Verifica se ho cliccato sul titolo radar
   if (e.target.closest('.radar-glow')) {
     isTransitioning = true;
@@ -1306,14 +1273,6 @@ modalContent.addEventListener('click', (e) => {
   }
   // in tutti gli altri casi (testo, liste, fuori…) non succede nulla
 });
-// 🔒 Blocca i tap/click che "passano attraverso" la modale su mobile
-modal.addEventListener('pointerdown', (e) => {
-  e.stopPropagation();
-});
-modalContent.addEventListener('pointerdown', (e) => {
-  e.stopPropagation();
-});
-
 
 // === 1. Caricamento dinamico veloce di immagini/video ===
 async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
