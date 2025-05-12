@@ -1362,7 +1362,8 @@ async function attivaSlideshow() {
   let welcomeTimeout;
   let welcomeShown = false;
 
-  window.addEventListener('DOMContentLoaded', () => {
+
+window.addEventListener('DOMContentLoaded', () => {
   // 1) Avvia animazioni sidebar/menu
   document.getElementById('sidebar').classList.add('animated');
   document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
@@ -1411,31 +1412,66 @@ async function attivaSlideshow() {
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
   // 3) Pianifica il pop-up di benvenuto
-  // --- inizio nuovo blocco welcome ---
-// --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
-let welcomeTimeout = setTimeout(() => {
-  // Imposto il contenuto
-  modalContent.innerHTML = contenutoHome;
+  // --- inizio nuovo blocco welcome definitivo ---
+  let welcomeTimeout = setTimeout(() => {
+    // Imposto il contenuto
+    modalContent.innerHTML = contenutoHome;
 
-  // 1) preparo l’auto‐hide a 6 secondi
-  const autoHide = setTimeout(() => {
-    modal.classList.remove('show');
-  }, 8000);
+    // 1) preparo l’auto‐hide a 8 secondi
+    const autoHide = setTimeout(() => {
+      modal.classList.remove('show');
+      // **solo su mobile** ri-animiamo sidebar+menu-item
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        document.getElementById('sidebar').classList.add('animated');
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+      }
+    }, 8000);
 
-  // 2) registro subito il listener in capture per chiudere al primo pointerdown (desktop e mobile)
-  const hideOnPointerDown = () => {
-    modal.classList.remove('show');
-    clearTimeout(autoHide);
-    document.removeEventListener('pointerdown', hideOnPointerDown, true);
-  };
-  document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
+    // 2) registro subito il listener in capture per chiudere al primo pointerdown
+    const hideOnPointerDown = () => {
+      modal.classList.remove('show');
+      clearTimeout(autoHide);
+      // **solo su mobile** ri-animiamo sidebar+menu-item
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        document.getElementById('sidebar').classList.add('animated');
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+      }
+      document.removeEventListener('pointerdown', hideOnPointerDown, true);
+    };
+    document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
 
-  // 3) mostro il popup
-  modal.classList.add('show');
-}, 500);
-// --- fine blocco welcome definitivo ---
+    // 3) mostro il popup
+    modal.classList.add('show');
+  }, 500);
+  // --- fine blocco welcome definitivo ---
 
 });
+
+// Event delegation per il form di contatto
+document.addEventListener('submit', function(e) {
+  if (e.target.matches('#contact-form')) {
+    e.preventDefault();
+    modalContent.innerHTML = `
+      <div style="text-align:center; padding:1em;">
+        <h2>Grazie di averci contattato!</h2>
+        <p>Risponderemo entro 24 ore.</p>
+      </div>`;
+    modal.classList.remove('fade-out');
+    modal.classList.add('show');
+    setTimeout(() => {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modalContent.innerHTML = contenutoHome;
+        currentIndex = null;
+      }, 600);
+    }, 3000);
+  }
+});
+
+
+
+
 
 
 
