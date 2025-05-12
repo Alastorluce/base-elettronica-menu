@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- già presente -->
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
+  <!-- 🔹 Icona desktop / favicon per tutti i browser -->
+<link rel="icon" type="image/x-icon" href="logo_multires.ico">
+
+<!-- 🔹 Icona PNG moderna per browser e retina -->
+<link rel="icon" type="image/png" sizes="256x256" href="logo_256.png">
+<link rel="apple-touch-icon" sizes="512x512" href="logo_512.png">
+
+<!-- 🔹 Manifest per Android (shortcut con icona corretta) -->
+<link rel="manifest" href="/manifest.json">
+
   <style>
 
 
@@ -694,6 +705,19 @@ ul.custom-list li > strong {
 }
 .auto-scroll-show #modal-content::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0,255,179,0.8);
+}
+
+
+video#logo-btn {
+  object-fit: cover;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100%;
+  max-height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+  transform: none !important;
+  z-index: 1;
 }
 
 
@@ -1417,7 +1441,7 @@ async function attivaSlideshow() {
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
 
-  // Precarica tutti i media e salva in cache
+  // Precarica i media
   const mediaCache = {};
   await Promise.all(
     immagini.map(url => new Promise(resolve => {
@@ -1425,7 +1449,7 @@ async function attivaSlideshow() {
         const video = document.createElement('video');
         video.src = url;
         video.muted = true;
-        video.loop = true;
+        video.loop = false;
         video.preload = 'auto';
         video.onloadeddata = () => {
           mediaCache[url] = video;
@@ -1446,69 +1470,82 @@ async function attivaSlideshow() {
 
   let idx = Math.floor(Math.random() * immagini.length);
 
-  const changeImage = () => {
-  const url = immagini[idx];
-  const isVideo = url.endsWith('.mp4');
-  const media = mediaCache[url];
-  if (!media) return;
+  function changeImage() {
+    const url = immagini[idx];
+    const isVideo = url.endsWith('.mp4');
+    const media = mediaCache[url];
+    if (!media) return;
 
-  const container = document.getElementById('logo-btn');
-  container.style.opacity = '0';
-
-  setTimeout(() => {
-    let newMedia;
-
-    if (isVideo) {
-  newMedia = media.cloneNode(true);
-  newMedia.autoplay = true;
-  newMedia.loop = true;
-  newMedia.muted = true;
-  newMedia.playsInline = true;
-
-  // 🔥 AGGIUNGI QUESTO BLOCCO QUI PER IL VIDEO
-  newMedia.style.objectFit = 'contain';
-  newMedia.style.width = 'auto';
-  newMedia.style.height = 'auto';
-  newMedia.style.position = 'absolute';
-  newMedia.style.top = '50%';
-  newMedia.style.left = '50%';
-  newMedia.style.transform = 'translate(-50%, -50%) scale(2)';
-
-  } else {
-    newMedia = new Image();
-    newMedia.src = media.src;
-    newMedia.classList.add('loaded-img');
-
-    // ✅ Stili per immagini (già ottimi)
-    newMedia.style.objectFit = 'contain';
-    newMedia.style.width = 'auto';
-    newMedia.style.height = 'auto';
-    newMedia.style.position = 'absolute';
-    newMedia.style.top = '50%';
-    newMedia.style.left = '50%';
-    newMedia.style.transform = 'translate(-50%, -50%) scale(2.3)';
-}
-
-    newMedia.style.transition = container.style.transition;
-    newMedia.style.zIndex = container.style.zIndex;
-    newMedia.style.animation = container.style.animation;
-    newMedia.style.opacity = '0';
-
-    container.replaceWith(newMedia);
-    newMedia.addEventListener('click', ripristinaMenuPrincipale);
-
+    const container = document.getElementById('logo-btn');
+    container.style.opacity = '0';
 
     setTimeout(() => {
-      newMedia.style.opacity = '1';
-    }, 50);
-  }, 300);
+      let newMedia;
 
-  idx = (idx + 1) % immagini.length;
-};
+      if (isVideo) {
+        newMedia = media.cloneNode(true);
+        newMedia.autoplay = true;
+        newMedia.loop = false;
+        newMedia.muted = true;
+        newMedia.playsInline = true;
+      } else {
+        newMedia = new Image();
+        newMedia.src = media.src;
+        newMedia.classList.add('loaded-img');
+      }
 
+      newMedia.id = 'logo-btn';
+      Object.assign(newMedia.style, {
+        width: container.style.width,
+        height: container.style.height,
+        position: container.style.position,
+        top: container.style.top,
+        left: container.style.left,
+        transform: container.style.transform,
+        transition: container.style.transition,
+        zIndex: container.style.zIndex,
+        animation: container.style.animation,
+        opacity: '0',
+        cursor: 'pointer'
+      });
+
+      newMedia.addEventListener('click', ripristinaMenuPrincipale);
+      container.replaceWith(newMedia);
+
+      setTimeout(() => {
+        newMedia.style.opacity = '1';
+      }, 50);
+    }, 300);
+
+    idx = (idx + 1) % immagini.length;
+  }
+
+  function pianificaProssimo() {
+    const url = immagini[idx];
+    const isVideo = url.endsWith('.mp4');
+    const media = mediaCache[url];
+
+    if (isVideo && media) {
+      media.onended = () => {
+        changeImage();
+        pianificaProssimo();
+      };
+      media.play().catch(() => {
+        setTimeout(() => {
+          changeImage();
+          pianificaProssimo();
+        }, 5000);
+      });
+    } else {
+      slideshowInterval = setTimeout(() => {
+        changeImage();
+        pianificaProssimo();
+      }, 5000);
+    }
+  }
 
   changeImage();
-  slideshowInterval = setInterval(changeImage, 5000);
+  pianificaProssimo();
 }
 
 
