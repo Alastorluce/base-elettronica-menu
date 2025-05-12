@@ -743,6 +743,7 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     if (active) return;
     active = true;
     last   = null;
+    remainder = 0;         // niente avanzi dal passato
     el.classList.add('auto-scroll-hide');
     el.classList.remove('auto-scroll-show');
     el._scrollRaf = requestAnimationFrame(step);
@@ -758,7 +759,22 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
-  el.addEventListener('click', () => {if (active) {stop();} else {start();} });
+  // dentro setupAutoScroll, sostituisci il tuo click listener con:
+el.addEventListener('click', () => {
+  // ① annulla l’avvio automatico futuro
+  if (el._scrollTimeout) {
+    clearTimeout(el._scrollTimeout);
+    el._scrollTimeout = null;
+  }
+
+  // ② resetta remainder così non “eredità” pixel sbagliati
+  remainder = 0;
+
+  // ③ toggle start/stop
+  if (active) stop();
+  else start();
+});
+
   el.addEventListener('wheel', stop, { passive: true });
   el.addEventListener('touchmove', stop, { passive: true });
 
