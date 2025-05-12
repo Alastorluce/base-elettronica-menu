@@ -1290,7 +1290,8 @@ function apriSubservizio(tipo) {
 modalContent.addEventListener('click', (e) => {
   // Esci subito se la modale non è visibile o sei in transizione
   if (!modal.classList.contains('show') || isTransitioning) return;
-
+  
+  e.stopPropagation(); // 👈 impedisce che il click trapassi
   // Verifica se ho cliccato sul titolo radar
   if (e.target.closest('.radar-glow')) {
     isTransitioning = true;
