@@ -240,6 +240,9 @@
   /* riserva lo spazio per la scrollbar quando compare */
   scrollbar-gutter: stable;
 }
+@supports (overflow: overlay) {
+  #modal-content { overflow-y: overlay; }
+}
 
 /* fallback per browser che non supportano scrollbar-gutter */
 @media (min-width: 769px) {
@@ -247,15 +250,6 @@
     padding-right: 3px;
   }
 }
-
-
-
-
-  
-
-
-
-
 
 
 
