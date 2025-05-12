@@ -1451,6 +1451,13 @@ async function attivaSlideshow() {
         video.muted = true;
         video.loop = false;
         video.preload = 'auto';
+video.load(); // forza il preload
+video.oncanplaythrough = () => {
+  mediaCache[url] = video;
+  resolve();
+};
+video.onerror = resolve;
+
         video.onloadeddata = () => {
           mediaCache[url] = video;
           resolve();
