@@ -586,6 +586,26 @@ html {
   padding-right: 6px; /* Compensa lo spazio della scrollbar */
 }
 
+/* — override desktop solo per la modale e il suo content — */
+@media (hover: hover) and (pointer: fine) {
+  /* nascondi scrollbar finché c’è auto-scroll-hide */
+  #modal.auto-scroll-hide,
+  #modal-content.auto-scroll-hide {
+    /* Firefox e IE */
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  #modal.auto-scroll-hide::-webkit-scrollbar,
+  #modal-content.auto-scroll-hide::-webkit-scrollbar {
+    width: 0 !important;
+  }
+
+  /* fai ricomparire scrollbar spessa solo quando c’è auto-scroll-show */
+  #modal.auto-scroll-show::-webkit-scrollbar,
+  #modal-content.auto-scroll-show::-webkit-scrollbar {
+    width: 3px !important;
+  }
+}
 
 
 .radar-glow {
