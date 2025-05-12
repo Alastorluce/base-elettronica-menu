@@ -1475,6 +1475,8 @@ let welcomeTimeout = setTimeout(() => {
 
   // 👇 Mostra il blocco trasparente sotto al benvenuto
   const blocker = document.getElementById('modal-blocker');
+
+  
   blocker.style.display = 'block';
 
   // 1) auto-hide dopo 8 secondi
@@ -1490,7 +1492,7 @@ let welcomeTimeout = setTimeout(() => {
     clearTimeout(autoHide);
     document.removeEventListener('pointerdown', hideOnPointerDown, true);
   };
-  document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
+  blocker.addEventListener('pointerdown', hideOnPointerDown);
 
   // 3) mostra la modale
   modal.classList.add('show');
