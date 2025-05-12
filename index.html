@@ -530,31 +530,40 @@ ul.custom-list li > strong {
 
 
 /* Mobile e desktop: scrollbar piccola ma visibile di default */
+/* Sostituisci le regole esistenti per la scrollbar con queste: */
+
+/* Scrollbar sottile e fissa per tutti gli elementi */
 ::-webkit-scrollbar {
-  width: 3px;
-  height: 3px;
-}
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.5);
-}
-::-webkit-scrollbar-thumb {
-  background: #00a6ff;
-  border-radius: 3px;
-  border: 2px solid #000;
-}
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #00a6ff rgba(0, 0, 0, 0.5);
+  width: 6px;  /* Larghezza della scrollbar */
+  height: 6px; /* Altezza per scrollbar orizzontali */
 }
 
-/* --- solo sui dispositivi desktop con puntatore “fino” --- */
-@media (hover: hover) and (pointer: fine) {
-  .auto-scroll-hide {
-    /* Firefox e IE */
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
-  }
+::-webkit-scrollbar-track {
+  background: transparent; /* Sfondo trasparente */
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 166, 255, 0.5); /* Colore con trasparenza */
+  border-radius: 3px;
+  border: 1px solid transparent; /* Bordo trasparente per evitare spostamenti */
+  background-clip: padding-box; /* Importante per evitare spostamenti */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 166, 255, 0.8); /* Colore più visibile al hover */
+}
+
+/* Per Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 166, 255, 0.5) transparent;
+}
+
+/* Per il contenuto modale */
+#modal-content {
+  scrollbar-gutter: stable both-edges; /* Riserva spazio per la scrollbar */
+  padding-right: 6px; /* Compensa lo spazio della scrollbar */
 }
 
 /* — override desktop solo per la modale e il suo content — */
