@@ -215,7 +215,7 @@
       margin: auto 10px;
       max-width: 900px;
       max-height: 70vh;
-      overflow-y: auto;
+      overflow: hidden;
       backdrop-filter: blur(10px);
       transition: opacity 0.6s ease;
       z-index: 3;
@@ -223,7 +223,15 @@
     }
     #modal.show { opacity: 1; pointer-events: auto; }
     #modal.fade-out { opacity: 0; pointer-events: none; }
-    #modal-content { text-align: left; max-width: 800px; }
+    #modal-content {
+  text-align: left;
+  max-width: 800px;
+
+  /* queste due righe ti danno lo scroll interno */
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
 
 
     @media (max-width: 400px) {
@@ -775,9 +783,8 @@ function initScrollOn(root) {
  */
 function showModalWithScroll() {
   // ——— reset completo prima di riaprire la modale ———
-  clearAutoScroll(modal);
   clearAutoScroll(modalContent);
-  modal.scrollTop        = 0;
+  
   modalContent.scrollTop = 0;
 
   modal.classList.remove('fade-out');
@@ -785,7 +792,6 @@ function showModalWithScroll() {
   isTransitioning = false;
 
   // adesso riattivi l’autoscroll con initScrollOn
-  initScrollOn(modal);
   initScrollOn(modalContent);
 }
 
