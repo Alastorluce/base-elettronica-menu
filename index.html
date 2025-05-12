@@ -538,31 +538,38 @@ ul.custom-list li > strong {
 
 
 
-/* Scrollbar stile per Chrome, Edge, Safari */
+/* Mobile e desktop: scrollbar piccola ma visibile di default */
 ::-webkit-scrollbar {
   width: 3px;
   height: 3px;
 }
-
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.5); /* sfondo della traccia */
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.5);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #00a6ff; /* colore della barra */
+  background: #00a6ff;
   border-radius: 3px;
-  border: 2px solid #000; /* contorno per creare contrasto */
+  border: 2px solid #000;
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: #00ffb3; /* colore al passaggio */
-}
-
 /* Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: #00a6ff rgba(0, 0, 0, 0.5);
+}
+
+/* --- solo sui dispositivi desktop con puntatore “fino” --- */
+@media (hover: hover) and (pointer: fine) {
+  .auto-scroll-hide {
+    /* Firefox e IE */
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  .auto-scroll-hide::-webkit-scrollbar {
+    width: 0 !important;
+  }
+  .auto-scroll-show::-webkit-scrollbar {
+    width: 12px !important;
+  }
 }
 
 
