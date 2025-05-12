@@ -209,6 +209,18 @@
     #logo-btn.loaded-img {   
       animation: fadeImage 2s ease-in-out; 
     }
+    
+
+
+    #modal-blocker {
+      display: none; /* sarà visibile solo durante il messaggio di benvenuto */
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2; /* sotto il #modal (z-index: 3), sopra tutto il resto */
+      background: transparent;
+    }
 
     #modal {
       background: rgba(0, 0, 0, 0.8);
@@ -725,10 +737,13 @@ ul.custom-list li > strong {
     <img src="logo.png" alt="Watermark Logo">
   </div>
 
+  <!-- Layer fantasma per bloccare click al di sotto -->
+  <div id="modal-blocker"></div>
+
   <div id="modal" class="modal">
-    <div id="modal-content"><h2>Caricamento...</h2></div>
+       <div id="modal-content"><h2>Caricamento...</h2></div>
+     </div>
   </div>
-</div>
 
 
 
@@ -1455,26 +1470,31 @@ async function attivaSlideshow() {
   // --- inizio nuovo blocco welcome ---
 // --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
 let welcomeTimeout = setTimeout(() => {
-  // Imposto il contenuto
   modalContent.innerHTML = contenutoHome;
 
-  // 1) preparo l’auto‐hide a 6 secondi
+  // 👇 Mostra il blocco trasparente sotto al benvenuto
+  const blocker = document.getElementById('modal-blocker');
+  blocker.style.display = 'block';
+
+  // 1) auto-hide dopo 8 secondi
   const autoHide = setTimeout(() => {
     modal.classList.remove('show');
+    blocker.style.display = 'none';
   }, 8000);
 
-  // 2) registro subito il listener in capture per chiudere al primo pointerdown (desktop e mobile)
+  // 2) chiusura al primo click/tap
   const hideOnPointerDown = () => {
     modal.classList.remove('show');
+    blocker.style.display = 'none';
     clearTimeout(autoHide);
     document.removeEventListener('pointerdown', hideOnPointerDown, true);
   };
   document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
 
-  // 3) mostro il popup
+  // 3) mostra la modale
   modal.classList.add('show');
 }, 500);
-// --- fine blocco welcome definitivo ---
+
 
 });
 
