@@ -710,7 +710,7 @@ function isScrollable(el) {
 }
 
 // Attiva un autoscroll lento su `el`
-function setupAutoScroll(el, speed = 12, delay = 9000) {
+function setupAutoScroll(el, speed = 11, delay = 9000) {
   // ① ferma scroll pendenti
   clearAutoScroll(el);
 
@@ -775,7 +775,7 @@ function initScrollOn(root) {
 
   const isDesktop = window.matchMedia('(min-width: 769px)').matches;
   // desktop = 20px/s, mobile = 11px/s
-  const speed = isDesktop ? 20 : 12;
+  const speed = isDesktop ? 20 : 11;
   const delay = 9000;
 
   // solo se c’è overflow vero
