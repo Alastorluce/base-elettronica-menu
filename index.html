@@ -768,32 +768,41 @@ function setupAutoScroll(el, speed = 12, delay = 9000) {
 
 // Inizializzazione minimal: se scrollabile, setta l’autoscroll
 function initScrollOn(root) {
-  // desktop se larghezza ≥ 769px
+  // reset
+  clearAutoScroll(root);
+  root.scrollTop = 0;
+
   const isDesktop = window.matchMedia('(min-width: 769px)').matches;
-  // scegli la velocità: 20px/s su desktop, 12px/s su mobile
-  const speed = isDesktop ? 20 : 12;
+  // desktop = 20px/s, mobile = 11px/s
+  const speed = isDesktop ? 20 : 11;
   const delay = 9000;
 
-  // NON controllo più isScrollable: parte sempre
-  setupAutoScroll(root, speed, delay);
+  // solo se c’è overflow vero
+  if (root.scrollHeight > root.clientHeight) {
+    setupAutoScroll(root, speed, delay);
+  }
 }
+
 /**
  * Mostra la modale con il contenuto già in `modalContent.innerHTML`
  * e innesca l'autoscroll sul #modal.
  */
 function showModalWithScroll() {
-  // ——— reset completo prima di riaprire la modale ———
-  clearAutoScroll(modalContent);
-  
-  modalContent.scrollTop = 0;
+  // reset completo
+  [modal, modalContent].forEach(el => {
+    clearAutoScroll(el);
+    el.scrollTop = 0;
+  });
 
   modal.classList.remove('fade-out');
   modal.classList.add('show');
   isTransitioning = false;
 
-  // adesso riattivi l’autoscroll con initScrollOn
+  // riavvia lo scroll su entrambi
+  initScrollOn(modal);
   initScrollOn(modalContent);
 }
+
 
 
 
