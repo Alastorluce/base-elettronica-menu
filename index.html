@@ -667,13 +667,6 @@ ul.custom-list li > strong {
 }
 
 
-#benvenuto.fade-out {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-
 </style>
 </head>
 
@@ -946,25 +939,8 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   
   
 
-    // 1. Messaggio di benvenuto pronto
-const contenutoHome = `
-  <div id="benvenuto" style="
-    text-align: center;
-    max-width: 700px;
-    margin: 50px auto;
-    background-color: rgba(0,0,0,0.85);
-    padding: 30px;
-    border-radius: 15px;
-    position: fixed;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    color: white;
-    transition: opacity 0.3s ease;
-    opacity: 1;
-    pointer-events: auto;
-  ">
+    const contenutoHome = `
+  <div style="text-align: center; max-width: 700px; margin: 50px auto;">
     <h2 style="margin-bottom: 10px; color: white;">Benvenuti in</h2>
     <h1 style="color: #00aaff; font-size: 2.5em; margin-top: 0;">Base Elettronica Service</h1>
     <p style="font-size: 1.2em; color: white;">
@@ -974,40 +950,6 @@ const contenutoHome = `
     </p>
   </div>
 `;
-
-// 2. Inserimento nel DOM (sostituisci 'box' col tuo contenitore reale)
-document.getElementById('box').innerHTML = contenutoHome;
-
-// 3. Subito dopo: aggancia l'evento di chiusura
-const benv = document.getElementById('benvenuto');
-
-if (benv) {
-  benv.addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    // Scudo per bloccare click passanti
-    const shield = document.createElement('div');
-    shield.style.position = 'fixed';
-    shield.style.top = 0;
-    shield.style.left = 0;
-    shield.style.right = 0;
-    shield.style.bottom = 0;
-    shield.style.zIndex = 9999;
-    document.body.appendChild(shield);
-
-    // Effetto fade
-    benv.style.opacity = '0';
-    benv.style.pointerEvents = 'none';
-
-    setTimeout(() => {
-      benv.remove();
-      shield.remove();
-    }, 300);
-  });
-}
-
-
 
 let onMain = true;
 let modal = document.getElementById('modal');
