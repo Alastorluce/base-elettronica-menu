@@ -212,16 +212,7 @@
     
 
 
-    #modal-blocker {
-      display: none; /* sarà visibile solo durante il messaggio di benvenuto */
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 3; /* sotto il #modal (z-index: 3), sopra tutto il resto */
-      background: transparent;
-    }
-
+  
 
     #modal {
       background: rgba(0, 0, 0, 0.8);
@@ -756,7 +747,7 @@ ul.custom-list li > strong {
   </div>
 
   <!-- Layer fantasma per bloccare click al di sotto -->
-  <div id="modal-blocker"></div>
+
 
   <div id="modal" class="modal">
        <div id="modal-content"><h2>Caricamento...</h2></div>
