@@ -572,6 +572,26 @@ ul.custom-list li > strong {
   }
 }
 
+/* — override desktop solo per la modale e il suo content — */
+@media (hover: hover) and (pointer: fine) {
+  /* nascondi scrollbar finché c’è auto-scroll-hide */
+  #modal.auto-scroll-hide,
+  #modal-content.auto-scroll-hide {
+    /* Firefox e IE */
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  #modal.auto-scroll-hide::-webkit-scrollbar,
+  #modal-content.auto-scroll-hide::-webkit-scrollbar {
+    width: 0 !important;
+  }
+
+  /* fai ricomparire scrollbar spessa solo quando c’è auto-scroll-show */
+  #modal.auto-scroll-show::-webkit-scrollbar,
+  #modal-content.auto-scroll-show::-webkit-scrollbar {
+    width: 12px !important;
+  }
+}
 
 
 .radar-glow {
@@ -636,21 +656,6 @@ ul.custom-list li > strong {
 /* escludi gli item della lista: rimangono left-aligned */
 #modal-content ul li {
   text-align: left;
-}
-
-.auto-scroll-hide {
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE10+ */
-}
-.auto-scroll-hide::-webkit-scrollbar {
-  width: 0;                       /* Chrome, Safari, Opera */
-}
-
-.auto-scroll-show {
-  scrollbar-width: auto;
-}
-.auto-scroll-show::-webkit-scrollbar {
-  width: 3px;
 }
 
 
