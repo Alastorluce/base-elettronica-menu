@@ -6,16 +6,7 @@
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
-
-
-
-
-
-     /* Solo per web: niente fade-out quando ha la classe instant-hide */
-      #modal.instant-hide {
-      transition: none !important;
-}
-
+     
      /* disabilita selezione di testo e immagini */
     *, *::before, *::after {
       user-select: none;
@@ -195,12 +186,12 @@
       top: 55%;
       left: 50%;
       transform: translate(-50%, -50%) scale(2.3);
-      transition: transform 0.4s ease-in-out, opacity 1s ease-in-out;
+      transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
       
     }
    
     #logo-btn.loaded-img {   
-      animation: fadeImage 2s ease-in-out; 
+      animation: fadeImage 1s ease-in-out; 
     }
 
     #modal {
@@ -215,7 +206,7 @@
       margin: auto 10px;
       max-width: 900px;
       max-height: 70vh;
-      overflow: hidden;
+      overflow-y: auto;
       backdrop-filter: blur(10px);
       transition: opacity 0.6s ease;
       z-index: 3;
@@ -223,15 +214,7 @@
     }
     #modal.show { opacity: 1; pointer-events: auto; }
     #modal.fade-out { opacity: 0; pointer-events: none; }
-    #modal-content {
-  text-align: left;
-  max-width: 800px;
-
-  /* queste due righe ti danno lo scroll interno */
-  overflow-y: auto;
-  max-height: 70vh;
-}
-
+    #modal-content { text-align: left; max-width: 800px; }
 
 
     @media (max-width: 400px) {
@@ -687,124 +670,82 @@ ul.custom-list li > strong {
   
     <script>
 
-/**
- * Ferma qualunque timeout o RAF pendente sul container `el`
- */
-function clearAutoScroll(el) {
-  if (el._scrollTimeout) {
-    clearTimeout(el._scrollTimeout);
-    el._scrollTimeout = null;
-  }
-  if (el._scrollRaf) {
-    cancelAnimationFrame(el._scrollRaf);
-    el._scrollRaf = null;
-  }
-}
 
+
+// Ritorna true se l'elemento è scrollabile (overflow-y auto|scroll e contenuto più lungo)
 function isScrollable(el) {
   const cs = getComputedStyle(el);
   return (cs.overflowY === 'auto' || cs.overflowY === 'scroll')
          && el.scrollHeight > el.clientHeight;
 }
 
+// Attiva un autoscroll lento su `el`
 function setupAutoScroll(el, speed = 11, delay = 9000) {
-  // 0) Stoppa qualunque scroll in corso
-  clearAutoScroll(el);
+  let id, last, active = false;
 
-  // 0.1) Se c'era già un listener, lo rimuoviamo
-  if (el._clickHandler) {
-    el.removeEventListener('click', el._clickHandler);
-    el._clickHandler = null;
-  }
-
-  let last = null;
-  let active = false;
-  let remainder = 0;
-
+  // NASCONDI subito la scrollbar, anche prima di partire
   el.classList.add('auto-scroll-hide');
   el.classList.remove('auto-scroll-show');
 
   function step(ts) {
     if (!active) return;
     if (!last) last = ts;
-    const d = ts - last;
+    const d = ts - last; 
     last = ts;
-
-    const raw = (d * speed) / 1000 + remainder;
-    const move = Math.floor(raw);
-    remainder = raw - move;
-
-    if (move > 0) {
-      el.scrollTop += move;
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-        active = false;
-        return;
-      }
-    }
-    el._scrollRaf = requestAnimationFrame(step);
+    el.scrollTop += (d * speed) / 1000;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight) return stop();
+    id = requestAnimationFrame(step);
   }
 
   function start() {
     if (active) return;
-    remainder = 0;   // resetta le frazioni accumulate
-    last = null;
     active = true;
+    last = null;
+    // già nascosta in apertura, ma ripeti per sicurezza
     el.classList.add('auto-scroll-hide');
     el.classList.remove('auto-scroll-show');
-    el._scrollRaf = requestAnimationFrame(step);
+    id = requestAnimationFrame(step);
   }
 
   function stop() {
-  // Ferma qualunque start pendente o RAF in corso
-  clearAutoScroll(el);
-  // e marca lo stato come “non attivo”
-  active = false;
-  el.classList.remove('auto-scroll-hide');
-  el.classList.add('auto-scroll-show');
-}
-
-
-  // 1) Prepara un unico clickHandler nominato
-  el._clickHandler = () => {
-    active ? stop() : start();
-  };
-
-  // 2) Solo al termine del delay: avvia lo scroll e collega il clickHandler
-  el._scrollTimeout = setTimeout(() => {
-    start();
-    el.addEventListener('click', el._clickHandler);
-  }, delay);
-}
-
-function initScrollOn(root) {
-  clearAutoScroll(root);
-  root.scrollTop = 0;
-
-  const isDesktop = window.matchMedia('(min-width: 769px)').matches;
-  const speed = isDesktop ? 20 : 11;
-  const delay = 9000;
-
-  if (root.scrollHeight > root.clientHeight) {
-    setupAutoScroll(root, speed, delay);
+    if (!active) return;
+    active = false;
+    cancelAnimationFrame(id);
+    el.classList.remove('auto-scroll-hide');
+    el.classList.add('auto-scroll-show');
   }
+
+ // click/tap singolo per attivare lo scroll
+el.addEventListener('click', () => {
+  if (!active) start();
+});
+
+// rileva scroll manuale (touch o mousewheel), e blocca l’autoscroll
+el.addEventListener('wheel', stop, { passive: true });
+el.addEventListener('touchmove', stop, { passive: true });
+
+
+  // parte in automatico dopo il delay
+  setTimeout(start, delay);
 }
 
-function showModalWithScroll() {
-  [modal, modalContent].forEach(el => {
-    clearAutoScroll(el);
-    el.scrollTop = 0;
-  });
+// Inizializzazione minimal: se scrollabile, setta l’autoscroll
+function initScrollOn(root) {
+  if (isScrollable(root)) setupAutoScroll(root);
+}
 
+/**
+ * Mostra la modale con il contenuto già in `modalContent.innerHTML`
+ * e innesca l'autoscroll sul #modal.
+ */
+function showModalWithScroll() {
   modal.classList.remove('fade-out');
   modal.classList.add('show');
   isTransitioning = false;
-
+  // inizializza l'autoscroll sempre
   initScrollOn(modal);
   initScrollOn(modalContent);
 }
-
-
-
 
 
 
@@ -1010,19 +951,15 @@ function ripristinaMenuPrincipale() {
     document.body.style.overflow = '';
 
     // B) chiudi modale se aperta
-    // B) chiudi modale se aperta
-if (modal.classList.contains('show')) {
-  modal.classList.remove('show');
-  modal.classList.add('fade-out');
-  setTimeout(() => {
-    modal.classList.remove('fade-out');
-    modalContent.innerHTML = '';
-    currentIndex = null;
-    // Non facciamo più showModalWithScroll() qui!
-    isTransitioning = false;
-  }, 600);
-}
-
+    if (modal.classList.contains('show')) {
+      modal.classList.remove('show');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        modal.classList.remove('fade-out');
+        modalContent.innerHTML = '';
+        showModalWithScroll();
+      }, 600);
+    }
 
     // C) ripristina sidebar e menu
     submenu.style.display = 'none';
@@ -1286,21 +1223,12 @@ async function attivaSlideshow() {
   watermark.style.opacity = '1';
 
   if (modal.classList.contains('show')) {
-  // 1) immediata rimozione
-  modal.classList.add('instant-hide');
-  modal.classList.remove('show');
-  modal.style.opacity = '0';
-
-  // 2) resetto opacità e transitions subito dopo
-  setTimeout(() => {
-    modal.classList.remove('instant-hide');
-    modal.style.opacity = '';      // <- qui tolgo l'inline style
-  }, 0);
-
-  setTimeout(() => {
-    watermark.style.opacity = '0.05';
-  }, 5);
-}
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      watermark.style.opacity = '0.05';
+    }, 5);
+  }
 
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
@@ -1319,7 +1247,7 @@ async function attivaSlideshow() {
         void logo.offsetWidth;
         logo.classList.add('loaded-img');
         logo.style.opacity = '1';
-      }, 1000);
+      }, 50);
     };
     idx = (idx + 1) % immagini.length;
   };
