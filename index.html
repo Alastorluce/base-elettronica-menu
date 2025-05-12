@@ -1459,27 +1459,36 @@ async function attivaSlideshow() {
     let newMedia;
 
     if (isVideo) {
-      newMedia = media.cloneNode(true);
-      newMedia.autoplay = true;
-      newMedia.loop = true;
-      newMedia.muted = true;
-      newMedia.playsInline = true;
-    } else {
-      newMedia = new Image();
-      newMedia.src = media.src;
-      newMedia.classList.add('loaded-img');
-    }
+  newMedia = media.cloneNode(true);
+  newMedia.autoplay = true;
+  newMedia.loop = true;
+  newMedia.muted = true;
+  newMedia.playsInline = true;
 
-    // Copia gli stili del logo precedente
-    newMedia.id = 'logo-btn';
-    newMedia.style.width = container.style.width;
-    newMedia.style.height = container.style.height;
-    newMedia.style.position = container.style.position;
-    newMedia.style.top = container.style.top;
-    newMedia.style.left = container.style.left;
-    newMedia.style.transform = isVideo
-  ? 'translate(-50%, -50%) scale(4.6)'
-  : 'translate(-50%, -50%) scale(2.3)';
+  // 🔥 AGGIUNGI QUESTO BLOCCO QUI PER IL VIDEO
+  newMedia.style.objectFit = 'contain';
+  newMedia.style.width = 'auto';
+  newMedia.style.height = 'auto';
+  newMedia.style.position = 'absolute';
+  newMedia.style.top = '50%';
+  newMedia.style.left = '50%';
+  newMedia.style.transform = 'translate(-50%, -50%) scale(2)';
+
+  } else {
+    newMedia = new Image();
+    newMedia.src = media.src;
+    newMedia.classList.add('loaded-img');
+
+    // ✅ Stili per immagini (già ottimi)
+    newMedia.style.objectFit = 'contain';
+    newMedia.style.width = 'auto';
+    newMedia.style.height = 'auto';
+    newMedia.style.position = 'absolute';
+    newMedia.style.top = '50%';
+    newMedia.style.left = '50%';
+    newMedia.style.transform = 'translate(-50%, -50%) scale(2.3)';
+}
+
     newMedia.style.transition = container.style.transition;
     newMedia.style.zIndex = container.style.zIndex;
     newMedia.style.animation = container.style.animation;
