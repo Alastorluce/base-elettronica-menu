@@ -710,40 +710,36 @@ function isScrollable(el) {
 }
 
 // Attiva un autoscroll lento su `el`
-function setupAutoScroll(el, speed = 11, delay = 9000) {
-  // ① ferma scroll pendenti
+function setupAutoScroll(el, speed = 12, delay = 9000) {
+  // nessun scroll pendente
   clearAutoScroll(el);
 
   let last = null, active = false, remainder = 0;
 
-  el.classList.add('auto-scroll-hide');
-  el.classList.remove('auto-scroll-show');
-
   function step(ts) {
-  if (!active) return;
-  if (!last) last = ts;
-  const d = ts - last;
-  last = ts;
+    if (!active) return;
+    if (!last) last = ts;
+    const d = ts - last;
+    last = ts;
 
-  const raw  = (d*speed)/1000 + remainder;
-  // almeno 1px ogni volta
-  const move = Math.max(1, Math.floor(raw));
-  remainder    = raw - move;
+    // almeno 1px/frame
+    const raw  = (d*speed)/1000 + remainder;
+    const move = Math.max(1, Math.floor(raw));
+    remainder   = raw - move;
 
-  el.scrollTop += move;
-  if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-    active = false;
-    return;
+    el.scrollTop += move;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+      active = false;
+      return;
+    }
+    el._scrollRaf = requestAnimationFrame(step);
   }
-  el._scrollRaf = requestAnimationFrame(step);
-}
-
 
   function start() {
     if (active) return;
-    active = true;
-    last   = null;
-    remainder = 0;         // niente avanzi dal passato
+    active    = true;
+    last      = null;
+    remainder = 0;
     el.classList.add('auto-scroll-hide');
     el.classList.remove('auto-scroll-show');
     el._scrollRaf = requestAnimationFrame(step);
@@ -759,66 +755,44 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
     el.classList.add('auto-scroll-show');
   }
 
-  // dentro setupAutoScroll, sostituisci il tuo click listener con:
-el.addEventListener('click', () => {
-  // ① annulla l’avvio automatico futuro
-  if (el._scrollTimeout) {
-    clearTimeout(el._scrollTimeout);
+  // click: annullo qualunque timeout/raf e poi toggle
+  el.addEventListener('click', () => {
+    clearAutoScroll(el);
+    if (active) stop();
+    else       start();
+  });
+
+  el.addEventListener('wheel', () => { stop(); clearAutoScroll(el); }, { passive: true });
+  el.addEventListener('touchmove', () => { stop(); clearAutoScroll(el); }, { passive: true });
+
+  // memorizza il timeout in el._scrollTimeout
+  el._scrollTimeout = setTimeout(() => {
+    start();
     el._scrollTimeout = null;
-  }
-
-  // ② resetta remainder così non “eredità” pixel sbagliati
-  remainder = 0;
-
-  // ③ toggle start/stop
-  if (active) stop();
-  else start();
-});
-
-  el.addEventListener('wheel', stop, { passive: true });
-  el.addEventListener('touchmove', stop, { passive: true });
-
-  // ③ memorizza il timeout
-  el._scrollTimeout = setTimeout(start, delay);
+  }, delay);
 }
 
-
-// Inizializzazione minimal: se scrollabile, setta l’autoscroll
-function initScrollOn(root) {
-  // reset
-  clearAutoScroll(root);
-  root.scrollTop = 0;
-
-  const isDesktop = window.matchMedia('(min-width: 769px)').matches;
-  // desktop = 20px/s, mobile = 11px/s
-  const speed = isDesktop ? 20 : 11;
-  const delay = 9000;
-
-  // solo se c’è overflow vero
-  if (root.scrollHeight > root.clientHeight) {
-    setupAutoScroll(root, speed, delay);
-  }
-}
 
 /**
  * Mostra la modale con il contenuto già in `modalContent.innerHTML`
  * e innesca l'autoscroll sul #modal.
  */
 function showModalWithScroll() {
-  // reset completo
-  [modal, modalContent].forEach(el => {
-    clearAutoScroll(el);
-    el.scrollTop = 0;
-  });
+  // ferma tutto e riporta in cima
+  clearAutoScroll(modal);
+  clearAutoScroll(modalContent);
+  modal.scrollTop        = 0;
+  modalContent.scrollTop = 0;
 
   modal.classList.remove('fade-out');
   modal.classList.add('show');
   isTransitioning = false;
 
-  // riavvia lo scroll su entrambi
+  // ora riattivi
   initScrollOn(modal);
   initScrollOn(modalContent);
 }
+
 
 
 
