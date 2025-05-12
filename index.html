@@ -30,7 +30,10 @@
     @keyframes slideIn { from { transform: translateX(-100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
     @keyframes pulse {0%,100% { transform: translate(-50%, -50%) scale(1); }50%     { transform: translate(-50%, -50%) scale(1.1); }}
     
-
+.auto-scroll-hide { scrollbar-width: none; -ms-overflow-style: none; }
+.auto-scroll-hide::-webkit-scrollbar { width: 0; }
+.auto-scroll-show { scrollbar-width: auto; }
+.auto-scroll-show::-webkit-scrollbar { width: 3px; }
     
 
     /* **2**: warning nascosto di default */
@@ -557,12 +560,6 @@ ul.custom-list li > strong {
     /* Firefox e IE */
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
-  }
-  .auto-scroll-hide::-webkit-scrollbar {
-    width: 0 !important;
-  }
-  .auto-scroll-show::-webkit-scrollbar {
-    width: 3px !important;
   }
 }
 
