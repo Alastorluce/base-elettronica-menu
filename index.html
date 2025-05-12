@@ -961,6 +961,8 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
     z-index: 1000;
     color: white;
     transition: opacity 0.3s ease;
+    opacity: 1;
+    pointer-events: auto;
   ">
     <h2 style="margin-bottom: 10px; color: white;">Benvenuti in</h2>
     <h1 style="color: #00aaff; font-size: 2.5em; margin-top: 0;">Base Elettronica Service</h1>
@@ -970,38 +972,35 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
       Scopri di più esplorando il nostro sito!
     </p>
   </div>
-
 `;
-setTimeout(() => {
+
+
   const benv = document.getElementById('benvenuto');
 
-  if (benv) {
-    // Chiude cliccando ovunque sul messaggio
-    benv.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
+if (benv) {
+  benv.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
 
-      // Crea uno "scudo" temporaneo per evitare click passanti
-      const shield = document.createElement('div');
-      shield.style.position = 'fixed';
-      shield.style.top = 0;
-      shield.style.left = 0;
-      shield.style.right = 0;
-      shield.style.bottom = 0;
-      shield.style.zIndex = 9999;
-      document.body.appendChild(shield);
+    // Crea lo scudo temporaneo anti-click
+    const shield = document.createElement('div');
+    shield.style.position = 'fixed';
+    shield.style.top = 0;
+    shield.style.left = 0;
+    shield.style.right = 0;
+    shield.style.bottom = 0;
+    shield.style.zIndex = 9999;
+    document.body.appendChild(shield);
 
-      benv.style.opacity = '0';
-      benv.style.pointerEvents = 'none';
+    benv.style.opacity = '0';
+    benv.style.pointerEvents = 'none';
 
-      setTimeout(() => {
-        benv.remove();         // rimuove il messaggio
-        shield.remove();       // rimuove lo scudo
-      }, 300); // tempo dell'animazione
-    });
-  }
-}, 300);
-
+    setTimeout(() => {
+      benv.remove();
+      shield.remove();
+    }, 300);
+  });
+}
 
 
 let onMain = true;
