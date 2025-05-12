@@ -1359,78 +1359,146 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
   for (let i = 1; i <= max; i++) {
     for (let ext of estensioni) {
       const url = `${basePath}img${i}${ext}`;
-      tentativi.push(new Promise(resolve => {
-        const img = new Image();
-        img.onload = () => resolve(url);    // se carica, restituisci l'URL
-        img.onerror = () => resolve(null);  // se fallisce, ignora
-        img.src = url;
-      }));
+      if (ext === '.mp4') {
+        // Test video con elemento video
+        tentativi.push(new Promise(resolve => {
+          const video = document.createElement('video');
+          video.src = url;
+          video.onloadeddata = () => resolve(url);
+          video.onerror = () => resolve(null);
+        }));
+      } else {
+        // Test immagini classico
+        tentativi.push(new Promise(resolve => {
+          const img = new Image();
+          img.onload = () => resolve(url);
+          img.onerror = () => resolve(null);
+          img.src = url;
+        }));
+      }
     }
   }
 
   const risultati = await Promise.all(tentativi);
-  return risultati.filter(Boolean); // elimina i null (file non trovati)
+  return risultati.filter(Boolean); // elimina i null
 }
+
 
 // === 2. Avvio dello slideshow ===
 async function attivaSlideshow() {
   if (slideshowAttivo) return;
 
-  const sidebar = document.getElementById('sidebar');
-  sidebar.style.display = 'none';
+  const sidebar   = document.getElementById('sidebar');
+  const submenu   = document.getElementById('submenu-servizi');
+  const watermark = document.getElementById('watermark-logo');
+  let logo        = document.getElementById('logo-btn');
 
-  const submenu = document.getElementById('submenu-servizi');
+  sidebar.style.display = 'none';
   submenu.style.display = 'none';
   document.body.style.overflow = 'hidden';
-
   slideshowAttivo = true;
-  
-  const watermark = document.getElementById('watermark-logo');
+
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
 
   if (modal.classList.contains('show')) {
-  // 1) immediata rimozione
-  modal.classList.add('instant-hide');
-  modal.classList.remove('show');
-  modal.style.opacity = '0';
-
-  // 2) resetto opacità e transitions subito dopo
-  setTimeout(() => {
-    modal.classList.remove('instant-hide');
-    modal.style.opacity = '';      // <- qui tolgo l'inline style
-  }, 0);
-
-  setTimeout(() => {
-    watermark.style.opacity = '0.05';
-  }, 5);
-}
+    modal.classList.add('instant-hide');
+    modal.classList.remove('show');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+      modal.classList.remove('instant-hide');
+      modal.style.opacity = '';
+    }, 0);
+    setTimeout(() => {
+      watermark.style.opacity = '0.05';
+    }, 5);
+  }
 
   const immagini = await caricaImmaginiValidi();
   if (immagini.length === 0) return;
 
-  const logo = document.getElementById('logo-btn');
+  // Precarica tutti i media e salva in cache
+  const mediaCache = {};
+  await Promise.all(
+    immagini.map(url => new Promise(resolve => {
+      if (url.endsWith('.mp4')) {
+        const video = document.createElement('video');
+        video.src = url;
+        video.muted = true;
+        video.loop = true;
+        video.preload = 'auto';
+        video.onloadeddata = () => {
+          mediaCache[url] = video;
+          resolve();
+        };
+        video.onerror = resolve;
+      } else {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => {
+          mediaCache[url] = img;
+          resolve();
+        };
+        img.onerror = resolve;
+      }
+    }))
+  );
+
   let idx = Math.floor(Math.random() * immagini.length);
 
   const changeImage = () => {
-    const img = new Image();
-    img.src = immagini[idx];
-    img.onload = () => {
-      logo.style.opacity = '0';
-      setTimeout(() => {
-        logo.src = img.src;
-        logo.classList.remove('loading', 'loaded-img');
-        void logo.offsetWidth;
-        logo.classList.add('loaded-img');
-        logo.style.opacity = '1';
-      }, 1000);
-    };
-    idx = (idx + 1) % immagini.length;
-  };
+  const url = immagini[idx];
+  const isVideo = url.endsWith('.mp4');
+  const media = mediaCache[url];
+  if (!media) return;
+
+  const container = document.getElementById('logo-btn');
+  container.style.opacity = '0';
+
+  setTimeout(() => {
+    let newMedia;
+
+    if (isVideo) {
+      newMedia = media.cloneNode(true);
+      newMedia.autoplay = true;
+      newMedia.loop = true;
+      newMedia.muted = true;
+      newMedia.playsInline = true;
+    } else {
+      newMedia = new Image();
+      newMedia.src = media.src;
+      newMedia.classList.add('loaded-img');
+    }
+
+    // Copia gli stili del logo precedente
+    newMedia.id = 'logo-btn';
+    newMedia.style.width = container.style.width;
+    newMedia.style.height = container.style.height;
+    newMedia.style.position = container.style.position;
+    newMedia.style.top = container.style.top;
+    newMedia.style.left = container.style.left;
+    newMedia.style.transform = container.style.transform;
+    newMedia.style.transition = container.style.transition;
+    newMedia.style.zIndex = container.style.zIndex;
+    newMedia.style.animation = container.style.animation;
+    newMedia.style.opacity = '0';
+
+    container.replaceWith(newMedia);
+
+    setTimeout(() => {
+      newMedia.style.opacity = '1';
+    }, 50);
+  }, 300);
+
+  idx = (idx + 1) % immagini.length;
+};
+
 
   changeImage();
-  slideshowInterval = setInterval(changeImage, 5000); // cambia ogni 5 secondi
+  slideshowInterval = setInterval(changeImage, 5000);
 }
+
+
 
 
 
