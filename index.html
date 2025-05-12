@@ -996,7 +996,8 @@ function apri(index) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // se clicchi la stessa voce, chiudi
+  const fineTransizione = () => { isTransitioning = false; };
+
   if (currentIndex === index) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -1004,25 +1005,27 @@ function apri(index) {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
       currentIndex = null;
-      isTransitioning = false;
+      fineTransizione();
     }, 600);
     return;
   }
 
   currentIndex = index;
-  // cambio contenuto
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
       modalContent.innerHTML = contenuti[index];
       showModalWithScroll();
+      fineTransizione();
     }, 600);
   } else {
     modalContent.innerHTML = contenuti[index];
     showModalWithScroll();
+    fineTransizione(); // <-- aggiunto per sicurezza
   }
 }
+
 
 
 
