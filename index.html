@@ -1305,6 +1305,14 @@ modalContent.addEventListener('click', (e) => {
   }
   // in tutti gli altri casi (testo, liste, fuori…) non succede nulla
 });
+// 🔒 Blocca i tap/click che "passano attraverso" la modale su mobile
+modal.addEventListener('pointerdown', (e) => {
+  e.stopPropagation();
+});
+modalContent.addEventListener('pointerdown', (e) => {
+  e.stopPropagation();
+});
+
 
 // === 1. Caricamento dinamico veloce di immagini/video ===
 async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
