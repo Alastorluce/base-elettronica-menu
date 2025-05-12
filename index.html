@@ -264,7 +264,7 @@
 
   #sidebar-content {
   justify-content: flex-start;
-    padding-top: 4vh;
+  padding-top: 4vh;
   flex-grow: 1;
 }
 
@@ -1362,16 +1362,16 @@ async function attivaSlideshow() {
   let welcomeTimeout;
   let welcomeShown = false;
 
-  window.addEventListener('DOMContentLoaded', () => {
-  // 1) Avvia animazioni sidebar/menu
-  document.getElementById('sidebar').classList.add('animated');
-  document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
+
+window.addEventListener('DOMContentLoaded', () => {
+  // PRIMA: prendi subito modal e contenuto
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modal-content');
+
+  // 1) NON avviare più subito l’animazione del sidebar/menu
 
   // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
   if (window.matchMedia('(max-width: 768px)').matches) {
-    const modal        = document.getElementById('modal');
-    const modalContent = document.getElementById('modal-content');
-
     // 2a) Inietta il pulsante di chiusura, se non esiste già
     if (!modal.querySelector('.modal-close')) {
       const closeBtn = document.createElement('button');
@@ -1396,46 +1396,54 @@ async function attivaSlideshow() {
     // 2c) Assicura che su touch “Clicca qui” parta la showroom
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
       el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tap
+        e.preventDefault();
         attivaSlideshow();
       }, { passive: false });
     });
 
-    // 2d) Avvia la showroom automaticamente (se lo desideri)
+    // 2d) Avvia la showroom automaticamente (se serve)
     // attivaSlideshow();
   }
-   
+
   // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
   const logoBtn = document.getElementById('logo-btn');
   logoBtn.style.cursor = 'pointer';
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
   // 3) Pianifica il pop-up di benvenuto
-  // --- inizio nuovo blocco welcome ---
-// --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
-let welcomeTimeout = setTimeout(() => {
-  // Imposto il contenuto
-  modalContent.innerHTML = contenutoHome;
+  // --- inizio blocco welcome definitivo riscritto ---
+  setTimeout(() => {
+    // 3.1) Mostro il contenuto di benvenuto
+    modalContent.innerHTML = contenutoHome;
+    modal.classList.add('show');
 
-  // 1) preparo l’auto‐hide a 6 secondi
-  const autoHide = setTimeout(() => {
-    modal.classList.remove('show');
-  }, 8000);
+    // 3.2) Preparo l’auto-hide a 5 secondi
+    const autoHide = setTimeout(() => {
+      modal.classList.remove('show');
+      // QUI: mostro finalmente il menu dopo i 5 s
+      document.getElementById('sidebar').classList.add('animated');
+      document.querySelectorAll('.menu-item')
+              .forEach(el => el.classList.add('animated'));
+    }, 8000);
 
-  // 2) registro subito il listener in capture per chiudere al primo pointerdown (desktop e mobile)
-  const hideOnPointerDown = () => {
-    modal.classList.remove('show');
-    clearTimeout(autoHide);
-    document.removeEventListener('pointerdown', hideOnPointerDown, true);
-  };
-  document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
+    // 3.3) Listener per chiusura anticipata al primo pointerdown
+    const hideOnPointerDown = () => {
+      clearTimeout(autoHide);           // annullo l’auto-hide pendente
+      modal.classList.remove('show');   // chiudo subito il popup
+      // QUI: mostro subito il menu
+      document.getElementById('sidebar').classList.add('animated');
+      document.querySelectorAll('.menu-item')
+              .forEach(el => el.classList.add('animated'));
+      document.removeEventListener('pointerdown', hideOnPointerDown, true);
+    };
+    document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
 
-  // 3) mostro il popup
-  modal.classList.add('show');
-}, 500);
-// --- fine blocco welcome definitivo ---
+  }, 1000);
+  // --- fine blocco welcome definitivo ---
 
 });
+
+
 
 
 
