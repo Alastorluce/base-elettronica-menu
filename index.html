@@ -1368,8 +1368,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const modalContent = document.getElementById('modal-content');
   const logoBtn      = document.getElementById('logo-btn');
 
-  // 1) Avvia animazioni sidebar/menu
-  // —> RIMOSSO per posticipare al welcome
+  // 1) RIMOSSO: nessuna animazione del sidebar/menu al caricamento
 
   // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
   if (window.matchMedia('(max-width: 768px)').matches) {
@@ -1403,14 +1402,16 @@ window.addEventListener('DOMContentLoaded', () => {
     // attivaSlideshow();
   }
 
-  // click su logo centrale
+  // click sul logo centrale
   logoBtn.style.cursor = 'pointer';
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
-  // helper: ri-animare sidebar+menu-item SOLO su mobile
+  // helper SOLO MOBILE: ri-animare sidebar+menu-item
   function animateMenuItemsMobile() {
     if (!window.matchMedia('(max-width: 768px)').matches) return;
+    // animazione del sidebar (slide-in)
     document.getElementById('sidebar').classList.add('animated');
+    // animazione delle voci con delay casuale
     document.querySelectorAll('.menu-item').forEach(el => {
       el.classList.remove('animated');
       const rndDelay    = (Math.random() * 3).toFixed(2) + 's';
@@ -1422,15 +1423,16 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3) Pianifica il pop-up di benvenuto
+  // 3) Pop-up di benvenuto
   setTimeout(() => {
-    // mostra benvenuto dopo 1s
+    // mostra dopo 1s
     modalContent.innerHTML = contenutoHome;
     modal.classList.add('show');
 
-    // auto-hide dopo 8 secondi
+    // auto-hide dopo 8s
     const autoHide = setTimeout(() => {
       modal.classList.remove('show');
+      // SOLO MOBILE: ri-animazione menu
       animateMenuItemsMobile();
     }, 8000);
 
@@ -1438,12 +1440,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const hideOnPointerDown = () => {
       clearTimeout(autoHide);
       modal.classList.remove('show');
+      // SOLO MOBILE: ri-animazione menu
       animateMenuItemsMobile();
       document.removeEventListener('pointerdown', hideOnPointerDown, true);
     };
     document.addEventListener('pointerdown', hideOnPointerDown, { capture: true });
   }, 1000);
-
 });
 
 
