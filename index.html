@@ -994,29 +994,40 @@ function apri(index) {
 
 
 function toggleSubmenu() {
-  onMain = false;          // <-- esco dal main
-  const logo      = document.getElementById('sidebar-logo');
-  const submenu   = document.getElementById('submenu-servizi');
+  onMain = false;
+  const logo = document.getElementById('sidebar-logo');
+  const submenu = document.getElementById('submenu-servizi');
   const menuItems = document.querySelectorAll('.menu-list > .menu-item');
 
-  // 1) fade-out del logo
   logo.style.opacity = '0';
 
   setTimeout(() => {
-    // 2) nascondi i menu principali
+    // Nascondi i principali
     menuItems.forEach(el => {
       if (!el.closest('#submenu-servizi')) {
         el.style.display = 'none';
+        el.classList.remove('animated');
       }
     });
 
-    // 3) mostra il sottomenù
+    // Mostra submenu (ma SENZA .animated)
     submenu.style.display = 'flex';
 
-    // 4) fade-in del logo
+    // Poi, DOPO un ciclo di rendering, aggiungila
+    setTimeout(() => {
+      submenu.querySelectorAll('.menu-item').forEach((el, i) => {
+        el.classList.remove('animated'); // per sicurezza
+        el.style.animation = 'none';     // resetta animazione
+        void el.offsetWidth;             // forza reflow
+        el.style.animation = '';         // riattiva
+        el.classList.add('animated');
+      });
+    }, 30); // sufficiente per far partire l'animazione pulita
+
     logo.style.opacity = '1';
-  }, 500); // deve corrispondere al tuo transition-duration in CSS
+  }, 500);
 }
+
 
 
 
