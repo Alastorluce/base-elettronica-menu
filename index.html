@@ -1415,6 +1415,16 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
     }
   }
 
+
+  window.addEventListener('load', () => {
+  const installPrompt = document.getElementById('install-prompt');
+  if (installPrompt && !installPrompt.classList.contains('show')) {
+    installPrompt.classList.add('show');
+  }
+});
+
+
+  
   const risultati = await Promise.all(tentativi);
   return risultati.filter(Boolean);
 }
