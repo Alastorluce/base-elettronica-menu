@@ -3,6 +3,11 @@
   "short_name": "Base",
   "icons": [
     {
+      "src": "icons/logo_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
       "src": "icons/logo_256.png",
       "sizes": "256x256",
       "type": "image/png"
