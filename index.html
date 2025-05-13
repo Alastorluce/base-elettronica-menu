@@ -7,14 +7,17 @@
   <title>Base Elettronica Service - Menu</title>
   <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <!-- 🔹 Icona desktop / favicon per tutti i browser -->
-<link rel="icon" type="image/x-icon" href="logo_multires.ico">
+<link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
+  <!-- 🔹 Icona desktop / favicon per tutti i browser -->
+<!-- Favicon universale (desktop) -->
+<link rel="icon" href="icons/logo_multires.ico" type="image/x-icon">
 
-<!-- 🔹 Icona PNG moderna per browser e retina -->
-<link rel="icon" type="image/png" sizes="256x256" href="logo_256.png">
-<link rel="apple-touch-icon" sizes="512x512" href="logo_512.png">
+<!-- Icone moderne (mobile & PWA) -->
+<link rel="icon" type="image/png" sizes="256x256" href="icons/logo_256.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icons/logo_512.png">
 
-<!-- 🔹 Manifest per Android (shortcut con icona corretta) -->
-<link rel="manifest" href="/manifest.json">
+<!-- Manifest per Android / PWA -->
+<link rel="manifest" href="icons/manifest.json">
 
   <style>
 
@@ -1015,6 +1018,7 @@ let currentIndex = null;
 let isTransitioning = false;
 let slideshowAttivo = false;
 let slideshowInterval = null;
+let mediaPrecaricati = []; // cache globale dei media precaricati
 
 function apri(index) {
   if (isTransitioning) return;
@@ -1404,6 +1408,11 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
   }
 
   const risultati = await Promise.all(tentativi);
+
+// ✅ Salva la cache globale e restituiscila
+mediaPrecaricati = risultati.filter(Boolean);
+return mediaPrecaricati;
+
   return risultati.filter(Boolean); // elimina i null
 }
 
@@ -1564,7 +1573,14 @@ video.onerror = resolve;
   let welcomeTimeout;
   let welcomeShown = false;
 
+
   window.addEventListener('DOMContentLoaded', () => {
+  // 🔁 Precarica tutti i media all'avvio della pagina
+  caricaImmaginiValidi().then((media) => {
+    console.log("Precaricati:", media.length, "file");
+  });
+
+
   // 1) Avvia animazioni sidebar/menu
   document.getElementById('sidebar').classList.add('animated');
   document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
