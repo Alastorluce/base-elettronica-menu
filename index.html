@@ -1451,13 +1451,6 @@ async function attivaSlideshow() {
         video.muted = true;
         video.loop = false;
         video.preload = 'auto';
-video.load(); // forza il preload
-video.oncanplaythrough = () => {
-  mediaCache[url] = video;
-  resolve();
-};
-video.onerror = resolve;
-
         video.onloadeddata = () => {
           mediaCache[url] = video;
           resolve();
@@ -1567,31 +1560,6 @@ video.onerror = resolve;
   window.addEventListener('DOMContentLoaded', () => {
   // 1) Avvia animazioni sidebar/menu
   document.getElementById('sidebar').classList.add('animated');
-  // ✅ Mostra prompt "Installa l'app" solo una volta
-let deferredPrompt;
-const installPrompt = document.getElementById('install-prompt');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  if (!localStorage.getItem('appInstallPromptShown')) {
-    installPrompt.classList.add('show');
-
-    installPrompt.addEventListener('click', async () => {
-      installPrompt.classList.remove('show');
-      localStorage.setItem('appInstallPromptShown', '1');
-
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log('Outcome installazione:', outcome);
-        deferredPrompt = null;
-      }
-    });
-  }
-});
-
   document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
 
   // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
@@ -1746,36 +1714,5 @@ document.querySelectorAll('.menu-item').forEach(el => {
 
 
 </script>
-<!-- 🔹 Installa App -->
-<div id="install-prompt" style="
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.85);
-  color: #00a6ff;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 1em;
-  cursor: pointer;
-  z-index: 10000;
-  display: none;
-  transition: opacity 0.4s ease;
-">
-  📲 Installa l'app
-</div>
-
-<style>
-  #install-prompt.show {
-    display: block;
-    animation: fadeInPrompt 0.6s ease;
-  }
-
-  @keyframes fadeInPrompt {
-    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    to { opacity: 1; transform: translateX(-50%) translateY(0); }
-  }
-</style>
-
 </body>
 </html>
