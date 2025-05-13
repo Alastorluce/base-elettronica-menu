@@ -1782,7 +1782,7 @@ document.querySelectorAll('.menu-item').forEach(el => {
   // Registrazione Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js') // Assicurati che il percorso sia corretto
+      navigator.serviceWorker.register('sw.js') // Assicurati che il percorso sia corretto
         .then(registration => {
           console.log('Service Worker registrato con successo:', registration);
         })
