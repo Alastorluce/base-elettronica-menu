@@ -1572,27 +1572,30 @@ video.onerror = resolve;
     const media = mediaCache[url];
 
     if (isVideo && media) {
-      media.onended = () => {
-        changeImage();
-        pianificaProssimo();
-      };
-      media.play().catch(() => {
-        setTimeout(() => {
-          changeImage();
-          pianificaProssimo();
-        }, 5000);
-      });
-    } else {
-      slideshowInterval = setTimeout(() => {
+  try {
+    media.onended = () => {
+      changeImage();
+      pianificaProssimo();
+    };
+    media.currentTime = 0; // riparte da capo se viene mostrato di nuovo
+    media.play().catch(() => {
+      setTimeout(() => {
         changeImage();
         pianificaProssimo();
       }, 5000);
-    }
+    });
+  } catch (err) {
+    setTimeout(() => {
+      changeImage();
+      pianificaProssimo();
+    }, 5000);
   }
-
-  changeImage();
-  pianificaProssimo();
-}
+} else {
+  setTimeout(() => {
+    changeImage();
+    pianificaProssimo();
+  }, 5000);
+    }
 
 
 
