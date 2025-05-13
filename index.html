@@ -1571,32 +1571,24 @@ video.onerror = resolve;
     const isVideo = url.endsWith('.mp4');
     const media = mediaCache[url];
 
-
     if (isVideo && media) {
-  media.currentTime = 0;
-  const durata = media.duration ? media.duration * 1000 : 10000; // fallback 10s
-
-  // Mostra il video (che è già stato precaricato)
-  media.play().then(() => {
-    // Se riesce a partire, aspetta la fine
-    media.onended = () => {
-      changeImage();
-      pianificaProssimo();
-    };
-  }).catch(() => {
-    // Se il play fallisce, aspetta comunque la durata intera
+  media.onended = () => {
+    changeImage();
+    pianificaProssimo();
+  };
+  media.play().catch(() => {
     setTimeout(() => {
       changeImage();
       pianificaProssimo();
-    }, durata);
+    }, 5000);
   });
 } else {
-  // immagini classiche: mostra per 5 secondi
   slideshowInterval = setTimeout(() => {
     changeImage();
     pianificaProssimo();
   }, 5000);
     }
+    
 
   changeImage();
   pianificaProssimo();
