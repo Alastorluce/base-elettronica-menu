@@ -1569,32 +1569,42 @@ video.onerror = resolve;
 }
 
   function pianificaProssimo() {
-    const url = immagini[idx];
-    const isVideo = url.endsWith('.mp4');
-    const media = mediaCache[url];
+  function pianificaProssimo() {
+  const url = immagini[idx];
+  const isVideo = url.endsWith('.mp4');
+  const media = mediaCache[url];
 
-    if (isVideo && media) {
-      media.onended = () => {
-        changeImage();
-        pianificaProssimo();
-      };
-      media.play().catch(() => {
-        setTimeout(() => {
-          changeImage();
-          pianificaProssimo();
-        }, 5000);
-      });
-    } else {
-      slideshowInterval = setTimeout(() => {
+  if (isVideo && media) {
+    let timeoutForzaCambio = setTimeout(() => {
+      console.warn("Video troppo lento, passo avanti");
+      changeImage();
+      pianificaProssimo();
+    }, 5000); // se in 5 secondi non parte...
+
+    media.onplaying = () => {
+      clearTimeout(timeoutForzaCambio); // video partito, ok
+    };
+
+    media.onended = () => {
+      clearTimeout(timeoutForzaCambio);
+      changeImage();
+      pianificaProssimo();
+    };
+
+    media.play().catch(() => {
+      clearTimeout(timeoutForzaCambio);
+      setTimeout(() => {
         changeImage();
         pianificaProssimo();
       }, 5000);
-    }
+    });
+  } else {
+    slideshowInterval = setTimeout(() => {
+      changeImage();
+      pianificaProssimo();
+    }, 5000);
   }
-
-  changeImage();
-  pianificaProssimo();
-}
+  }
 
 
 
