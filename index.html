@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- già presente -->
   <title>Base Elettronica Service - Menu</title>
-
+  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
+  <!-- 🔹 Icona desktop / favicon per tutti i browser -->
 <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
   <!-- 🔹 Icona desktop / favicon per tutti i browser -->
 <!-- Favicon universale (desktop) -->
@@ -718,35 +719,8 @@ video#logo-btn {
   max-height: 100%;
   position: absolute;
   top: 0; left: 0;
-  transform: none;
+  transform: none !important;
   z-index: 1;
-}
-
-
-
-#install-prompt {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(0, 166, 255, 0.9);
-  color: #000;
-  padding: 0.7em 1.2em;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 166, 255, 0.4);
-  z-index: 9999;
-  transition: opacity 0.5s ease;
-  font-family: 'Varela Round', sans-serif;
-}
-#install-prompt.show {
-  display: block;
-  opacity: 1;
-}
-#install-prompt:hover {
-  background: #00ffb3;
-  color: #000;
 }
 
 
@@ -816,36 +790,6 @@ video#logo-btn {
      </div>
   </div>
 
-
-   <div id="install-prompt" style="
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.85);
-  color: #00a6ff;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 1em;
-  cursor: pointer;
-  z-index: 10000;
-  display: none;
-  transition: opacity 0.4s ease;
-">
-  📲 Installa l'app
-</div>
-
-<style>
-  #install-prompt.show {
-    display: block;
-    animation: fadeInPrompt 0.6s ease;
-  }
-
-  @keyframes fadeInPrompt {
-    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    to { opacity: 1; transform: translateX(-50%) translateY(0); }
-  }
-</style>
 
 
   
@@ -1469,6 +1413,7 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
 mediaPrecaricati = risultati.filter(Boolean);
 return mediaPrecaricati;
 
+  return risultati.filter(Boolean); // elimina i null
 }
 
 
@@ -1626,24 +1571,26 @@ video.onerror = resolve;
  
   // 1. Variabili di controllo
   let welcomeTimeout;
-let welcomeShown = false;
-let deferredPrompt = null;
+  let welcomeShown = false;
 
-window.addEventListener('DOMContentLoaded', () => {
+
+  window.addEventListener('DOMContentLoaded', () => {
   // 🔁 Precarica tutti i media all'avvio della pagina
   caricaImmaginiValidi().then((media) => {
     console.log("Precaricati:", media.length, "file");
   });
 
-  // Animazioni sidebar/menu
+
+  // 1) Avvia animazioni sidebar/menu
   document.getElementById('sidebar').classList.add('animated');
   document.querySelectorAll('.menu-item').forEach(el => el.classList.add('animated'));
 
-  // SOLO MOBILE: gestione modale e showroom
+  // 2) SOLO MOBILE: inietta “×”, abilita touch su “Clicca qui” e avvia showroom
   if (window.matchMedia('(max-width: 768px)').matches) {
     const modal        = document.getElementById('modal');
     const modalContent = document.getElementById('modal-content');
 
+    // 2a) Inietta il pulsante di chiusura, se non esiste già
     if (!modal.querySelector('.modal-close')) {
       const closeBtn = document.createElement('button');
       closeBtn.className = 'modal-close';
@@ -1652,6 +1599,7 @@ window.addEventListener('DOMContentLoaded', () => {
       modal.insertBefore(closeBtn, modalContent);
     }
 
+    // 2b) Collega il click sulla “×” per chiudere la modale
     modal.querySelectorAll('.modal-close').forEach(btn => {
       btn.addEventListener('click', () => {
         modal.classList.remove('show');
@@ -1663,64 +1611,55 @@ window.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    // 2c) Assicura che su touch “Clicca qui” parta la showroom
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
       el.addEventListener('touchstart', e => {
-        e.preventDefault();
+        e.preventDefault();  // evita doppio tap
         attivaSlideshow();
       }, { passive: false });
     });
-  }
 
-  // Logo cliccabile
+    // 2d) Avvia la showroom automaticamente (se lo desideri)
+    // attivaSlideshow();
+  }
+   
+  // Fai sì che cliccando logo o immagine si richiami ripristinaMenuPrincipale
   const logoBtn = document.getElementById('logo-btn');
   logoBtn.style.cursor = 'pointer';
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 
-  // Pop-up benvenuto
-  welcomeTimeout = setTimeout(() => {
-    modalContent.innerHTML = contenutoHome;
-    const blocker = document.getElementById('modal-blocker');
-    blocker.style.display = 'block';
+  // 3) Pianifica il pop-up di benvenuto
+  // --- inizio nuovo blocco welcome ---
+// --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
+let welcomeTimeout = setTimeout(() => {
+  modalContent.innerHTML = contenutoHome;
 
-    const autoHide = setTimeout(() => {
-      modal.classList.remove('show');
-      blocker.style.display = 'none';
-    }, 8000);
+  // 👇 Mostra il blocco trasparente sotto al benvenuto
+  const blocker = document.getElementById('modal-blocker');
 
-    const hideOnPointerDown = () => {
-      modal.classList.remove('show');
-      blocker.style.display = 'none';
-      clearTimeout(autoHide);
-      document.removeEventListener('pointerdown', hideOnPointerDown, true);
-    };
+  
+  blocker.style.display = 'block';
 
-    blocker.addEventListener('pointerdown', hideOnPointerDown);
-    modal.classList.add('show');
-  }, 500);
-});
+  // 1) auto-hide dopo 8 secondi
+  const autoHide = setTimeout(() => {
+    modal.classList.remove('show');
+    blocker.style.display = 'none';
+  }, 8000);
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
+  // 2) chiusura al primo click/tap
+  const hideOnPointerDown = () => {
+    modal.classList.remove('show');
+    blocker.style.display = 'none';
+    clearTimeout(autoHide);
+    document.removeEventListener('pointerdown', hideOnPointerDown, true);
+  };
+  blocker.addEventListener('pointerdown', hideOnPointerDown);
 
-  if (localStorage.getItem('installPromptShown') === 'true') return;
+  // 3) mostra la modale
+  modal.classList.add('show');
+}, 500);
 
-  const installPrompt = document.getElementById('install-prompt');
-  if (!installPrompt) return;
 
-  setTimeout(() => {
-    installPrompt.classList.add('show');
-  }, 4000);
-
-  installPrompt.addEventListener('click', () => {
-    installPrompt.classList.remove('show');
-    deferredPrompt.prompt();
-
-    deferredPrompt.userChoice.then(() => {
-      localStorage.setItem('installPromptShown', 'true');
-      deferredPrompt = null;
-    });
-  });
 });
 
 
@@ -1798,6 +1737,5 @@ document.querySelectorAll('.menu-item').forEach(el => {
 
 
 </script>
-
 </body>
 </html>
