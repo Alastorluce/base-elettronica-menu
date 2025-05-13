@@ -789,6 +789,7 @@ video#logo-btn {
   </div>
 
 
+<div id="video-preload-container" style="display:none;"></div>
 
   
     <script>
@@ -1380,20 +1381,29 @@ modalContent.addEventListener('pointerdown', (e) => {
 async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
   const estensioni = ['.jpg', '.png', '.webp', '.mp4'];
   const tentativi = [];
+  const preloadContainer = document.getElementById('video-preload-container');
 
   for (let i = 1; i <= max; i++) {
     for (let ext of estensioni) {
       const url = `${basePath}img${i}${ext}`;
       if (ext === '.mp4') {
-        // Test video con elemento video
         tentativi.push(new Promise(resolve => {
           const video = document.createElement('video');
           video.src = url;
-          video.onloadeddata = () => resolve(url);
+          video.preload = 'auto';
+          video.muted = true;
+          video.playsInline = true;
+          video.setAttribute('crossorigin', 'anonymous');
+          video.setAttribute('data-preload', url); // utile per identificazione
+          video.load();
+
+          // Iniettiamo in DOM invisibile per farlo caricare per davvero
+          preloadContainer.appendChild(video);
+
+          video.oncanplaythrough = () => resolve(url);
           video.onerror = () => resolve(null);
         }));
       } else {
-        // Test immagini classico
         tentativi.push(new Promise(resolve => {
           const img = new Image();
           img.onload = () => resolve(url);
@@ -1405,8 +1415,9 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
   }
 
   const risultati = await Promise.all(tentativi);
-  return risultati.filter(Boolean); // elimina i null
+  return risultati.filter(Boolean);
 }
+
 
 
 // === 2. Avvio dello slideshow ===
@@ -1479,54 +1490,70 @@ video.onerror = resolve;
   let idx = Math.floor(Math.random() * immagini.length);
 
   function changeImage() {
-    const url = immagini[idx];
-    const isVideo = url.endsWith('.mp4');
-    const media = mediaCache[url];
-    if (!media) return;
+  const url = immagini[idx];
+  const isVideo = url.endsWith('.mp4');
 
-    const container = document.getElementById('logo-btn');
-    container.style.opacity = '0';
+  const container = document.getElementById('logo-btn');
+  container.style.opacity = '0';
 
-    setTimeout(() => {
-      let newMedia;
+  setTimeout(() => {
+    let newMedia;
 
-      if (isVideo) {
-        newMedia = media.cloneNode(true);
-        newMedia.autoplay = true;
-        newMedia.loop = false;
-        newMedia.muted = true;
-        newMedia.playsInline = true;
-      } else {
-        newMedia = new Image();
-        newMedia.src = media.src;
-        newMedia.classList.add('loaded-img');
-      }
+    if (isVideo) {
+      // Prendi il video già precaricato dal DOM invisibile
+      const preloaded = document.querySelector(`video[data-preload="${url}"]`);
+      if (!preloaded) return;
 
+      newMedia = preloaded.cloneNode(true);
       newMedia.id = 'logo-btn';
+      newMedia.autoplay = true;
+      newMedia.loop = false;
+      newMedia.muted = true;
+      newMedia.playsInline = true;
+
       Object.assign(newMedia.style, {
-        width: container.style.width,
-        height: container.style.height,
-        position: container.style.position,
-        top: container.style.top,
-        left: container.style.left,
-        transform: container.style.transform,
-        transition: container.style.transition,
-        zIndex: container.style.zIndex,
-        animation: container.style.animation,
+        objectFit: 'cover',
+        width: '100vw',
+        height: '100vh',
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        transform: 'none',
+        zIndex: '1',
         opacity: '0',
-        cursor: 'pointer'
+        transition: 'opacity 1s ease-in-out'
       });
 
-      newMedia.addEventListener('click', ripristinaMenuPrincipale);
-      container.replaceWith(newMedia);
+    } else {
+      // Immagine standard
+      newMedia = new Image();
+      newMedia.src = url;
+      newMedia.classList.add('loaded-img');
+      newMedia.id = 'logo-btn';
+      Object.assign(newMedia.style, {
+        width: '350px',
+        maxWidth: '90vw',
+        height: 'auto',
+        position: 'absolute',
+        top: '55%',
+        left: '50%',
+        transform: 'translate(-50%, -50%) scale(2.3)',
+        zIndex: '1',
+        opacity: '0',
+        transition: 'opacity 1s ease-in-out'
+      });
+    }
 
-      setTimeout(() => {
-        newMedia.style.opacity = '1';
-      }, 50);
-    }, 300);
+    newMedia.addEventListener('click', ripristinaMenuPrincipale);
+    container.replaceWith(newMedia);
 
-    idx = (idx + 1) % immagini.length;
-  }
+    setTimeout(() => {
+      newMedia.style.opacity = '1';
+    }, 50);
+  }, 300);
+
+  idx = (idx + 1) % immagini.length;
+}
 
   function pianificaProssimo() {
     const url = immagini[idx];
