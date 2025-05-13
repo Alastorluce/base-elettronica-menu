@@ -1570,7 +1570,9 @@ video.onerror = resolve;
     const url = immagini[idx];
     const isVideo = url.endsWith('.mp4');
     const media = mediaCache[url];
-if (isVideo && media) {
+
+
+    if (isVideo && media) {
   media.currentTime = 0;
   const durata = media.duration ? media.duration * 1000 : 10000; // fallback 10s
 
@@ -1594,8 +1596,7 @@ if (isVideo && media) {
     changeImage();
     pianificaProssimo();
   }, 5000);
-}
-    
+    }
 
   changeImage();
   pianificaProssimo();
