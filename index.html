@@ -1679,8 +1679,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // 3) Pianifica il pop-up di benvenuto
   // --- inizio nuovo blocco welcome ---
 // --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
-let autoHide = null;
 
+let isWelcomeVisible = false;
+    
 let welcomeTimeout = setTimeout(() => {
   const blocker = document.getElementById('modal-blocker');
   const modal = document.getElementById('modal');
@@ -1689,15 +1690,15 @@ let welcomeTimeout = setTimeout(() => {
   modalContent.innerHTML = contenutoHome;
   blocker.style.display = 'block';
   modal.classList.add('show');
+  isWelcomeVisible = true;
 
-  // Timeout automatico globale
   autoHide = setTimeout(() => {
-    // Chiude solo se la modale è ancora la stessa
-    if (modal.classList.contains('show') && modalContent.innerHTML.includes("Base Elettronica Service")) {
+    if (isWelcomeVisible) {
       modal.classList.remove('show');
       blocker.style.display = 'none';
     }
     autoHide = null;
+    isWelcomeVisible = false;
   }, 8000);
 
   const hideOnPointerDown = () => {
@@ -1707,12 +1708,12 @@ let welcomeTimeout = setTimeout(() => {
     }
     modal.classList.remove('show');
     blocker.style.display = 'none';
+    isWelcomeVisible = false;
     document.removeEventListener('pointerdown', hideOnPointerDown, true);
   };
 
   blocker.addEventListener('pointerdown', hideOnPointerDown, true);
 }, 500);
-
 
 });
 
