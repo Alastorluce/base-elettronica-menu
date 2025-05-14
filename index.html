@@ -1679,32 +1679,34 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // 3) Pianifica il pop-up di benvenuto
   // --- inizio nuovo blocco welcome ---
 // --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
+let autoHide;  // dichiarato fuori così è visibile ovunque
+
 let welcomeTimeout = setTimeout(() => {
   modalContent.innerHTML = contenutoHome;
 
-  // 👇 Mostra il blocco trasparente sotto al benvenuto
   const blocker = document.getElementById('modal-blocker');
-
-  
   blocker.style.display = 'block';
 
-  // 1) auto-hide dopo 8 secondi
-  const autoHide = setTimeout(() => {
+  // Mostra la modale di benvenuto
+  modal.classList.add('show');
+
+  // Timeout automatico dopo 8s
+  autoHide = setTimeout(() => {
     modal.classList.remove('show');
     blocker.style.display = 'none';
+    autoHide = null;
   }, 8000);
 
-  // 2) chiusura al primo click/tap
+  // Chiusura al primo tap/click
   const hideOnPointerDown = () => {
     modal.classList.remove('show');
     blocker.style.display = 'none';
-    clearTimeout(autoHide);
+    clearTimeout(autoHide); // << questa è la riga fondamentale!
+    autoHide = null;
     document.removeEventListener('pointerdown', hideOnPointerDown, true);
   };
-  blocker.addEventListener('pointerdown', hideOnPointerDown);
 
-  // 3) mostra la modale
-  modal.classList.add('show');
+  blocker.addEventListener('pointerdown', hideOnPointerDown, true);
 }, 500);
 
 
