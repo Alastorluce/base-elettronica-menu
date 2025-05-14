@@ -1679,9 +1679,12 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // 3) Pianifica il pop-up di benvenuto
   // --- inizio nuovo blocco welcome ---
 // --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
+// === ALL’INTERNO DI window.addEventListener('DOMContentLoaded', () => { ... ===
 
-let isWelcomeVisible = false;
-    
+// In cima al file JS o all'interno dello scope DOMContentLoaded:
+let autoHide = null;
+let modaleBenvenutoAttiva = false;
+
 let welcomeTimeout = setTimeout(() => {
   const blocker = document.getElementById('modal-blocker');
   const modal = document.getElementById('modal');
@@ -1690,15 +1693,16 @@ let welcomeTimeout = setTimeout(() => {
   modalContent.innerHTML = contenutoHome;
   blocker.style.display = 'block';
   modal.classList.add('show');
-  isWelcomeVisible = true;
+  modaleBenvenutoAttiva = true;
 
+  // Timeout automatico dopo 8 secondi (solo se la modale è ancora quella di benvenuto)
   autoHide = setTimeout(() => {
-    if (isWelcomeVisible) {
+    if (modaleBenvenutoAttiva && modal.classList.contains('show')) {
       modal.classList.remove('show');
       blocker.style.display = 'none';
     }
     autoHide = null;
-    isWelcomeVisible = false;
+    modaleBenvenutoAttiva = false;
   }, 8000);
 
   const hideOnPointerDown = () => {
@@ -1708,12 +1712,13 @@ let welcomeTimeout = setTimeout(() => {
     }
     modal.classList.remove('show');
     blocker.style.display = 'none';
-    isWelcomeVisible = false;
+    modaleBenvenutoAttiva = false;
     document.removeEventListener('pointerdown', hideOnPointerDown, true);
   };
 
   blocker.addEventListener('pointerdown', hideOnPointerDown, true);
 }, 500);
+
 
 });
 
