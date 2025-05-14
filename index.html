@@ -1679,30 +1679,34 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // 3) Pianifica il pop-up di benvenuto
   // --- inizio nuovo blocco welcome ---
 // --- inizio blocco welcome definitivo (chiude sempre al primo click) ---
-let autoHide;  // dichiarato fuori così è visibile ovunque
+let autoHide = null;
 
 let welcomeTimeout = setTimeout(() => {
-  modalContent.innerHTML = contenutoHome;
-
   const blocker = document.getElementById('modal-blocker');
-  blocker.style.display = 'block';
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modal-content');
 
-  // Mostra la modale di benvenuto
+  modalContent.innerHTML = contenutoHome;
+  blocker.style.display = 'block';
   modal.classList.add('show');
 
-  // Timeout automatico dopo 8s
+  // Timeout automatico globale
   autoHide = setTimeout(() => {
-    modal.classList.remove('show');
-    blocker.style.display = 'none';
+    // Chiude solo se la modale è ancora la stessa
+    if (modal.classList.contains('show') && modalContent.innerHTML.includes("Base Elettronica Service")) {
+      modal.classList.remove('show');
+      blocker.style.display = 'none';
+    }
     autoHide = null;
   }, 8000);
 
-  // Chiusura al primo tap/click
   const hideOnPointerDown = () => {
+    if (autoHide !== null) {
+      clearTimeout(autoHide);
+      autoHide = null;
+    }
     modal.classList.remove('show');
     blocker.style.display = 'none';
-    clearTimeout(autoHide); // << questa è la riga fondamentale!
-    autoHide = null;
     document.removeEventListener('pointerdown', hideOnPointerDown, true);
   };
 
