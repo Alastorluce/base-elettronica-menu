@@ -1544,7 +1544,7 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
 // === 2. Avvio dello slideshow ===
 async function attivaSlideshow() {
   if (slideshowAttivo) return;
-  
+  let slideshowInterval = null;
 
   const sidebar   = document.getElementById('sidebar');
   const submenu   = document.getElementById('submenu-servizi');
@@ -1614,9 +1614,6 @@ async function attivaSlideshow() {
     }
   }));
   
-
-
-
   await Promise.all(promisesForMediaCache);
   console.log("mediaCache popolata:", mediaCache);
 
@@ -1682,60 +1679,57 @@ async function attivaSlideshow() {
             }
 
             if (isVideo) {
-  if (mediaFromCache.tagName === "VIDEO") {
-    newMediaElement = mediaFromCache.cloneNode(true);
-    newMediaElement.id = "logo-btn";
-    newMediaElement.controls = false;
-    newMediaElement.autoplay = true;
-    newMediaElement.loop = false;
+                if (mediaFromCache.tagName === "VIDEO") {
+                    newMediaElement = mediaFromCache.cloneNode(true);
+                    newMediaElement.id = "logo-btn";
+                    newMediaElement.controls = false;
 
-    Object.assign(newMediaElement.style, {
-      objectFit: "cover",
-      width: "100vw",
-      height: "100vh",
-      position: "absolute",
-      top: "0",
-      left: "0",
-      transform: "none",
-      zIndex: "1",
-      opacity: "0",
-      transition: "opacity 1s ease-in-out"
-    });
-  } else {
-    console.warn(`Elemento in cache per video URL ${url} non è un TAG VIDEO. Salto.`);
-    idx = (idx + 1) % immagini.length;
-    if (slideshowAttivo) changeImage();
-    return;
-  }
-} else {  // È un’immagine
-  if (mediaFromCache.tagName === "IMG") {
-    newMediaElement = mediaFromCache.cloneNode(false);
-    newMediaElement.id = "logo-btn";
-    newMediaElement.classList.add("loaded-img");
+                    Object.assign(newMediaElement.style, {
+                        objectFit: "cover",
+                        width: "100vw",
+                        height: "100vh",
+                        position: "absolute",
+                        top: "0",
+                        left: "0",
+                        transform: "none",
+                        zIndex: "1",
+                        opacity: "0",
+                        transition: "opacity 1s ease-in-out"
+                    });
+                } else {
+                    console.warn(`Elemento in cache per video URL ${url} non è un TAG VIDEO. Salto.`);
+                    idx = (idx + 1) % immagini.length;
+                    if (slideshowAttivo) { changeImage(); }
+                    return;
+                }
+            } else { // È un'immagine
+                if (mediaFromCache.tagName === "IMG") {
+                    newMediaElement = mediaFromCache.cloneNode(false);
+                    newMediaElement.id = "logo-btn";
+                    newMediaElement.classList.add("loaded-img");
 
-    Object.assign(newMediaElement.style, {
-      width: "auto",
-      height: "auto",
-      maxWidth: "100vw",
-      maxHeight: "100vh",
-      objectFit: "contain",
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      zIndex: "1",
-      opacity: "0",
-      transition: "opacity 1s ease-in-out"
-    });
-  } else {
-    console.warn(`Elemento in cache per immagine URL ${url} non è un TAG IMG. Salto.`);
-    idx = (idx + 1) % immagini.length;
-    if (slideshowAttivo) changeImage();
-    return;
-  }
-} 
+                    Object.assign(newMediaElement.style, {
+                        width: "auto",
+                        height: "auto",
+                        maxWidth: "100vw",
+                        maxHeight: "100vh",
+                        objectFit: "contain",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        zIndex: "1",
+                        opacity: "0",
+                        transition: "opacity 1s ease-in-out"
+                    });
+                } else {
+                    console.warn(`Elemento in cache per immagine URL ${url} non è un TAG IMG. Salto.`);
+                    idx = (idx + 1) % immagini.length;
+                    if (slideshowAttivo) { changeImage(); }
+                    return;
+                }
+            }
 
-        
             if (newMediaElement) {
                 newMediaElement.addEventListener("click", ripristinaMenuPrincipale);
                 currentLogoBtn.replaceWith(newMediaElement);
@@ -1753,75 +1747,83 @@ async function attivaSlideshow() {
         idx = (idx + 1) % immagini.length;
       }
       // Fine Definizione della funzione changeImage      // Definizione della funzione pianificaProssimo
-    
-// … subito dopo la chiusura di changeImage(), incolla questo:
+      function pianificaProssimo() {
+        if (!slideshowAttivo || !immagini || immagini.length === 0) {
+            console.warn("pianificaProssimo chiamata ma slideshow non attivo o media non disponibili.");
+            return;
+        }
 
-// Variabile di controllo per il timeout
+        // Determina l'URL del media *attualmente* visualizzato o che sta per essere visualizzato.
+        // idx è già stato incrementato da changeImage per il *prossimo* media.
+        // Quindi, per il media corrente, dobbiamo guardare all'indice precedente.
+        const currentMediaIdx = (idx === 0) ? immagini.length - 1 : idx - 1;
+        const url = immagini[currentMediaIdx];
 
+        if (!url) {
+            console.error(`URL non definito in pianificaProssimo per indice ${currentMediaIdx}. Avanzo al prossimo.`);
+            if (slideshowInterval) clearTimeout(slideshowInterval);
+            // Non chiamare changeImage() direttamente qui per evitare loop se l'array immagini è problematico.
+            // Affidati al normale ciclo di changeImage() che sarà chiamato dopo.
+            // idx è già stato avanzato da changeImage, quindi la prossima chiamata a changeImage userà l'indice corretto.
+            // Se c'è un problema persistente con gli URL, la logica di salto in changeImage dovrebbe gestirlo.
+            return; // Esci e lascia che il flusso normale riprenda se possibile.
+        }
 
-function pianificaProssimo() {
-  // 1) Se lo slideshow è spento o non ci sono media, esco
-  if (!slideshowAttivo || !Array.isArray(immagini) || immagini.length === 0) {
-    console.warn("pianificaProssimo: slideshow non attivo o array 'immagini' vuoto");
-    return;
-  }
+        const isVideo = url.endsWith(".mp4");
+        const mediaElementInDom = document.getElementById("logo-btn"); // Il media attualmente nel DOM
 
-  // 2) Cancella eventuale timer precedente
-  if (slideshowInterval) {
-    clearTimeout(slideshowInterval);
-    slideshowInterval = null;
-  }
+        if (slideshowInterval) {
+            clearTimeout(slideshowInterval);
+            slideshowInterval = null;
+        }
 
-  // 3) Calcola l'indice del media che è appena stato mostrato
-  const currentIdx = (idx === 0) ? immagini.length - 1 : idx - 1;
-  const url        = immagini[currentIdx];
-  const mediaEl    = document.getElementById("logo-btn");
-
-  if (!url || !mediaEl) {
-    console.error("pianificaProssimo: url o elemento non valido", { url, mediaEl });
-    return;
-  }
-
-  const isVideo = url.endsWith(".mp4");
-
-  if (isVideo) {
-    // 4a) Se è un video, attacca onended / onerror e forzo play
-    if (mediaEl.tagName === "VIDEO") {
-      mediaEl.onended = () => {
-        if (!slideshowAttivo) return;
-        changeImage();
-        pianificaProssimo();
-      };
-      mediaEl.onerror = () => {
-        console.error(`Errore riproduzione video ${url}`);
-        if (!slideshowAttivo) return;
-        changeImage();
-        pianificaProssimo();
-      };
-      mediaEl.play().catch(() => {
-        // se l’autoplay fallisce, vado comunque avanti
-        changeImage();
-        pianificaProssimo();
-      });
-    } else {
-      // non è un video: salto direttamente
-      changeImage();
-      pianificaProssimo();
-    }
-  } else {
-    // 4b) Se è un’immagine, aspetto 3 secondi prima di avanzare
-    slideshowInterval = setTimeout(() => {
-      if (!slideshowAttivo) return;
-      changeImage();
-      pianificaProssimo();
-    }, 3000);
-  }
-}
-
-// E all’avvio dello slideshow (dopo aver definito changeImage e pianificaProssimo):
-changeImage();
-pianificaProssimo();
-
+        if (isVideo) {
+            if (mediaElementInDom && mediaElementInDom.tagName === "VIDEO" && mediaElementInDom.src.includes(url.substring(url.lastIndexOf('/') + 1))) {
+                console.log(`Video ${url} in visualizzazione. Attendo onended.`);
+                mediaElementInDom.onended = () => {
+                    if (!slideshowAttivo) return;
+                    console.log(`Video ${url} terminato (onended). Avanzo.`);
+                    changeImage();
+                    pianificaProssimo();
+                };
+                mediaElementInDom.onerror = (e) => {
+                    console.error(`Errore durante riproduzione video ${url} nel DOM:`, e);
+                    if (!slideshowAttivo) return;
+                    changeImage(); 
+                    pianificaProssimo();
+                };
+                // Assicurati che il video stia suonando (autoplay potrebbe fallire a volte)
+                if (mediaElementInDom.paused) {
+                    mediaElementInDom.play().then(() => {
+                        console.log(`Video ${url} (DOM) riavviato da pianificaProssimo.`);
+                    }).catch(err => {
+                        console.error(`Errore play() video ${url} (DOM) da pianificaProssimo:`, err);
+                        if (slideshowAttivo) {
+                            changeImage(); 
+                            pianificaProssimo();
+                        }
+                    });
+                }
+            } else {
+                 console.warn(`Video ${url} non corrisponde a #logo-btn nel DOM o non è un video. Salto.`);
+                 if (slideshowAttivo) {
+                    changeImage();
+                    pianificaProssimo();
+                 }
+            }
+        } else { // È unimmagine
+            // Non c'è bisogno di controllare mediaElementInDom per le immagini, il timer è sufficiente.
+            console.log(`Immagine ${url} in visualizzazione. Imposto timer di 3 secondi.`);
+            slideshowInterval = setTimeout(() => {
+                if (!slideshowAttivo) return;
+                console.log(`Timer immagine ${url} scaduto. Avanzo.`);
+                changeImage();
+                pianificaProssimo();
+            }, 3000); // 3 secondi per le immagini
+        }
+      }
+      // Fine Definizione della funzione pianificaProssimo      changeImage(); // La chiamata originale
+  pianificaProssimo();
 }
 
 
