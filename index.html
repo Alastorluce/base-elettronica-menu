@@ -1723,7 +1723,6 @@ async function attivaSlideshow() {
 
 // Variabile di controllo per il timeout
 
-
 function pianificaProssimo() {
   // 1) Se lo slideshow è spento o non ci sono media, esco
   if (!slideshowAttivo || !Array.isArray(immagini) || immagini.length === 0) {
@@ -1768,10 +1767,12 @@ function pianificaProssimo() {
         changeImage();
         pianificaProssimo();
       });
+      return; // <<< esco subito per non ricadere nel timeout delle immagini
     } else {
       // non è un video: salto direttamente
       changeImage();
       pianificaProssimo();
+      return; // <<< idem qui
     }
   } else {
     // 4b) Se è un’immagine, aspetto 3 secondi prima di avanzare
@@ -1782,6 +1783,7 @@ function pianificaProssimo() {
     }, 3000);
   }
 }
+
 
 // E all’avvio dello slideshow (dopo aver definito changeImage e pianificaProssimo):
 changeImage();
