@@ -1388,6 +1388,117 @@ modalContent.addEventListener('pointerdown', (e) => {
 
 
 // === 1. Caricamento dinamico veloce di immagini/video ===
+async function caricaMediaSeparati(maxImg = 100, maxVid = 100) {
+  const basePathImg = 'media/images/';
+  const basePathVid = 'media/video/';
+  const estensioniImg = ['.jpg', '.png', '.webp', '.gif'];
+  const videoUrls = [];
+  const imageUrls = [];
+  const promises = [];
+  const preloadContainer = document.getElementById('video-preload-container');
+
+  if (!preloadContainer) {
+    console.error("Elemento con ID 'video-preload-container' non trovato. Impossibile precaricare i video.");
+    // Potrebbe essere utile creare dinamicamente il container se non esiste, o uscire.
+    // Per ora, usciamo se non c'è, perché è cruciale.
+    // document.body.insertAdjacentHTML('beforeend', '<div id="video-preload-container" style="display: none;"></div>');
+    // preloadContainer = document.getElementById('video-preload-container');
+    // if (!preloadContainer) return []; // Se anche la creazione dinamica fallisce
+    return [];
+  }
+
+  // Carica Immagini
+  console.log(`Inizio caricamento immagini da ${basePathImg} (max ${maxImg})`);
+  for (let i = 1; i <= maxImg; i++) {
+    for (const ext of estensioniImg) {
+      const url = `${basePathImg}img${i}${ext}`;
+      promises.push(new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          imageUrls.push(url);
+          console.log(`Immagine caricata: ${url}`);
+          resolve();
+        };
+        img.onerror = () => {
+          // console.warn(`Errore caricamento immagine (non trovata o altro): ${url}`);
+          resolve(); 
+        };
+        img.src = url;
+      }));
+    }
+  }
+
+  // Carica Video
+  console.log(`Inizio caricamento video da ${basePathVid} (max ${maxVid})`);
+  for (let i = 1; i <= maxVid; i++) {
+    const url = `${basePathVid}vd${i}.mp4`;
+    promises.push(new Promise(resolve => {
+      const videoElement = document.createElement('video');
+      videoElement.src = url;
+      videoElement.preload = 'auto';
+      videoElement.muted = true;
+      videoElement.playsInline = true;
+      videoElement.setAttribute('crossorigin', 'anonymous');
+      videoElement.setAttribute('data-preload-src', url); // Usato per recuperare da mediaCache
+      
+      preloadContainer.appendChild(videoElement); // Aggiungi al DOM per il precaricamento
+
+      const onCanPlay = () => {
+        videoUrls.push(url);
+        console.log(`Video precaricato e pronto (oncanplaythrough): ${url}`);
+        // L'elemento video rimane nel preloadContainer. Sarà recuperato da lì
+        // quando si popola mediaCache in attivaSlideshow.
+        resolve();
+        removeListeners();
+      };
+
+      const onError = (err) => {
+        // console.warn(`Errore durante il precaricamento del video ${url}:`, err);
+        if (videoElement.parentNode === preloadContainer) {
+             preloadContainer.removeChild(videoElement); // Rimuovi se errore e ancora figlio
+        }
+        resolve();
+        removeListeners();
+      };
+
+      const removeListeners = () => {
+          videoElement.removeEventListener('canplaythrough', onCanPlay);
+          videoElement.removeEventListener('error', onError);
+          videoElement.removeEventListener('stalled', onError);
+      }
+
+      videoElement.addEventListener('canplaythrough', onCanPlay);
+      videoElement.addEventListener('error', onError);
+      videoElement.addEventListener('stalled', onError); 
+
+      videoElement.load(); // Inizia il caricamento esplicitamente
+    }));
+  }
+
+  await Promise.all(promises);
+
+  console.log("URL Immagini trovate e valide:", imageUrls);
+  console.log("URL Video trovati e validi:", videoUrls);
+
+  const tuttiIMedia = [...imageUrls, ...videoUrls];
+
+  if (tuttiIMedia.length === 0) {
+    console.warn("Nessun media (immagine o video) è stato caricato correttamente. Lo slideshow non partirà.");
+    return [];
+  }
+
+  // Shuffle (Algoritmo di Fisher-Yates)
+  for (let i = tuttiIMedia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [tuttiIMedia[i], tuttiIMedia[j]] = [tuttiIMedia[j], tuttiIMedia[i]];
+  }
+  console.log("Elenco media finale (misto e shuffled) pronto per lo slideshow:", tuttiIMedia);
+  return tuttiIMedia;
+}
+
+
+// La vecchia funzione caricaImmaginiValidi viene commentata o rimossa.
+/*
 async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
   const estensioni = ['.jpg', '.png', '.webp', '.mp4'];
   const tentativi = [];
@@ -1423,31 +1534,22 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
       }
     }
   }
-
-
-  window.addEventListener('load', () => {
-  const installPrompt = document.getElementById('install-prompt');
-  if (installPrompt && !installPrompt.classList.contains('show')) {
-    installPrompt.classList.add('show');
-  }
-});
-
-
   
   const risultati = await Promise.all(tentativi);
   return risultati.filter(Boolean);
 }
-
+*/
 
 
 // === 2. Avvio dello slideshow ===
 async function attivaSlideshow() {
   if (slideshowAttivo) return;
+  let slideshowInterval = null;
 
   const sidebar   = document.getElementById('sidebar');
   const submenu   = document.getElementById('submenu-servizi');
   const watermark = document.getElementById('watermark-logo');
-  let logo        = document.getElementById('logo-btn');
+  // let logo        = document.getElementById('logo-btn'); // logo-btn viene gestito da changeImage
 
   sidebar.style.display = 'none';
   submenu.style.display = 'none';
@@ -1457,6 +1559,7 @@ async function attivaSlideshow() {
   watermark.style.display = 'block';
   watermark.style.opacity = '1';
 
+  const modal = document.getElementById('modal'); // Assicurati che modal sia definito
   if (modal.classList.contains('show')) {
     modal.classList.add('instant-hide');
     modal.classList.remove('show');
@@ -1470,19 +1573,28 @@ async function attivaSlideshow() {
     }, 5);
   }
 
-  const immagini = await caricaImmaginiValidi();
-  if (immagini.length === 0) return;
+  // Usa la nuova funzione di caricamento
+  immagini = await caricaMediaSeparati(); // 'immagini' è globale o definita in uno scope superiore
+  if (!immagini || immagini.length === 0) {
+      console.error("Nessun media caricato da caricaMediaSeparati. Slideshow non avviato.");
+      // Qui potresti voler ripristinare lo stato dell'interfaccia o mostrare un messaggio
+      ripristinaMenuPrincipale(); // Esempio di ripristino
+      return;
+  }
 
-  // Precarica i media
-    const mediaCache = {};
+  // Precarica i media nella cache
+  mediaCache = {}; // mediaCache è globale o definita in uno scope superiore
   const preloadContainer = document.getElementById('video-preload-container');
   const promisesForMediaCache = immagini.map(url => new Promise(resolve => {
     if (url.endsWith('.mp4')) {
-      const preloadedVideo = preloadContainer.querySelector(`video[data-preload="${url}"]`);
-      if (preloadedVideo) {
-        mediaCache[url] = preloadedVideo;
+      // I video sono già stati creati e aggiunti a preloadContainer da caricaMediaSeparati.
+      // Li recuperiamo da lì.
+      const preloadedVideoElement = preloadContainer.querySelector(`video[data-preload-src="${url}"]`);
+      if (preloadedVideoElement) {
+        mediaCache[url] = preloadedVideoElement;
+        console.log(`Video ${url} trovato nel preloadContainer e aggiunto a mediaCache.`);
       } else {
-        console.error(`Video precaricato non trovato nel DOM per URL: ${url}.`);
+        console.error(`Video ${url} non trovato nel preloadContainer come previsto. Sarà saltato.`);
         mediaCache[url] = null;
       }
       resolve();
@@ -1490,137 +1602,227 @@ async function attivaSlideshow() {
       const img = new Image();
       img.onload = () => {
         mediaCache[url] = img;
+        console.log(`Immagine ${url} caricata e aggiunta a mediaCache.`);
         resolve();
       };
       img.onerror = () => {
-        console.error(`Errore caricamento immagine per mediaCache: ${url}`);
+        console.error(`Errore caricamento immagine ${url} per mediaCache. Sarà saltata.`);
         mediaCache[url] = null;
         resolve();
       };
       img.src = url;
     }
   }));
+  
   await Promise.all(promisesForMediaCache);
+  console.log("mediaCache popolata:", mediaCache);
 
-  let idx = Math.floor(Math.random() * immagini.length);
+  idx = Math.floor(Math.random() * immagini.length); // idx è globale o definita in uno scope superiore
 
-  function changeImage() {
-  const url = immagini[idx];
-  const isVideo = url.endsWith('.mp4');
-
-  const container = document.getElementById('logo-btn');
-  container.style.opacity = '0';
-
-  setTimeout(() => {
-    let newMedia;
-
-    if (isVideo) {
-      // Prendi il video già precaricato dal DOM invisibile
-      const preloaded = document.querySelector(`video[data-preload="${url}"]`);
-      if (!preloaded) return;
-
-      newMedia = preloaded.cloneNode(true);
-      newMedia.id = 'logo-btn';
-      newMedia.autoplay = true;
-      newMedia.loop = false;
-      newMedia.muted = true;
-      newMedia.playsInline = true;
-
-      Object.assign(newMedia.style, {
-        objectFit: 'cover',
-        width: '100vw',
-        height: '100vh',
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        transform: 'none',
-        zIndex: '1',
-        opacity: '0',
-        transition: 'opacity 1s ease-in-out'
-      });
-
-    } else {
-      // Immagine standard
-      newMedia = new Image();
-      newMedia.src = url;
-      newMedia.classList.add('loaded-img');
-      newMedia.id = 'logo-btn';
-      Object.assign(newMedia.style, {
-        width: '350px',
-        maxWidth: '90vw',
-        height: 'auto',
-        position: 'absolute',
-        top: '55%',
-        left: '50%',
-        transform: 'translate(-50%, -50%) scale(2.3)',
-        zIndex: '1',
-        opacity: '0',
-        transition: 'opacity 1s ease-in-out'
-      });
-    }
-
-    newMedia.addEventListener('click', ripristinaMenuPrincipale);
-    container.replaceWith(newMedia);
-
-    setTimeout(() => {
-      newMedia.style.opacity = '1';
-    }, 50);
-  }, 300);
-
-  idx = (idx + 1) % immagini.length;
-}
-
-  function pianificaProssimo() {
-  if (!slideshowAttivo) return;
-
-  const url = immagini[idx];
-  const isVideo = url.endsWith(".mp4");
-  const media = mediaCache[url];
-
-  if (slideshowInterval) {
-    clearTimeout(slideshowInterval);
-    slideshowInterval = null;
+  // Assicurati che ci sia un elemento #logo-btn nel DOM prima di iniziare
+  if (!document.getElementById('logo-btn')) {
+      const mainDiv = document.getElementById('main');
+      if (mainDiv) {
+          const placeholderLogoBtn = document.createElement('div');
+          placeholderLogoBtn.id = 'logo-btn';
+          // Stili iniziali minimi per evitare errori, changeImage lo sostituirà
+          placeholderLogoBtn.style.width = '1px'; 
+          placeholderLogoBtn.style.height = '1px';
+          placeholderLogoBtn.style.opacity = '0';
+          mainDiv.appendChild(placeholderLogoBtn);
+          console.log("Placeholder per #logo-btn creato.");
+      } else {
+          console.error("Elemento #main non trovato, impossibile creare placeholder per #logo-btn.");
+          return; // Non possiamo procedere senza #main
+      }
   }
 
-  if (isVideo && media && media.tagName === 'VIDEO') {
-    // Assicura che parta dall’inizio
-    media.currentTime = 0;
+      // Definizione della funzione changeImage
+      function changeImage() {
+        if (!slideshowAttivo || !immagini || immagini.length === 0) {
+            console.warn("changeImage chiamata ma slideshow non attivo o media non disponibili.");
+            return;
+        }
 
-    // Imposta onended per andare avanti solo a fine video
-    media.onended = () => {
-      if (!slideshowAttivo) return;
-      changeImage();
-      pianificaProssimo();
-    };
+        const url = immagini[idx];
+        if (!url) {
+            console.error(`URL non valido all'indice ${idx} in changeImage.`);
+            idx = (idx + 1) % immagini.length;
+            if (slideshowAttivo) {
+                 changeImage();
+            }
+            return;
+        }
 
-    // Prova a farlo partire
-    media.play().then(() => {
-      console.log("Video partito correttamente");
-    }).catch((err) => {
-      console.warn("Errore in media.play(), fallback a durata 10s", err);
-      slideshowInterval = setTimeout(() => {
-        if (!slideshowAttivo) return;
-        changeImage();
-        pianificaProssimo();
-      }, 10000); // Fallback a 10s se play fallisce
-    });
+        const isVideo = url.endsWith(".mp4");
+        const currentLogoBtn = document.getElementById("logo-btn");
 
-  } else if (media && media.tagName === 'IMG') {
-    // Per le immagini: timeout classico
-    slideshowInterval = setTimeout(() => {
-      if (!slideshowAttivo) return;
-      changeImage();
-      pianificaProssimo();
-    }, 3000); // ← durata immagine
-  } else {
-    console.warn("Media non valido. Passo al successivo");
-    changeImage();
-    pianificaProssimo();
-  }
-}
+        if (!currentLogoBtn) {
+            console.error("#logo-btn non trovato nel DOM. Impossibile cambiare media.");
+            return;
+        }
+        currentLogoBtn.style.opacity = "0";
 
+        setTimeout(() => {
+            if (!slideshowAttivo) return;
 
-  changeImage();
+            let newMediaElement;
+            const mediaFromCache = mediaCache[url];
+
+            if (!mediaFromCache) {
+                console.warn(`Media per URL ${url} non trovato in mediaCache. Salto al prossimo.`);
+                idx = (idx + 1) % immagini.length;
+                if (slideshowAttivo) {
+                    changeImage();
+                }
+                return;
+            }
+
+            if (isVideo) {
+                if (mediaFromCache.tagName === "VIDEO") {
+                    newMediaElement = mediaFromCache.cloneNode(true);
+                    newMediaElement.id = "logo-btn";
+                    newMediaElement.controls = false;
+
+                    Object.assign(newMediaElement.style, {
+                        objectFit: "cover",
+                        width: "100vw",
+                        height: "100vh",
+                        position: "absolute",
+                        top: "0",
+                        left: "0",
+                        transform: "none",
+                        zIndex: "1",
+                        opacity: "0",
+                        transition: "opacity 1s ease-in-out"
+                    });
+                } else {
+                    console.warn(`Elemento in cache per video URL ${url} non è un TAG VIDEO. Salto.`);
+                    idx = (idx + 1) % immagini.length;
+                    if (slideshowAttivo) { changeImage(); }
+                    return;
+                }
+            } else { // È un'immagine
+                if (mediaFromCache.tagName === "IMG") {
+                    newMediaElement = mediaFromCache.cloneNode(false);
+                    newMediaElement.id = "logo-btn";
+                    newMediaElement.classList.add("loaded-img");
+
+                    Object.assign(newMediaElement.style, {
+                        width: "auto",
+                        height: "auto",
+                        maxWidth: "100vw",
+                        maxHeight: "100vh",
+                        objectFit: "contain",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        zIndex: "1",
+                        opacity: "0",
+                        transition: "opacity 1s ease-in-out"
+                    });
+                } else {
+                    console.warn(`Elemento in cache per immagine URL ${url} non è un TAG IMG. Salto.`);
+                    idx = (idx + 1) % immagini.length;
+                    if (slideshowAttivo) { changeImage(); }
+                    return;
+                }
+            }
+
+            if (newMediaElement) {
+                newMediaElement.addEventListener("click", ripristinaMenuPrincipale);
+                currentLogoBtn.replaceWith(newMediaElement);
+
+                setTimeout(() => {
+                    if (slideshowAttivo && newMediaElement.isConnected) {
+                       newMediaElement.style.opacity = "1";
+                    }
+                }, 20);
+            } else {
+                console.warn("newMediaElement non è stato creato per URL:", url);
+            }
+        }, 300);
+
+        idx = (idx + 1) % immagini.length;
+      }
+      // Fine Definizione della funzione changeImage      // Definizione della funzione pianificaProssimo
+      function pianificaProssimo() {
+        if (!slideshowAttivo || !immagini || immagini.length === 0) {
+            console.warn("pianificaProssimo chiamata ma slideshow non attivo o media non disponibili.");
+            return;
+        }
+
+        // Determina l'URL del media *attualmente* visualizzato o che sta per essere visualizzato.
+        // idx è già stato incrementato da changeImage per il *prossimo* media.
+        // Quindi, per il media corrente, dobbiamo guardare all'indice precedente.
+        const currentMediaIdx = (idx === 0) ? immagini.length - 1 : idx - 1;
+        const url = immagini[currentMediaIdx];
+
+        if (!url) {
+            console.error(`URL non definito in pianificaProssimo per indice ${currentMediaIdx}. Avanzo al prossimo.`);
+            if (slideshowInterval) clearTimeout(slideshowInterval);
+            // Non chiamare changeImage() direttamente qui per evitare loop se l'array immagini è problematico.
+            // Affidati al normale ciclo di changeImage() che sarà chiamato dopo.
+            // idx è già stato avanzato da changeImage, quindi la prossima chiamata a changeImage userà l'indice corretto.
+            // Se c'è un problema persistente con gli URL, la logica di salto in changeImage dovrebbe gestirlo.
+            return; // Esci e lascia che il flusso normale riprenda se possibile.
+        }
+
+        const isVideo = url.endsWith(".mp4");
+        const mediaElementInDom = document.getElementById("logo-btn"); // Il media attualmente nel DOM
+
+        if (slideshowInterval) {
+            clearTimeout(slideshowInterval);
+            slideshowInterval = null;
+        }
+
+        if (isVideo) {
+            if (mediaElementInDom && mediaElementInDom.tagName === "VIDEO" && mediaElementInDom.src.includes(url.substring(url.lastIndexOf('/') + 1))) {
+                console.log(`Video ${url} in visualizzazione. Attendo onended.`);
+                mediaElementInDom.onended = () => {
+                    if (!slideshowAttivo) return;
+                    console.log(`Video ${url} terminato (onended). Avanzo.`);
+                    changeImage();
+                    pianificaProssimo();
+                };
+                mediaElementInDom.onerror = (e) => {
+                    console.error(`Errore durante riproduzione video ${url} nel DOM:`, e);
+                    if (!slideshowAttivo) return;
+                    changeImage(); 
+                    pianificaProssimo();
+                };
+                // Assicurati che il video stia suonando (autoplay potrebbe fallire a volte)
+                if (mediaElementInDom.paused) {
+                    mediaElementInDom.play().then(() => {
+                        console.log(`Video ${url} (DOM) riavviato da pianificaProssimo.`);
+                    }).catch(err => {
+                        console.error(`Errore play() video ${url} (DOM) da pianificaProssimo:`, err);
+                        if (slideshowAttivo) {
+                            changeImage(); 
+                            pianificaProssimo();
+                        }
+                    });
+                }
+            } else {
+                 console.warn(`Video ${url} non corrisponde a #logo-btn nel DOM o non è un video. Salto.`);
+                 if (slideshowAttivo) {
+                    changeImage();
+                    pianificaProssimo();
+                 }
+            }
+        } else { // È unimmagine
+            // Non c'è bisogno di controllare mediaElementInDom per le immagini, il timer è sufficiente.
+            console.log(`Immagine ${url} in visualizzazione. Imposto timer di 3 secondi.`);
+            slideshowInterval = setTimeout(() => {
+                if (!slideshowAttivo) return;
+                console.log(`Timer immagine ${url} scaduto. Avanzo.`);
+                changeImage();
+                pianificaProssimo();
+            }, 3000); // 3 secondi per le immagini
+        }
+      }
+      // Fine Definizione della funzione pianificaProssimo      changeImage(); // La chiamata originale
   pianificaProssimo();
 }
 
