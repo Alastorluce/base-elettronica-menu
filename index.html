@@ -1474,38 +1474,33 @@ async function attivaSlideshow() {
   if (immagini.length === 0) return;
 
   // Precarica i media
-  const mediaCache = {};
-  await Promise.all(
-    immagini.map(url => new Promise(resolve => {
-      if (url.endsWith('.mp4')) {
-        const video = document.createElement('video');
-        video.src = url;
-        video.muted = true;
-        video.loop = false;
-        video.preload = 'auto';
-video.load(); // forza il preload
-video.oncanplaythrough = () => {
-  mediaCache[url] = video;
-  resolve();
-};
-video.onerror = resolve;
-
-        video.onloadeddata = () => {
-          mediaCache[url] = video;
-          resolve();
-        };
-        video.onerror = resolve;
+    const mediaCache = {};
+  const preloadContainer = document.getElementById('video-preload-container');
+  const promisesForMediaCache = immagini.map(url => new Promise(resolve => {
+    if (url.endsWith('.mp4')) {
+      const preloadedVideo = preloadContainer.querySelector(`video[data-preload="${url}"]`);
+      if (preloadedVideo) {
+        mediaCache[url] = preloadedVideo;
       } else {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-          mediaCache[url] = img;
-          resolve();
-        };
-        img.onerror = resolve;
+        console.error(`Video precaricato non trovato nel DOM per URL: ${url}.`);
+        mediaCache[url] = null;
       }
-    }))
-  );
+      resolve();
+    } else { // Immagini
+      const img = new Image();
+      img.onload = () => {
+        mediaCache[url] = img;
+        resolve();
+      };
+      img.onerror = () => {
+        console.error(`Errore caricamento immagine per mediaCache: ${url}`);
+        mediaCache[url] = null;
+        resolve();
+      };
+      img.src = url;
+    }
+  }));
+  await Promise.all(promisesForMediaCache);
 
   let idx = Math.floor(Math.random() * immagini.length);
 
@@ -1577,23 +1572,38 @@ video.onerror = resolve;
 
   function pianificaProssimo() {
     const url = immagini[idx];
-    const isVideo = url.endsWith('.mp4');
-    const media = mediaCache[url];
+    const isVideo = url.endsWith(".mp4");
+    const media = mediaCache[url]; // media può essere null se il preload è fallito
 
-    if (isVideo && media) {
-      media.onended = () => {
+    if (isVideo) { // È un file .mp4
+      if (media) { // Ed è stato caricato correttamente in cache
+        media.onended = () => {
+          changeImage();
+          pianificaProssimo();
+        };
+        media.play().catch((error) => {
+          console.error("Errore durante la riproduzione del video (media.play error):", url, error);
+          // Non avanzare automaticamente per video che non partono.
+          // Se si volesse avanzare, si potrebbero chiamare changeImage() e pianificaProssimo() qui.
+        });
+      } else { // È un file .mp4, ma non è stato caricato (mediaCache[url] è null)
+        console.warn("Video .mp4 non trovato in cache o caricamento fallito, si salta:", url);
+        // Avanza al prossimo elemento per non bloccare lo slideshow e non applicare il timeout delle immagini.
         changeImage();
         pianificaProssimo();
-      };
-      media.play().catch((error) => {
-        console.error("Errore durante la riproduzione del video:", media.src, error);
-        // Non avanzare automaticamente se il video non parte per errore
-      });
-    } else {
-      slideshowInterval = setTimeout(() => {
+      }
+    } else { // Non è un file .mp4 (quindi è un'immagine)
+      if (media) { // E l'immagine è stata caricata
+        slideshowInterval = setTimeout(() => {
+          changeImage();
+          pianificaProssimo();
+        }, 5000);
+      } else { // Immagine non caricata
+        console.warn("Immagine non trovata in cache o caricamento fallito, si salta:", url);
+        // Avanza al prossimo elemento
         changeImage();
         pianificaProssimo();
-      }, 5000);
+      }
     }
   }
 
