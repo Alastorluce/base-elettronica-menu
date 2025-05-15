@@ -1571,69 +1571,54 @@ async function attivaSlideshow() {
 }
 
   function pianificaProssimo() {
-    if (!slideshowAttivo) return; // Controllo generale all'inizio
+  if (!slideshowAttivo) return;
 
-    const url = immagini[idx];
-    const isVideo = url.endsWith(".mp4");
-    const media = mediaCache[url];
+  const url = immagini[idx];
+  const isVideo = url.endsWith(".mp4");
+  const media = mediaCache[url];
 
-    // Pulisce sempre un eventuale timer per immagini precedente
-    if (slideshowInterval) {
-      clearTimeout(slideshowInterval);
-      slideshowInterval = null;
-    }
-
-    if (isVideo) {
-      if (media && media.tagName === 'VIDEO') { // Assicuriamoci che sia un elemento VIDEO
-        media.onended = () => {
-          if (!slideshowAttivo) return;
-          changeImage();
-          pianificaProssimo();
-        };
-        media.onerror = () => { // Gestione esplicita dell'errore del tag video
-            console.error("Errore intrinseco dell'elemento video durante il caricamento/riproduzione:", url);
-            if (!slideshowAttivo) return;
-            changeImage(); // Salta al prossimo media
-            pianificaProssimo();
-        };
-        // Tentativo di riproduzione
-        const playPromise = media.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            // Riproduzione avviata con successo
-            console.log("Video play() avviato:", url);
-          }).catch((error) => {
-            console.error("Errore esplicito da media.play() promise:", url, error);
-            if (!slideshowAttivo) return;
-            changeImage(); // Salta al prossimo in caso di errore di play
-            pianificaProssimo();
-          });
-        } else {
-            // Alcuni browser meno recenti potrebbero non restituire una Promise da play()
-            // In questo caso, ci affidiamo a onended e onerror
-            console.log("media.play() non ha restituito una Promise, affidamento su eventi:", url);
-        }
-      } else {
-        console.warn("Media video .mp4 non valido o non trovato in cache, si salta:", url);
-        if (!slideshowAttivo) return;
-        changeImage();
-        pianificaProssimo();
-      }
-    } else { // È un'immagine
-      if (media && media.tagName === 'IMG') { // Assicuriamoci che sia un elemento IMG
-        slideshowInterval = setTimeout(() => {
-          if (!slideshowAttivo) return;
-          changeImage();
-          pianificaProssimo();
-        }, 3000); // 3 secondi per le immagini
-      } else {
-        console.warn("Media immagine non valido o non trovato in cache, si salta:", url);
-        if (!slideshowAttivo) return;
-        changeImage();
-        pianificaProssimo();
-      }
-    }
+  if (slideshowInterval) {
+    clearTimeout(slideshowInterval);
+    slideshowInterval = null;
   }
+
+  if (isVideo && media && media.tagName === 'VIDEO') {
+    // Assicura che parta dall’inizio
+    media.currentTime = 0;
+
+    // Imposta onended per andare avanti solo a fine video
+    media.onended = () => {
+      if (!slideshowAttivo) return;
+      changeImage();
+      pianificaProssimo();
+    };
+
+    // Prova a farlo partire
+    media.play().then(() => {
+      console.log("Video partito correttamente");
+    }).catch((err) => {
+      console.warn("Errore in media.play(), fallback a durata 10s", err);
+      slideshowInterval = setTimeout(() => {
+        if (!slideshowAttivo) return;
+        changeImage();
+        pianificaProssimo();
+      }, 10000); // Fallback a 10s se play fallisce
+    });
+
+  } else if (media && media.tagName === 'IMG') {
+    // Per le immagini: timeout classico
+    slideshowInterval = setTimeout(() => {
+      if (!slideshowAttivo) return;
+      changeImage();
+      pianificaProssimo();
+    }, 3000); // ← durata immagine
+  } else {
+    console.warn("Media non valido. Passo al successivo");
+    changeImage();
+    pianificaProssimo();
+  }
+}
+
 
   changeImage();
   pianificaProssimo();
