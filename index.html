@@ -1571,36 +1571,64 @@ async function attivaSlideshow() {
 }
 
   function pianificaProssimo() {
+    if (!slideshowAttivo) return; // Controllo generale all'inizio
+
     const url = immagini[idx];
     const isVideo = url.endsWith(".mp4");
-    const media = mediaCache[url]; // media può essere null se il preload è fallito
+    const media = mediaCache[url];
 
-    if (isVideo) { // È un file .mp4
-      if (media) { // Ed è stato caricato correttamente in cache
+    // Pulisce sempre un eventuale timer per immagini precedente
+    if (slideshowInterval) {
+      clearTimeout(slideshowInterval);
+      slideshowInterval = null;
+    }
+
+    if (isVideo) {
+      if (media && media.tagName === 'VIDEO') { // Assicuriamoci che sia un elemento VIDEO
         media.onended = () => {
+          if (!slideshowAttivo) return;
           changeImage();
           pianificaProssimo();
         };
-        media.play().catch((error) => {
-          console.error("Errore durante la riproduzione del video (media.play error):", url, error);
-          // Non avanzare automaticamente per video che non partono.
-          // Se si volesse avanzare, si potrebbero chiamare changeImage() e pianificaProssimo() qui.
-        });
-      } else { // È un file .mp4, ma non è stato caricato (mediaCache[url] è null)
-        console.warn("Video .mp4 non trovato in cache o caricamento fallito, si salta:", url);
-        // Avanza al prossimo elemento per non bloccare lo slideshow e non applicare il timeout delle immagini.
+        media.onerror = () => { // Gestione esplicita dell'errore del tag video
+            console.error("Errore intrinseco dell'elemento video durante il caricamento/riproduzione:", url);
+            if (!slideshowAttivo) return;
+            changeImage(); // Salta al prossimo media
+            pianificaProssimo();
+        };
+        // Tentativo di riproduzione
+        const playPromise = media.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            // Riproduzione avviata con successo
+            console.log("Video play() avviato:", url);
+          }).catch((error) => {
+            console.error("Errore esplicito da media.play() promise:", url, error);
+            if (!slideshowAttivo) return;
+            changeImage(); // Salta al prossimo in caso di errore di play
+            pianificaProssimo();
+          });
+        } else {
+            // Alcuni browser meno recenti potrebbero non restituire una Promise da play()
+            // In questo caso, ci affidiamo a onended e onerror
+            console.log("media.play() non ha restituito una Promise, affidamento su eventi:", url);
+        }
+      } else {
+        console.warn("Media video .mp4 non valido o non trovato in cache, si salta:", url);
+        if (!slideshowAttivo) return;
         changeImage();
         pianificaProssimo();
       }
-    } else { // Non è un file .mp4 (quindi è un'immagine)
-      if (media) { // E l'immagine è stata caricata
+    } else { // È un'immagine
+      if (media && media.tagName === 'IMG') { // Assicuriamoci che sia un elemento IMG
         slideshowInterval = setTimeout(() => {
+          if (!slideshowAttivo) return;
           changeImage();
           pianificaProssimo();
-        }, 3000);
-      } else { // Immagine non caricata
-        console.warn("Immagine non trovata in cache o caricamento fallito, si salta:", url);
-        // Avanza al prossimo elemento
+        }, 3000); // 3 secondi per le immagini
+      } else {
+        console.warn("Media immagine non valido o non trovato in cache, si salta:", url);
+        if (!slideshowAttivo) return;
         changeImage();
         pianificaProssimo();
       }
