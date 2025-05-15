@@ -1,23 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
-
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- già presente -->
-  <title>Base Elettronica Service - Menu</title>
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
-  <!-- 🔹 Icona desktop / favicon per tutti i browser -->
-<link rel="icon" type="image/x-icon" href="logo_multires.ico">
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><!-- già presente -->
+<title>Base Elettronica Service - Menu</title>
+<link href="https://fonts.googleapis.com/css?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<!-- 🔹 Icona desktop / favicon per tutti i browser -->
+<link href="logo_multires.ico" rel="icon" type="image/x-icon"/>
 <!-- 🔹 Icona PNG moderna per browser e retina -->
-<link rel="icon" type="image/png" sizes="256x256" href="logo_256.png">
-<link rel="apple-touch-icon" sizes="512x512" href="logo_512.png">
-
+<link href="logo_256.png" rel="icon" sizes="256x256" type="image/png"/>
+<link href="logo_512.png" rel="apple-touch-icon" sizes="512x512"/>
 <!-- 🔹 Manifest per Android (shortcut con icona corretta) -->
-<link rel="manifest" href="manifest.json">
-
-
-  <style>
+<link href="manifest.json" rel="manifest"/>
+<style>
 
 
 
@@ -724,76 +720,58 @@ video#logo-btn {
 
 </style>
 </head>
-
 <body>
 <div id="media-preloader" style="display:none;"></div>
-
-
-
-    <div id="right-glow"></div>
-  
-    <div id="orientation-warning">
-      <div class="orientation-content">
-        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"
-             viewBox="0 0 24 24" fill="#00a6ff">
-          <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
+<div id="right-glow"></div>
+<div id="orientation-warning">
+<div class="orientation-content">
+<svg fill="#00a6ff" height="120" viewbox="0 0 24 24" width="120" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
                    4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
                    12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
-                   12h2v-2H5v2z"/>
-        </svg>
-        <p>Ruota il telefono in verticale per vedere il sito</p>
-      </div>
-    </div>
-  
-    <div id="sidebar">
-      <div id="sidebar-content">
-        <div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
-           <img src="logo.png" alt="Logo">
-        </div>
-  
-        <div class="menu-list">
-          <div class="menu-item" onclick="apri(0)">Chi siamo</div>
-          <div class="menu-item" onclick="toggleSubmenu()">I nostri servizi</div>
-          <div class="menu-item" onclick="apri(1)">Portfolio</div>
-          <div class="menu-item" onclick="apri(2)">Preventivi e Contatti</div>
-  
-          <!-- SOTTOMENU VISIBILE SOLO AL CLICK -->
-          <div id="submenu-servizi" style="display:none; flex-direction: column; align-items: center; width: 100%;">
-            <div class="menu-item sotto-servizio" onclick="apriSubservizio('service')">Service</div>
-            <div class="menu-item sotto-servizio" onclick="apriSubservizio('antincendio')">Sicurezza Antincendio</div>
-            <div class="menu-item sotto-servizio" onclick="apriSubservizio('progettazione')">Progettazione e Soluzioni su misura</div>
-            <div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
-            <div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Centro Assistenza Riparazioni</div>
-            <div class="menu-item sotto-servizio" onclick="ripristinaMenuPrincipale()"
-     style="color: #6A0DAD; border-color: #6A0DAD;">
+                   12h2v-2H5v2z"></path>
+</svg>
+<p>Ruota il telefono in verticale per vedere il sito</p>
+</div>
+</div>
+<div id="sidebar">
+<div id="sidebar-content">
+<div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
+<img alt="Logo" id="sidebar-logo-img" src="logo.png"/>
+</div>
+<div class="menu-list">
+<div class="menu-item" onclick="apri(0)">Chi siamo</div>
+<div class="menu-item" onclick="toggleSubmenu()">I nostri servizi</div>
+<div class="menu-item" onclick="apri(1)">Portfolio</div>
+<div class="menu-item" onclick="apri(2)">Preventivi e Contatti</div>
+<!-- SOTTOMENU VISIBILE SOLO AL CLICK -->
+<div id="submenu-servizi" style="display:none; flex-direction: column; align-items: center; width: 100%;">
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('service')">Service</div>
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('antincendio')">Sicurezza Antincendio</div>
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('progettazione')">Progettazione e Soluzioni su misura</div>
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Centro Assistenza Riparazioni</div>
+<div class="menu-item sotto-servizio" onclick="ripristinaMenuPrincipale()" style="color: #6A0DAD; border-color: #6A0DAD;">
   Menu principale
 </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  
-    <div id="main">
-  <img src="logo.png" id="logo-btn" alt="Logo">
-
-  <!-- Watermark centrato in basso -->
-  <div id="watermark-logo">
-    <img src="logo.png" alt="Watermark Logo">
-  </div>
-
-  <!-- Layer fantasma per bloccare click al di sotto -->
-  <div id="modal-blocker"></div>
-
-  <div id="modal" class="modal">
-       <div id="modal-content"><h2>Caricamento...</h2></div>
-     </div>
-  </div>
-
-
+</div>
+</div>
+</div>
+</div>
+<div id="main">
+<img alt="Logo" id="logo-btn-img" src="logo.png"/>
+<!-- Watermark centrato in basso -->
+<div id="watermark-logo">
+<img alt="Watermark Logo" id="watermark-logo-img" src="logo.png"/>
+</div>
+<!-- Layer fantasma per bloccare click al di sotto -->
+<div id="modal-blocker"></div>
+<div class="modal" id="modal">
+<div id="modal-content"><h2>Caricamento...</h2></div>
+</div>
+</div>
 <div id="video-preload-container" style="display:none;"></div>
-
-  
-    <script>
+<script>
 
 /**
  * Ferma qualunque timeout o RAF pendente sul container `el`
@@ -2045,7 +2023,6 @@ document.querySelectorAll('.menu-item').forEach(el => {
 ">
   📲 Installa l'app
 </div>
-
 <style>
   #install-prompt.show {
     display: block;
@@ -2057,7 +2034,6 @@ document.querySelectorAll('.menu-item').forEach(el => {
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
   }
 </style>
-
 <script>
   // Registrazione Service Worker
   if ('serviceWorker' in navigator) {
@@ -2107,5 +2083,29 @@ document.querySelectorAll('.menu-item').forEach(el => {
     });
   }
 </script>
-</body>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img');
+            images.forEach(function(img) {
+                // Controlla se l'immagine è già nascosta o fa parte di elementi che non dovrebbero sparire (es. loghi persistenti)
+                // Per ora, applichiamo a tutte le immagini per semplicità, ma si potrebbe aggiungere una classe 'no-timeout' per escluderle.
+                if (img.id === 'sidebar-logo-img' || img.id === 'watermark-logo-img' || img.id === 'logo-btn-img') {
+                    // Non applicare il timeout a queste immagini specifiche
+                    console.log('Timeout non applicato a: ' + img.id);
+                } else {
+                    setTimeout(function() {
+                        img.style.transition = 'opacity 0.5s ease-out';
+                        img.style.opacity = '0';
+                        // Opzionalmente, dopo la transizione, impostare display: none per rimuoverla dal layout
+                        setTimeout(function() {
+                            if (img.style.opacity === '0') { // Controlla se è ancora nascosta
+                                img.style.display = 'none';
+                            }
+                        }, 500); // Deve corrispondere alla durata della transizione
+                        console.log('Immagine nascosta dopo 3 secondi: ' + (img.src || img.alt || 'immagine senza src/alt'));
+                    }, 3000);
+                }
+            });
+        });
+        </script></body>
 </html>
