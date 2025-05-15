@@ -1497,48 +1497,6 @@ async function caricaMediaSeparati(maxImg = 100, maxVid = 100) {
 }
 
 
-// La vecchia funzione caricaImmaginiValidi viene commentata o rimossa.
-/*
-async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
-  const estensioni = ['.jpg', '.png', '.webp', '.mp4'];
-  const tentativi = [];
-  const preloadContainer = document.getElementById('video-preload-container');
-
-  for (let i = 1; i <= max; i++) {
-    for (let ext of estensioni) {
-      const url = `${basePath}img${i}${ext}`;
-      if (ext === '.mp4') {
-        tentativi.push(new Promise(resolve => {
-          const video = document.createElement('video');
-          video.src = url;
-          video.preload = 'auto';
-          video.muted = true;
-          video.playsInline = true;
-          video.setAttribute('crossorigin', 'anonymous');
-          video.setAttribute('data-preload', url); // utile per identificazione
-          video.load();
-
-          // Iniettiamo in DOM invisibile per farlo caricare per davvero
-          preloadContainer.appendChild(video);
-
-          video.oncanplaythrough = () => resolve(url);
-          video.onerror = () => resolve(null);
-        }));
-      } else {
-        tentativi.push(new Promise(resolve => {
-          const img = new Image();
-          img.onload = () => resolve(url);
-          img.onerror = () => resolve(null);
-          img.src = url;
-        }));
-      }
-    }
-  }
-  
-  const risultati = await Promise.all(tentativi);
-  return risultati.filter(Boolean);
-}
-*/
 
 
 // === 2. Avvio dello slideshow ===
@@ -1641,117 +1599,111 @@ async function attivaSlideshow() {
   }
 
       // Definizione della funzione changeImage
-      function changeImage() {
-        if (!slideshowAttivo || !immagini || immagini.length === 0) {
-            console.warn("changeImage chiamata ma slideshow non attivo o media non disponibili.");
-            return;
+     function changeImage() {
+    if (!slideshowAttivo || !immagini || immagini.length === 0) {
+      console.warn("changeImage chiamata ma slideshow non attivo o media non disponibili.");
+      return;
+    }
+    const url = immagini[idx];
+    if (!url) {
+      console.error(`URL non valido all'indice ${idx} in changeImage.`);
+      idx = (idx + 1) % immagini.length;
+      if (slideshowAttivo) changeImage();
+      return;
+    }
+    const isVideo = url.endsWith(".mp4");
+    const oldEl = document.getElementById("logo-btn");
+    if (!oldEl) {
+      console.error("#logo-btn non trovato nel DOM");
+      return;
+    }
+    oldEl.style.opacity = "0";
+    setTimeout(() => {
+      if (!slideshowAttivo) return;
+      const cached = mediaCache[url];
+      let newEl;
+      if (isVideo) {
+        if (cached && cached.tagName === "VIDEO") {
+          newEl = cached.cloneNode(true);
+          newEl.id = "logo-btn";
+          newEl.autoplay = true;
+          newEl.loop = false;
+          newEl.controls = false;
+          Object.assign(newEl.style, {
+            objectFit: "cover",
+            width: "100vw",
+            height: "100vh",
+            position: "absolute",
+            top: "0",
+            left: "0",
+            opacity: "0",
+            transition: "opacity 0.5s ease"
+          });
+        } else {
+          console.warn(`Cache video mancante o non VIDEO per ${url}`);
+          idx = (idx + 1) % immagini.length;
+          if (slideshowAttivo) changeImage();
+          return;
         }
-
-        const url = immagini[idx];
-        if (!url) {
-            console.error(`URL non valido all'indice ${idx} in changeImage.`);
-            idx = (idx + 1) % immagini.length;
-            if (slideshowAttivo) {
-                 changeImage();
-            }
-            return;
+      } else {
+        if (cached && cached.tagName === "IMG") {
+          newEl = cached.cloneNode(false);
+          newEl.id = "logo-btn";
+          Object.assign(newEl.style, {
+            objectFit: "contain",
+            maxWidth: "100vw",
+            maxHeight: "100vh",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            opacity: "0",
+            transition: "opacity 0.5s ease"
+          });
+        } else {
+          console.warn(`Cache immagine mancante o non IMG per ${url}`);
+          idx = (idx + 1) % immagini.length;
+          if (slideshowAttivo) changeImage();
+          return;
         }
-
-        const isVideo = url.endsWith(".mp4");
-        const currentLogoBtn = document.getElementById("logo-btn");
-
-        if (!currentLogoBtn) {
-            console.error("#logo-btn non trovato nel DOM. Impossibile cambiare media.");
-            return;
-        }
-        currentLogoBtn.style.opacity = "0";
-
-        setTimeout(() => {
-            if (!slideshowAttivo) return;
-
-            let newMediaElement;
-            const mediaFromCache = mediaCache[url];
-
-            if (!mediaFromCache) {
-                console.warn(`Media per URL ${url} non trovato in mediaCache. Salto al prossimo.`);
-                idx = (idx + 1) % immagini.length;
-                if (slideshowAttivo) {
-                    changeImage();
-                }
-                return;
-            }
-
-            if (isVideo) {
-  if (mediaFromCache.tagName === "VIDEO") {
-    newMediaElement = mediaFromCache.cloneNode(true);
-    newMediaElement.id = "logo-btn";
-    newMediaElement.controls = false;
-    newMediaElement.autoplay = true;
-    newMediaElement.loop = false;
-
-    Object.assign(newMediaElement.style, {
-      objectFit: "cover",
-      width: "100vw",
-      height: "100vh",
-      position: "absolute",
-      top: "0",
-      left: "0",
-      transform: "none",
-      zIndex: "1",
-      opacity: "0",
-      transition: "opacity 1s ease-in-out"
-    });
-  } else {
-    console.warn(`Elemento in cache per video URL ${url} non è un TAG VIDEO. Salto.`);
-    idx = (idx + 1) % immagini.length;
-    if (slideshowAttivo) changeImage();
-    return;
-  }
-} else {  // È un’immagine
-  if (mediaFromCache.tagName === "IMG") {
-    newMediaElement = mediaFromCache.cloneNode(false);
-    newMediaElement.id = "logo-btn";
-    newMediaElement.classList.add("loaded-img");
-
-    Object.assign(newMediaElement.style, {
-      width: "auto",
-      height: "auto",
-      maxWidth: "100vw",
-      maxHeight: "100vh",
-      objectFit: "contain",
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      zIndex: "1",
-      opacity: "0",
-      transition: "opacity 1s ease-in-out"
-    });
-  } else {
-    console.warn(`Elemento in cache per immagine URL ${url} non è un TAG IMG. Salto.`);
-    idx = (idx + 1) % immagini.length;
-    if (slideshowAttivo) changeImage();
-    return;
-  }
-} 
-
-        
-            if (newMediaElement) {
-                newMediaElement.addEventListener("click", ripristinaMenuPrincipale);
-                currentLogoBtn.replaceWith(newMediaElement);
-
-                setTimeout(() => {
-                    if (slideshowAttivo && newMediaElement.isConnected) {
-                       newMediaElement.style.opacity = "1";
-                    }
-                }, 20);
-            } else {
-                console.warn("newMediaElement non è stato creato per URL:", url);
-            }
-        }, 300);
-
-        idx = (idx + 1) % immagini.length;
       }
+      // inserimento e fade-in
+      newEl.addEventListener("click", ripristinaMenuPrincipale);
+      oldEl.replaceWith(newEl);
+      requestAnimationFrame(() => { newEl.style.opacity = "1"; });
+      // schedulo il prossimo cambio SOLO DOPO il fade-in
+      pianificaProssimo();
+    }, 300);
+    idx = (idx + 1) % immagini.length;
+  }
+
+  // 2) Definisco pianificaProssimo
+  function pianificaProssimo() {
+    if (!slideshowAttivo || immagini.length === 0) return;
+    if (slideshowInterval) {
+      clearTimeout(slideshowInterval);
+      slideshowInterval = null;
+    }
+    const lastIdx = (idx === 0 ? immagini.length - 1 : idx - 1);
+    const url = immagini[lastIdx];
+    const el  = document.getElementById("logo-btn");
+    if (!url || !el) return;
+    const isVid = url.endsWith(".mp4");
+    if (isVid && el.tagName === "VIDEO") {
+      el.onended = () => changeImage();
+      el.onerror = () => changeImage();
+      el.play().catch(() => changeImage());
+    } else {
+      slideshowInterval = setTimeout(() => {
+        changeImage();
+        pianificaProssimo();
+      }, 3000);
+    }
+  }
+
+  // 3) Avvio lo slideshow
+  changeImage();
+}
       // Fine Definizione della funzione changeImage      // Definizione della funzione pianificaProssimo
     
 // … subito dopo la chiusura di changeImage(), incolla questo:
@@ -1820,7 +1772,7 @@ function pianificaProssimo() {
 
 // E all’avvio dello slideshow (dopo aver definito changeImage e pianificaProssimo):
 changeImage();
-pianificaProssimo();
+
 
 }
 
