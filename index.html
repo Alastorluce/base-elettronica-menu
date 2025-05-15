@@ -796,7 +796,7 @@ video#logo-btn {
     <script>
 
 /**
- * Ferma qualunque timeout o RAF pendente sul container `el`
+ * Ferma qualunque timeout o RAF pendente sul container el
  */
 function clearAutoScroll(el) {
   if (el._scrollTimeout) {
@@ -920,7 +920,7 @@ function showModalWithScroll() {
 
 
       const contenuti = [
-        `<!-- Chi siamo -->
+        <!-- Chi siamo -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Chi siamo</h2>                    
   <h2 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h2>
@@ -936,9 +936,9 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 <p>Collaboriamo con enti pubblici, aziende private, studi di architettura, service per lo spettacolo e broadcaster televisivi, adattando ogni progetto alle esigenze specifiche del cliente con <strong>soluzioni su misura, scalabili e ad alta efficienza</strong>.</p>
 
 <p>Lavoriamo con attrezzature all’avanguardia e standard qualitativi elevati, ponendoci come partner di riferimento per eventi live, showroom, installazioni fisse, studi televisivi, ambienti immersivi e produzioni ad alto impatto tecnologico.</p>
-`,
+,
   
-        `<!-- Portfolio -->
+        <!-- Portfolio -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Portfolio</h2>
 </div>
@@ -961,9 +961,9 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   Avvia
 </span></em>&nbsp;una piccola anteprima nella showroom interattiva.</p>
 
-`,
+,
   
-        `<!-- Contattaci -->
+        <!-- Contattaci -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Contattaci</h2>
 </div>
@@ -994,12 +994,12 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
 <p style="margin-top:1em;">
   Preferisci scriverci direttamente? Puoi contattarci via email all’indirizzo: <a href="mailto:info@baseelettronica.it" style="color:#00ffb3;">info@baseelettronica.it</a>
 </p>
-`
+
       ];
   
   
 
-    const contenutoHome = `
+    const contenutoHome = 
   <div style="text-align: center; max-width: 700px; margin: 50px auto;">
     <h2 style="margin-bottom: 10px; color: white;">Benvenuti in</h2>
     <h1 style="color: #00aaff; font-size: 2.5em; margin-top: 0;">Base Elettronica Service</h1>
@@ -1009,7 +1009,7 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
       Scopri di più esplorando il nostro sito!
     </p>
   </div>
-`;
+;
 
 let onMain = true;
 let modal = document.getElementById('modal');
@@ -1203,7 +1203,7 @@ function apriSubservizio(tipo) {
   switch (tipo) {
     case 'service':
      
-  contenuto = `
+  contenuto = 
 
   <div style="text-align:center;">
     <h2 class="radar-glow">Service Tecnico per Eventi e Spettacoli</h2>
@@ -1225,11 +1225,11 @@ function apriSubservizio(tipo) {
 
 <p>Tutti i tecnici coinvolti sono formati secondo i moduli PES-PAV-PEI, piattaforme aeree (PLE), antincendio rischio elevato e movimentazione carichi in sicurezza, con copertura assicurativa completa.</p>
 
-<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>`;
+<p>Grazie a un parco attrezzature costantemente aggiornato, una logistica precisa e una mentalità orientata al risultato, ci poniamo come unico interlocutore tecnico per eventi, concerti, festival, congressi, produzioni televisive e corporate.</p>;
   break;
 
       case 'antincendio':
-  contenuto = `
+  contenuto = 
    
 
   <div style="text-align:center;">
@@ -1246,11 +1246,11 @@ function apriSubservizio(tipo) {
       <li><strong>Monitoraggio remoto</strong> e manutenzione predittiva su infrastrutture industriali, civili e per eventi temporanei.</li>
     </ul>
     <p>Ogni progetto viene sviluppato in sinergia con i nostri ingegneri e tecnici certificati, per garantire la massima copertura del rischio e la piena conformità alle normative nazionali ed europee.</p>
-  `;
+  ;
   break;
 
   case 'progettazione':
-  contenuto = `
+  contenuto = 
     
 
   <div style="text-align:center;">
@@ -1267,11 +1267,11 @@ function apriSubservizio(tipo) {
     </ul>
 
     <p>Ogni progetto è accompagnato da <strong style="color:#00a6ff;">documentazione tecnica dettagliata</strong>, planimetrie esecutive e consulenza dedicata nella fase di cantiere. Il nostro approccio modulare ci consente di soddisfare le esigenze sia di piccoli eventi privati sia di grandi produzioni professionali, garantendo risultati impeccabili e piena coerenza normativa.</p>
-  `;
+  ;
   break;
 
   case 'noleggio':
-  contenuto = `
+  contenuto = 
     
 
   <div style="text-align:center;">
@@ -1296,11 +1296,11 @@ function apriSubservizio(tipo) {
     <p>È possibile stipulare contratti di <strong>noleggio giornaliero, settimanale, mensile o a lungo termine</strong>, con servizio opzionale di consegna, installazione, supervisione tecnica e smontaggio.</p>
 
     <p>Ogni richiesta viene gestita con analisi tecnica preliminare, scheda materiali dettagliata e supporto nella scelta della configurazione più efficiente rispetto all’ambiente operativo e al tipo di evento.</p>
-  `;
+  ;
   break;
 
   case 'assistenza':
-  contenuto = `
+  contenuto = 
     
 
   <div style="text-align:center;">
@@ -1330,7 +1330,7 @@ function apriSubservizio(tipo) {
     </ul>
 
     <p>Il nostro team è abilitato a operare su installazioni fisse, strutture mobili e rental, con servizio di <strong>supporto tecnico pre e post-evento</strong>, documentazione CE e certificazione di conformità post-intervento.</p>
-  `;
+  ;
   break;
 
   }
@@ -1408,19 +1408,19 @@ async function caricaMediaSeparati(maxImg = 100, maxVid = 100) {
   }
 
   // Carica Immagini
-  console.log(`Inizio caricamento immagini da ${basePathImg} (max ${maxImg})`);
+  console.log(Inizio caricamento immagini da ${basePathImg} (max ${maxImg}));
   for (let i = 1; i <= maxImg; i++) {
     for (const ext of estensioniImg) {
-      const url = `${basePathImg}img${i}${ext}`;
+      const url = ${basePathImg}img${i}${ext};
       promises.push(new Promise(resolve => {
         const img = new Image();
         img.onload = () => {
           imageUrls.push(url);
-          console.log(`Immagine caricata: ${url}`);
+          console.log(Immagine caricata: ${url});
           resolve();
         };
         img.onerror = () => {
-          // console.warn(`Errore caricamento immagine (non trovata o altro): ${url}`);
+          // console.warn(Errore caricamento immagine (non trovata o altro): ${url});
           resolve(); 
         };
         img.src = url;
@@ -1429,9 +1429,9 @@ async function caricaMediaSeparati(maxImg = 100, maxVid = 100) {
   }
 
   // Carica Video
-  console.log(`Inizio caricamento video da ${basePathVid} (max ${maxVid})`);
+  console.log(Inizio caricamento video da ${basePathVid} (max ${maxVid}));
   for (let i = 1; i <= maxVid; i++) {
-    const url = `${basePathVid}vd${i}.mp4`;
+    const url = ${basePathVid}vd${i}.mp4;
     promises.push(new Promise(resolve => {
       const videoElement = document.createElement('video');
       videoElement.src = url;
@@ -1445,7 +1445,7 @@ async function caricaMediaSeparati(maxImg = 100, maxVid = 100) {
 
       const onCanPlay = () => {
         videoUrls.push(url);
-        console.log(`Video precaricato e pronto (oncanplaythrough): ${url}`);
+        console.log(Video precaricato e pronto (oncanplaythrough): ${url});
         // L'elemento video rimane nel preloadContainer. Sarà recuperato da lì
         // quando si popola mediaCache in attivaSlideshow.
         resolve();
@@ -1453,7 +1453,7 @@ async function caricaMediaSeparati(maxImg = 100, maxVid = 100) {
       };
 
       const onError = (err) => {
-        // console.warn(`Errore durante il precaricamento del video ${url}:`, err);
+        // console.warn(Errore durante il precaricamento del video ${url}:, err);
         if (videoElement.parentNode === preloadContainer) {
              preloadContainer.removeChild(videoElement); // Rimuovi se errore e ancora figlio
         }
@@ -1506,7 +1506,7 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
 
   for (let i = 1; i <= max; i++) {
     for (let ext of estensioni) {
-      const url = `${basePath}img${i}${ext}`;
+      const url = ${basePath}img${i}${ext};
       if (ext === '.mp4') {
         tentativi.push(new Promise(resolve => {
           const video = document.createElement('video');
@@ -1544,7 +1544,7 @@ async function caricaImmaginiValidi(basePath = 'image_background/', max = 100) {
 // === 2. Avvio dello slideshow ===
 async function attivaSlideshow() {
   if (slideshowAttivo) return;
-  let slideshowInterval = null;
+  
 
   const sidebar   = document.getElementById('sidebar');
   const submenu   = document.getElementById('submenu-servizi');
@@ -1589,12 +1589,12 @@ async function attivaSlideshow() {
     if (url.endsWith('.mp4')) {
       // I video sono già stati creati e aggiunti a preloadContainer da caricaMediaSeparati.
       // Li recuperiamo da lì.
-      const preloadedVideoElement = preloadContainer.querySelector(`video[data-preload-src="${url}"]`);
+      const preloadedVideoElement = preloadContainer.querySelector(video[data-preload-src="${url}"]);
       if (preloadedVideoElement) {
         mediaCache[url] = preloadedVideoElement;
-        console.log(`Video ${url} trovato nel preloadContainer e aggiunto a mediaCache.`);
+        console.log(Video ${url} trovato nel preloadContainer e aggiunto a mediaCache.);
       } else {
-        console.error(`Video ${url} non trovato nel preloadContainer come previsto. Sarà saltato.`);
+        console.error(Video ${url} non trovato nel preloadContainer come previsto. Sarà saltato.);
         mediaCache[url] = null;
       }
       resolve();
@@ -1602,11 +1602,11 @@ async function attivaSlideshow() {
       const img = new Image();
       img.onload = () => {
         mediaCache[url] = img;
-        console.log(`Immagine ${url} caricata e aggiunta a mediaCache.`);
+        console.log(Immagine ${url} caricata e aggiunta a mediaCache.);
         resolve();
       };
       img.onerror = () => {
-        console.error(`Errore caricamento immagine ${url} per mediaCache. Sarà saltata.`);
+        console.error(Errore caricamento immagine ${url} per mediaCache. Sarà saltata.);
         mediaCache[url] = null;
         resolve();
       };
@@ -1614,6 +1614,9 @@ async function attivaSlideshow() {
     }
   }));
   
+
+
+
   await Promise.all(promisesForMediaCache);
   console.log("mediaCache popolata:", mediaCache);
 
@@ -1646,7 +1649,7 @@ async function attivaSlideshow() {
 
         const url = immagini[idx];
         if (!url) {
-            console.error(`URL non valido all'indice ${idx} in changeImage.`);
+            console.error(URL non valido all'indice ${idx} in changeImage.);
             idx = (idx + 1) % immagini.length;
             if (slideshowAttivo) {
                  changeImage();
@@ -1670,7 +1673,7 @@ async function attivaSlideshow() {
             const mediaFromCache = mediaCache[url];
 
             if (!mediaFromCache) {
-                console.warn(`Media per URL ${url} non trovato in mediaCache. Salto al prossimo.`);
+                console.warn(Media per URL ${url} non trovato in mediaCache. Salto al prossimo.);
                 idx = (idx + 1) % immagini.length;
                 if (slideshowAttivo) {
                     changeImage();
@@ -1679,57 +1682,60 @@ async function attivaSlideshow() {
             }
 
             if (isVideo) {
-                if (mediaFromCache.tagName === "VIDEO") {
-                    newMediaElement = mediaFromCache.cloneNode(true);
-                    newMediaElement.id = "logo-btn";
-                    newMediaElement.controls = false;
+  if (mediaFromCache.tagName === "VIDEO") {
+    newMediaElement = mediaFromCache.cloneNode(true);
+    newMediaElement.id = "logo-btn";
+    newMediaElement.controls = false;
+    newMediaElement.autoplay = true;
+    newMediaElement.loop = false;
 
-                    Object.assign(newMediaElement.style, {
-                        objectFit: "cover",
-                        width: "100vw",
-                        height: "100vh",
-                        position: "absolute",
-                        top: "0",
-                        left: "0",
-                        transform: "none",
-                        zIndex: "1",
-                        opacity: "0",
-                        transition: "opacity 1s ease-in-out"
-                    });
-                } else {
-                    console.warn(`Elemento in cache per video URL ${url} non è un TAG VIDEO. Salto.`);
-                    idx = (idx + 1) % immagini.length;
-                    if (slideshowAttivo) { changeImage(); }
-                    return;
-                }
-            } else { // È un'immagine
-                if (mediaFromCache.tagName === "IMG") {
-                    newMediaElement = mediaFromCache.cloneNode(false);
-                    newMediaElement.id = "logo-btn";
-                    newMediaElement.classList.add("loaded-img");
+    Object.assign(newMediaElement.style, {
+      objectFit: "cover",
+      width: "100vw",
+      height: "100vh",
+      position: "absolute",
+      top: "0",
+      left: "0",
+      transform: "none",
+      zIndex: "1",
+      opacity: "0",
+      transition: "opacity 1s ease-in-out"
+    });
+  } else {
+    console.warn(Elemento in cache per video URL ${url} non è un TAG VIDEO. Salto.);
+    idx = (idx + 1) % immagini.length;
+    if (slideshowAttivo) changeImage();
+    return;
+  }
+} else {  // È un’immagine
+  if (mediaFromCache.tagName === "IMG") {
+    newMediaElement = mediaFromCache.cloneNode(false);
+    newMediaElement.id = "logo-btn";
+    newMediaElement.classList.add("loaded-img");
 
-                    Object.assign(newMediaElement.style, {
-                        width: "auto",
-                        height: "auto",
-                        maxWidth: "100vw",
-                        maxHeight: "100vh",
-                        objectFit: "contain",
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        zIndex: "1",
-                        opacity: "0",
-                        transition: "opacity 1s ease-in-out"
-                    });
-                } else {
-                    console.warn(`Elemento in cache per immagine URL ${url} non è un TAG IMG. Salto.`);
-                    idx = (idx + 1) % immagini.length;
-                    if (slideshowAttivo) { changeImage(); }
-                    return;
-                }
-            }
+    Object.assign(newMediaElement.style, {
+      width: "auto",
+      height: "auto",
+      maxWidth: "100vw",
+      maxHeight: "100vh",
+      objectFit: "contain",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      zIndex: "1",
+      opacity: "0",
+      transition: "opacity 1s ease-in-out"
+    });
+  } else {
+    console.warn(Elemento in cache per immagine URL ${url} non è un TAG IMG. Salto.);
+    idx = (idx + 1) % immagini.length;
+    if (slideshowAttivo) changeImage();
+    return;
+  }
+} 
 
+        
             if (newMediaElement) {
                 newMediaElement.addEventListener("click", ripristinaMenuPrincipale);
                 currentLogoBtn.replaceWith(newMediaElement);
@@ -1747,83 +1753,75 @@ async function attivaSlideshow() {
         idx = (idx + 1) % immagini.length;
       }
       // Fine Definizione della funzione changeImage      // Definizione della funzione pianificaProssimo
-      function pianificaProssimo() {
-        if (!slideshowAttivo || !immagini || immagini.length === 0) {
-            console.warn("pianificaProssimo chiamata ma slideshow non attivo o media non disponibili.");
-            return;
-        }
+    
+// … subito dopo la chiusura di changeImage(), incolla questo:
 
-        // Determina l'URL del media *attualmente* visualizzato o che sta per essere visualizzato.
-        // idx è già stato incrementato da changeImage per il *prossimo* media.
-        // Quindi, per il media corrente, dobbiamo guardare all'indice precedente.
-        const currentMediaIdx = (idx === 0) ? immagini.length - 1 : idx - 1;
-        const url = immagini[currentMediaIdx];
+// Variabile di controllo per il timeout
 
-        if (!url) {
-            console.error(`URL non definito in pianificaProssimo per indice ${currentMediaIdx}. Avanzo al prossimo.`);
-            if (slideshowInterval) clearTimeout(slideshowInterval);
-            // Non chiamare changeImage() direttamente qui per evitare loop se l'array immagini è problematico.
-            // Affidati al normale ciclo di changeImage() che sarà chiamato dopo.
-            // idx è già stato avanzato da changeImage, quindi la prossima chiamata a changeImage userà l'indice corretto.
-            // Se c'è un problema persistente con gli URL, la logica di salto in changeImage dovrebbe gestirlo.
-            return; // Esci e lascia che il flusso normale riprenda se possibile.
-        }
 
-        const isVideo = url.endsWith(".mp4");
-        const mediaElementInDom = document.getElementById("logo-btn"); // Il media attualmente nel DOM
+function pianificaProssimo() {
+  // 1) Se lo slideshow è spento o non ci sono media, esco
+  if (!slideshowAttivo || !Array.isArray(immagini) || immagini.length === 0) {
+    console.warn("pianificaProssimo: slideshow non attivo o array 'immagini' vuoto");
+    return;
+  }
 
-        if (slideshowInterval) {
-            clearTimeout(slideshowInterval);
-            slideshowInterval = null;
-        }
+  // 2) Cancella eventuale timer precedente
+  if (slideshowInterval) {
+    clearTimeout(slideshowInterval);
+    slideshowInterval = null;
+  }
 
-        if (isVideo) {
-            if (mediaElementInDom && mediaElementInDom.tagName === "VIDEO" && mediaElementInDom.src.includes(url.substring(url.lastIndexOf('/') + 1))) {
-                console.log(`Video ${url} in visualizzazione. Attendo onended.`);
-                mediaElementInDom.onended = () => {
-                    if (!slideshowAttivo) return;
-                    console.log(`Video ${url} terminato (onended). Avanzo.`);
-                    changeImage();
-                    pianificaProssimo();
-                };
-                mediaElementInDom.onerror = (e) => {
-                    console.error(`Errore durante riproduzione video ${url} nel DOM:`, e);
-                    if (!slideshowAttivo) return;
-                    changeImage(); 
-                    pianificaProssimo();
-                };
-                // Assicurati che il video stia suonando (autoplay potrebbe fallire a volte)
-                if (mediaElementInDom.paused) {
-                    mediaElementInDom.play().then(() => {
-                        console.log(`Video ${url} (DOM) riavviato da pianificaProssimo.`);
-                    }).catch(err => {
-                        console.error(`Errore play() video ${url} (DOM) da pianificaProssimo:`, err);
-                        if (slideshowAttivo) {
-                            changeImage(); 
-                            pianificaProssimo();
-                        }
-                    });
-                }
-            } else {
-                 console.warn(`Video ${url} non corrisponde a #logo-btn nel DOM o non è un video. Salto.`);
-                 if (slideshowAttivo) {
-                    changeImage();
-                    pianificaProssimo();
-                 }
-            }
-        } else { // È unimmagine
-            // Non c'è bisogno di controllare mediaElementInDom per le immagini, il timer è sufficiente.
-            console.log(`Immagine ${url} in visualizzazione. Imposto timer di 3 secondi.`);
-            slideshowInterval = setTimeout(() => {
-                if (!slideshowAttivo) return;
-                console.log(`Timer immagine ${url} scaduto. Avanzo.`);
-                changeImage();
-                pianificaProssimo();
-            }, 3000); // 3 secondi per le immagini
-        }
-      }
-      // Fine Definizione della funzione pianificaProssimo      changeImage(); // La chiamata originale
-  pianificaProssimo();
+  // 3) Calcola l'indice del media che è appena stato mostrato
+  const currentIdx = (idx === 0) ? immagini.length - 1 : idx - 1;
+  const url        = immagini[currentIdx];
+  const mediaEl    = document.getElementById("logo-btn");
+
+  if (!url || !mediaEl) {
+    console.error("pianificaProssimo: url o elemento non valido", { url, mediaEl });
+    return;
+  }
+
+  const isVideo = url.endsWith(".mp4");
+
+  if (isVideo) {
+    // 4a) Se è un video, attacca onended / onerror e forzo play
+    if (mediaEl.tagName === "VIDEO") {
+      mediaEl.onended = () => {
+        if (!slideshowAttivo) return;
+        changeImage();
+        pianificaProssimo();
+      };
+      mediaEl.onerror = () => {
+        console.error(Errore riproduzione video ${url});
+        if (!slideshowAttivo) return;
+        changeImage();
+        pianificaProssimo();
+      };
+      mediaEl.play().catch(() => {
+        // se l’autoplay fallisce, vado comunque avanti
+        changeImage();
+        pianificaProssimo();
+      });
+    } else {
+      // non è un video: salto direttamente
+      changeImage();
+      pianificaProssimo();
+    }
+  } else {
+    // 4b) Se è un’immagine, aspetto 3 secondi prima di avanzare
+    slideshowInterval = setTimeout(() => {
+      if (!slideshowAttivo) return;
+      changeImage();
+      pianificaProssimo();
+    }, 3000);
+  }
+}
+
+// E all’avvio dello slideshow (dopo aver definito changeImage e pianificaProssimo):
+changeImage();
+pianificaProssimo();
+
 }
 
 
@@ -1960,11 +1958,11 @@ let welcomeTimeout = setTimeout(() => {
 document.addEventListener('submit', function(e) {
   if (e.target.matches('#contact-form')) {
     e.preventDefault();
-    modalContent.innerHTML = `
+    modalContent.innerHTML = 
       <div style="text-align:center; padding:1em;">
         <h2>Grazie di averci contattato!</h2>
         <p>Risponderemo entro 24 ore.</p>
-      </div>`;
+      </div>;
     modal.classList.remove('fade-out');
     modal.classList.add('show');
     setTimeout(() => {
@@ -2079,7 +2077,7 @@ document.querySelectorAll('.menu-item').forEach(el => {
   const installPromptElement = document.getElementById('install-prompt');
 
   window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('`beforeinstallprompt` event was fired.');
+    console.log('beforeinstallprompt event was fired.');
     // Previene la visualizzazione del mini-infobar di Chrome
     e.preventDefault();
     // Salva l'evento per poterlo attivare dopo
@@ -2101,7 +2099,7 @@ document.querySelectorAll('.menu-item').forEach(el => {
 
         // Aspetta la scelta dell'utente
         const { outcome } = await deferredPrompt.userChoice;
-        console.log(`User response to the install prompt: ${outcome}`);
+        console.log(User response to the install prompt: ${outcome});
 
         // Non possiamo più usare l'evento, quindi lo resettiamo
         deferredPrompt = null;
