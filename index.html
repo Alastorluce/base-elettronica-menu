@@ -1600,6 +1600,13 @@ async function attivaSlideshow() {
 
       // Definizione della funzione changeImage
       function changeImage() {
+
+        // 1) Pulisci ogni timer residuo
+  if (slideshowInterval) {
+    clearTimeout(slideshowInterval);
+    slideshowInterval = null;
+  }
+        
         if (!slideshowAttivo || !immagini || immagini.length === 0) {
             console.warn("changeImage chiamata ma slideshow non attivo o media non disponibili.");
             return;
