@@ -1760,69 +1760,47 @@ async function attivaSlideshow() {
 
 
 function pianificaProssimo() {
-  // 1) Se lo slideshow è spento o non ci sono media, esco
-  if (!slideshowAttivo || !Array.isArray(immagini) || immagini.length === 0) {
-    console.warn("pianificaProssimo: slideshow non attivo o array 'immagini' vuoto");
-    return;
-  }
+  if (!slideshowAttivo || !immagini.length) return;
 
-  // 2) Cancella eventuale timer precedente
-  if (slideshowInterval) {
-    clearTimeout(slideshowInterval);
-    slideshowInterval = null;
-  }
+  // 1) Pulisci eventuale timer precedente
+  clearTimeout(slideshowInterval);
+  slideshowInterval = null;
 
-  // 3) Calcola l'indice del media che è appena stato mostrato
-  const currentIdx = (idx === 0) ? immagini.length - 1 : idx - 1;
-  const url        = immagini[currentIdx];
-  const mediaEl    = document.getElementById("logo-btn");
+  // 2) Prendo l’elemento attuale
+  const mediaEl = document.getElementById("logo-btn");
+  if (!mediaEl) return;
 
-  if (!url || !mediaEl) {
-    console.error("pianificaProssimo: url o elemento non valido", { url, mediaEl });
-    return;
-  }
+  // 3) Se è un video, aspetto l’evento ended:
+  if (mediaEl.tagName === "VIDEO") {
+    // assicuriamoci che autoplay non sia bloccato
+    mediaEl.muted = true;
+    mediaEl.playsInline = true;
 
-  const isVideo = url.endsWith(".mp4");
-
-  if (isVideo) {
-    // 4a) Se è un video, attacca onended / onerror e forzo play
-    if (mediaEl.tagName === "VIDEO") {
-      mediaEl.onended = () => {
-        if (!slideshowAttivo) return;
-        changeImage();
-        pianificaProssimo();
-      };
-      mediaEl.onerror = () => {
-        console.error(`Errore riproduzione video ${url}`);
-        if (!slideshowAttivo) return;
-        changeImage();
-        pianificaProssimo();
-      };
-      mediaEl.play().catch(() => {
-        // se l’autoplay fallisce, vado comunque avanti
-        changeImage();
-        pianificaProssimo();
-      });
-    } else {
-      // non è un video: salto direttamente
+    mediaEl.onended = () => {
       changeImage();
       pianificaProssimo();
-    }
-  } else {
-    // 4b) Se è un’immagine, aspetto 3 secondi prima di avanzare
+    };
+    mediaEl.onerror = () => {
+      console.warn("Errore video, passo al prossimo");
+      changeImage();
+      pianificaProssimo();
+    };
+    // lancio la riproduzione (autoplay se possibile)
+    mediaEl.play().catch(() => {
+      // se fallisce l’autoplay, forzo comunque lo switch
+      changeImage();
+      pianificaProssimo();
+    });
+  }
+  // 4) Se è un’immagine, uso il timeout di 3 s
+  else {
     slideshowInterval = setTimeout(() => {
-      if (!slideshowAttivo) return;
       changeImage();
       pianificaProssimo();
     }, 3000);
   }
 }
 
-// E all’avvio dello slideshow (dopo aver definito changeImage e pianificaProssimo):
-changeImage();
-pianificaProssimo();
-
-}
 
 
 
