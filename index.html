@@ -1204,9 +1204,13 @@ video#logo-btn {
        BLOCCO: Contenitore galleria multimediale
        Appare solo quando si entra nella sezione showroom
        ============================ -->
+  <div id="modal-content">
+  ...
   <div id="gallery-view" style="display: none; width: 100%; height: 100%; overflow-y: auto;">
     <div class="gallery-container" id="gallery-container"></div>
   </div>
+</div>
+
 
   <!-- ============================
        BLOCCO: Vista fullscreen per media
@@ -1741,15 +1745,13 @@ function ripristinaMenuPrincipale() {
       currentIndex = null;
     }
 
-    // 🔹 Chiude la galleria
-galleryView.style.display = 'none';
+    // 🔹 Nasconde la galleria
+    galleryView.style.display = 'none';
 
-// 🔧 Se la galleria è stata spostata nella modale, riportala nel #main
-if (modalContent.contains(galleryView)) {
-  modalContent.removeChild(galleryView);
-  main.appendChild(galleryView);
-}
-
+    // 🔧 Se è stata spostata, reinserisce la galleria nel #main
+    if (!main.contains(galleryView)) {
+      main.appendChild(galleryView);
+    }
 
     // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
@@ -2100,7 +2102,12 @@ function apriShowroom(tipo) {
     });
 
     // Mostra la modale galleria
-    modalContent.innerHTML = ''; // svuota modale ma non tocca #gallery-view
+    modalContent.innerHTML = `
+  <div id="gallery-view" style="display: block; width: 100%; height: 100%; overflow-y: auto;">
+    <div class="gallery-container" id="gallery-container"></div>
+  </div>
+`;
+
     galleryView.style.display = 'block';
 
     document.getElementById('logo-btn').style.display = 'none';
