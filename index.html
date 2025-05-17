@@ -611,8 +611,12 @@
 
   
     <script>
+// ===============================================
+// === SCROLL AUTOMATICO PER CONTENUTI LUNGHI ====
+// ===============================================
+
 /**
- * Ferma qualunque timeout o RAF pendente sul container `el`
+ * 🔁 Ferma qualunque scroll automatico (RAF o timeout) su un elemento
  */
 function clearAutoScroll(el) {
   if (el._scrollTimeout) {
@@ -625,17 +629,22 @@ function clearAutoScroll(el) {
   }
 }
 
+/**
+ * 🔎 Verifica se un elemento è scrollabile verticalmente
+ */
 function isScrollable(el) {
   const cs = getComputedStyle(el);
   return (cs.overflowY === 'auto' || cs.overflowY === 'scroll')
          && el.scrollHeight > el.clientHeight;
 }
 
+/**
+ * 🧭 Imposta lo scroll automatico continuo con pausa e riavvio al click
+ */
 function setupAutoScroll(el, speed = 11, delay = 9000) {
-  // 0) Stoppa qualunque scroll in corso
-  clearAutoScroll(el);
+  clearAutoScroll(el); // 🔁 Reset
 
-  // 0.1) Se c'era già un listener, lo rimuoviamo
+  // Se già presente, rimuovi l'eventuale listener
   if (el._clickHandler) {
     el.removeEventListener('click', el._clickHandler);
     el._clickHandler = null;
@@ -665,12 +674,13 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
         return;
       }
     }
+
     el._scrollRaf = requestAnimationFrame(step);
   }
 
   function start() {
     if (active) return;
-    remainder = 0;   // resetta le frazioni accumulate
+    remainder = 0;
     last = null;
     active = true;
     el.classList.add('auto-scroll-hide');
@@ -679,27 +689,27 @@ function setupAutoScroll(el, speed = 11, delay = 9000) {
   }
 
   function stop() {
-  // Ferma qualunque start pendente o RAF in corso
-  clearAutoScroll(el);
-  // e marca lo stato come "non attivo"
-  active = false;
-  el.classList.remove('auto-scroll-hide');
-  el.classList.add('auto-scroll-show');
-}
+    clearAutoScroll(el);
+    active = false;
+    el.classList.remove('auto-scroll-hide');
+    el.classList.add('auto-scroll-show');
+  }
 
-
-  // 1) Prepara un unico clickHandler nominato
+  // Handler nominato per toggle (click)
   el._clickHandler = () => {
     active ? stop() : start();
   };
 
-  // 2) Solo al termine del delay: avvia lo scroll e collega il clickHandler
+  // Avvia lo scroll dopo un delay e collega il click handler
   el._scrollTimeout = setTimeout(() => {
     start();
     el.addEventListener('click', el._clickHandler);
   }, delay);
 }
 
+/**
+ * ✨ Applica lo scroll automatico a un contenitore se necessario
+ */
 function initScrollOn(root) {
   clearAutoScroll(root);
   root.scrollTop = 0;
@@ -713,6 +723,9 @@ function initScrollOn(root) {
   }
 }
 
+/**
+ * 🎯 Mostra la modale con scroll automatico attivo
+ */
 function showModalWithScroll() {
   [modal, modalContent].forEach(el => {
     clearAutoScroll(el);
@@ -735,32 +748,31 @@ function showModalWithScroll() {
 
 
 
-      const contenuti = [
-        `<!-- Chi siamo -->
+
+   // ===============================================
+// === CONTENUTI HTML PER MODALE (statici) =======
+// ===============================================
+
+const contenuti = [
+  // === 0: Chi siamo
+  `<!-- Chi siamo -->
 <div style="text-align:center;">
-  <h2 class="radar-glow">Chi siamo</h2>                    
+  <h2 class="radar-glow">Chi siamo</h2>
   <h2 style="color:#00a6ff; margin-top:0;">Base Elettronica Service</h2>
 </div>
-
 <p style="text-align:justify;">
 Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della tecnologia applicata agli eventi, agli ambienti professionali e agli impianti integrati.</p>
-
 <p>Operiamo su tutto il territorio nazionale offrendo servizi altamente specializzati nella <em>progettazione, installazione e gestione</em> di impianti <strong>audio, video, luci, sicurezza, automazione e antincendio</strong>, con un approccio multidisciplinare che integra know-how tecnico, creatività progettuale e rigore normativo.</p>
-
 <p>Il nostro team è composto da tecnici qualificati, progettisti certificati e operatori esperti, in grado di affrontare ogni fase operativa: dal sopralluogo iniziale alla consegna chiavi in mano, passando per modellazione acustica, rendering 3D, collaudi funzionali e formazione all'utilizzo delle tecnologie installate.</p>
-
 <p>Collaboriamo con enti pubblici, aziende private, studi di architettura, service per lo spettacolo e broadcaster televisivi, adattando ogni progetto alle esigenze specifiche del cliente con <strong>soluzioni su misura, scalabili e ad alta efficienza</strong>.</p>
+<p>Lavoriamo con attrezzature all'avanguardia e standard qualitativi elevati, ponendoci come partner di riferimento per eventi live, showroom, installazioni fisse, studi televisivi, ambienti immersivi e produzioni ad alto impatto tecnologico.</p>`,
 
-<p>Lavoriamo con attrezzature all'avanguardia e standard qualitativi elevati, ponendoci come partner di riferimento per eventi live, showroom, installazioni fisse, studi televisivi, ambienti immersivi e produzioni ad alto impatto tecnologico.</p>
-`,
-  
-        `<!-- Portfolio -->
+  // === 1: Portfolio
+  `<!-- Portfolio -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Portfolio</h2>
 </div>
-
 <p>Nel corso degli anni abbiamo contribuito alla realizzazione tecnica e progettuale di numerosi eventi, installazioni e ambienti professionali in tutta Italia. Il nostro portfolio riflette la varietà e l'elevato standard qualitativo dei servizi offerti.</p>
-
 <ul>
   <li><strong style="color:#00a6ff;">Festival Nazionali e Tour Musicali</strong>: service completo per eventi live, dalla fase di pre-produzione alla regia tecnica in loco, con artisti di fama nazionale e internazionale.</li>
   <li><strong style="color:#00a6ff;">Installazioni in teatri e auditorium</strong>: sistemi fissi audio/luci/video integrati per spettacoli, musical, conferenze e produzioni culturali, con controllo centralizzato e interfacce utente dedicate.</li>
@@ -768,25 +780,20 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
   <li><strong style="color:#00a6ff;">Supporto tecnico per fiere, sfilate e dirette streaming</strong>: copertura A/V integrata, cablaggi fibra, ponti radio e mixer broadcast, con assistenza tecnica continua.</li>
   <li><strong style="color:#00a6ff;">Realizzazione di studi televisivi</strong>: progettazione e allestimento completo di ambienti televisivi e regie broadcast, con sistemi di illuminazione a LED, fondali scenografici, cablaggi audio/video digitali, pareti acustiche e regia IP-ready per produzioni live e on demand.</li>
 </ul>
-
 <p><em><span role="button" onclick="apri(2)" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
   Contattaci
 </span></em>&nbsp;per ricevere un portfolio dettagliato con referenze certificate, fotografie dei lavori realizzati e descrizioni tecniche complete.</p>
-
 <p style="margin-top:1.5em;"><em><span role="button" onclick="attivaSlideshow()" style="color:#00ffb3; text-decoration:none;cursor:pointer;">
   Avvia
-</span></em>&nbsp;una piccola anteprima nella showroom interattiva.</p>
+</span></em>&nbsp;una piccola anteprima nella showroom interattiva.</p>`,
 
-`,
-  
-        `<!-- Contattaci -->
+  // === 2: Contattaci
+  `<!-- Contattaci -->
 <div style="text-align:center;">
   <h2 class="radar-glow">Contattaci</h2>
 </div>
-
 <p>Hai un progetto da realizzare, un evento da organizzare o necessiti di assistenza tecnica? Il nostro team è a tua disposizione per consulenze, preventivi gratuiti e sopralluoghi personalizzati.</p>
 <p>Compila il modulo sottostante per essere ricontattato dal nostro CEO <strong>Fabrizio Di Filippo</strong> o da un nostro tecnico incaricato.</p>
-
 <div style="backdrop-filter: blur(10px); background:rgba(0,0,0,0.5); padding:2em; border-radius:15px; border:1px solid rgba(0,166,255,0.2); box-shadow:0 0 5px rgba(0,166,255,0.3);">
   <form id="contact-form" style="display:flex; flex-direction:column; gap:1em;">
     <label>
@@ -805,11 +812,11 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
       Invia Richiesta
     </button>
   </form>
-</div>
-`
-      ];
+</div>`
+];
 
-    const contenutoHome = `
+// ✅ Messaggio di benvenuto iniziale
+const contenutoHome = `
   <div style="text-align: center; max-width: 700px; margin: 50px auto;">
     <h2 style="margin-bottom: 10px; color: white;">Benvenuti in</h2>
     <h1 style="color: #00aaff; font-size: 2.5em; margin-top: 0;">Base Elettronica Service</h1>
@@ -820,6 +827,10 @@ Siamo una realtà consolidata con oltre 30 anni di esperienza nel settore della 
     </p>
   </div>
 `;
+
+// ======================================================
+// === MODALE DINAMICA (apri sezioni tipo "Chi siamo") ==
+// ======================================================
 
 let onMain = true;
 let modal = document.getElementById('modal');
@@ -839,15 +850,16 @@ function apri(index) {
     clearTimeout(autoHide);
     autoHide = null;
   }
+
   if (blocker.style.display === 'block') {
     blocker.style.display = 'none';
   }
 
-  // Nascondi la galleria se visibile
   document.getElementById('gallery-view').style.display = 'none';
 
   const fineTransizione = () => { isTransitioning = false; };
 
+  // Chiude se ri-clicchi la stessa voce aperta
   if (currentIndex === index) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -861,6 +873,8 @@ function apri(index) {
   }
 
   currentIndex = index;
+
+  // Se modale già aperta, effettua transizione del contenuto
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
@@ -872,27 +886,28 @@ function apri(index) {
   } else {
     modalContent.innerHTML = contenuti[index];
     showModalWithScroll();
-    fineTransizione(); // <-- aggiunto per sicurezza
+    fineTransizione();
   }
 }
+
+// =====================================================
+// === TOGGLE dei SOTTOMENU (Servizi / Showroom) ======
+// =====================================================
 
 function toggleSubmenu(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
   onMain = false;
-  
+
   const logo = document.getElementById('sidebar-logo');
   const submenuServizi = document.getElementById('submenu-servizi');
   const submenuShowroom = document.getElementById('submenu-showroom');
   const menuItems = document.querySelectorAll('.menu-list > .menu-item');
-  
-  // Nascondi la galleria se visibile
-  document.getElementById('gallery-view').style.display = 'none';
 
+  document.getElementById('gallery-view').style.display = 'none';
   logo.style.opacity = '0';
 
   setTimeout(() => {
-    // Nascondi i principali
     menuItems.forEach(el => {
       if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
         el.style.display = 'none';
@@ -900,7 +915,6 @@ function toggleSubmenu(tipo) {
       }
     });
 
-    // Chiudi l'altro submenu se aperto
     if (tipo === 'servizi') {
       submenuShowroom.style.display = 'none';
       submenuServizi.style.display = 'flex';
@@ -911,22 +925,25 @@ function toggleSubmenu(tipo) {
       currentSubmenu = 'showroom';
     }
 
-    // Poi, DOPO un ciclo di rendering, aggiungi l'animazione
     setTimeout(() => {
       const activeSubmenu = tipo === 'servizi' ? submenuServizi : submenuShowroom;
       activeSubmenu.querySelectorAll('.menu-item').forEach((el, i) => {
-        el.classList.remove('animated'); // per sicurezza
-        el.style.animation = 'none';     // resetta animazione
-        void el.offsetWidth;             // forza reflow
-        el.style.animation = '';         // riattiva
+        el.classList.remove('animated');
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = '';
         el.classList.add('animated');
       });
-    }, 30); // sufficiente per far partire l'animazione pulita
+    }, 30);
 
     logo.style.opacity = '1';
     isTransitioning = false;
   }, 500);
 }
+
+// ============================================================
+// === RIPRISTINA MENU PRINCIPALE da qualunque sottosezione ===
+// ============================================================
 
 function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
@@ -941,36 +958,25 @@ function ripristinaMenuPrincipale() {
   const modal     = document.getElementById('modal');
   const galleryView = document.getElementById('gallery-view');
 
-  // SE SONO GIÀ SUL MAIN (submenu chiuso, nessuna modale, nessuno slideshow e nessuna galleria), esci
-  if (
-    submenuServizi.style.display === 'none' &&
-    submenuShowroom.style.display === 'none' &&
-    !modal.classList.contains('show') &&
-    !slideshowAttivo &&
-    galleryView.style.display === 'none'
-  ) {
-    return;
-  }
+  const submenuAperto = submenuServizi.style.display !== 'none' || submenuShowroom.style.display !== 'none';
+  const modaleAttiva = modal.classList.contains('show');
+  const galleriaAttiva = galleryView.style.display !== 'none';
+
+  if (!submenuAperto && !modaleAttiva && !slideshowAttivo && !galleriaAttiva) return;
 
   isTransitioning = true;
-
-  // 0) fade‐out del logo piccolo
   smallLogo.style.opacity = '0';
-  // 1) fade‐out del main
   main.style.opacity = '0';
 
   setTimeout(() => {
-    // A) ferma slideshow
-    if (slideshowInterval) {
-      clearInterval(slideshowInterval);
-      slideshowInterval = null;
-    }
+    if (slideshowInterval) clearInterval(slideshowInterval);
+    slideshowInterval = null;
     slideshowAttivo = false;
+
     watermark.style.display = 'none';
     document.body.style.overflow = '';
 
-    // B) chiudi modale se aperta
-    if (modal.classList.contains('show')) {
+    if (modaleAttiva) {
       modal.classList.remove('show');
       modal.classList.add('fade-out');
       setTimeout(() => {
@@ -981,29 +987,27 @@ function ripristinaMenuPrincipale() {
       }, 600);
     }
 
-    // C) nascondi galleria se aperta
     galleryView.style.display = 'none';
-
-    // D) ripristina sidebar e menu
     submenuServizi.style.display = 'none';
     submenuShowroom.style.display = 'none';
+
     document.querySelectorAll('.menu-list > .menu-item')
             .forEach(el => el.style.display = 'flex');
+
     sidebar.style.display = '';
 
-    // E) reset logo centrale
+    // Reset logo centrale
     centralLogo.classList.remove('loaded-img','loading','pulse');
     centralLogo.style.transition = 'none';
     centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
     centralLogo.style.opacity    = '0';
     centralLogo.style.visibility = 'hidden';
 
-    // preload e fade-in logo centrale
     const preload = new Image();
     preload.src = 'logo.png';
     preload.onload = () => {
       centralLogo.src = preload.src;
-      void centralLogo.offsetWidth; 
+      void centralLogo.offsetWidth;
       centralLogo.style.transition  = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
       centralLogo.style.visibility  = 'visible';
       centralLogo.style.opacity     = '1';
@@ -1011,17 +1015,13 @@ function ripristinaMenuPrincipale() {
       setTimeout(() => centralLogo.classList.add('pulse'), 600);
     };
 
-    // 3) fade-in di main e logo piccolo
-    main.style.opacity      = '1';
+    main.style.opacity = '1';
     smallLogo.style.opacity = '1';
 
-    // 4) fine transizione
-    setTimeout(() => {
-      isTransitioning = false;
-    }, 600);
-
+    setTimeout(() => { isTransitioning = false; }, 600);
   }, 500);
 }
+
 
 function apriSubservizio(tipo) {
   if (isTransitioning) return;
