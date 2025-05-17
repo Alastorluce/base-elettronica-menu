@@ -1583,13 +1583,13 @@ function toggleSubmenu(tipo) {
 
   logo.style.opacity = '0';
 
-  setTimeout(() => {
-    menuItems.forEach(el => {
-      if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
-        el.style.display = 'none';
-        el.classList.remove('animated');
-      }
-    });
+  menuItems.forEach(el => {
+  if (el.parentElement.id !== 'submenu-servizi' && el.parentElement.id !== 'submenu-showroom') {
+    el.style.display = 'none';
+    el.classList.remove('animated');
+  }
+});
+
 
     if (tipo === 'servizi') {
       submenuShowroom.style.display = 'none';
