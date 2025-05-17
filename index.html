@@ -1192,8 +1192,8 @@ video#logo-btn {
        ============================ -->
   <div id="modal" class="modal">
     <!-- Pulsante di chiusura in alto a destra -->
-    <button class="modal-close" onclick="apri(currentIndex)">×</button>
-    
+    <button class="modal-close" onclick="chiudiModale()">×</button>
+
     <!-- Contenuto dinamico interno -->
     <div id="modal-content">
       <h2>Caricamento...</h2>
@@ -1596,6 +1596,26 @@ function apri(index) {
   }
 }
 
+/**
+ * ============================
+ * BLOCCO: chiudiModale()
+ * Chiude la modale con animazione fade-out.
+ * Viene usata dal pulsante "×" e in tutti i casi in cui si vuole
+ * forzare la chiusura della modale senza caricare nuovi contenuti.
+ * ============================
+ */
+function chiudiModale() {
+  modal.classList.remove('show');         // Rimuove visibilità attiva
+  modal.classList.add('fade-out');        // Applica dissolvenza
+
+  setTimeout(() => {
+    modal.classList.remove('fade-out');   // Rimuove classe di transizione
+    modalContent.innerHTML = '';          // Pulisce il contenuto
+    currentIndex = null;                  // Reset della sezione attiva
+  }, 600); // Durata animazione coerente con CSS transition
+}
+
+
 
 /**
  * ============================
@@ -1742,6 +1762,7 @@ function ripristinaMenuPrincipale() {
     preload.src = 'logo.png';
     preload.onload = () => {
       centralLogo.src = preload.src;
+      centralLogo.style.display = 'block'; // 🔧 forza display visibile
       void centralLogo.offsetWidth;
 
       centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
@@ -1762,6 +1783,18 @@ function ripristinaMenuPrincipale() {
       isTransitioning = false;
     }, 600);
   }, 500);
+
+  // 🔄 Riassegna gli onclick per le voci principali dopo reset
+document.querySelectorAll('.menu-item').forEach((el, i) => {
+  const txt = el.textContent.trim();
+
+  if (txt === 'Chi siamo') el.onclick = () => apri(0);
+  else if (txt === 'Portfolio') el.onclick = () => apri(1);
+  else if (txt === 'Preventivi e Contatti') el.onclick = () => apri(2);
+  else if (txt === 'I nostri servizi') el.onclick = () => toggleSubmenu('servizi');
+  else if (txt === 'Showroom') el.onclick = () => toggleSubmenu('showroom');
+});
+
 }
 
 
