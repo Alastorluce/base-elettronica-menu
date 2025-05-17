@@ -1928,50 +1928,47 @@ function apriShowroom(tipo) {
     ? 'media/Service_e_Spettacolo/'
     : 'media/Sicurezza_Antincendio/';
 
+  // === Controlla esistenza file (HEAD asincrona) ===
   const checkFile = (url) => new Promise((resolve) => {
     const xhr = new XMLHttpRequest();
     xhr.open('HEAD', url, true);
-    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 400);
-    xhr.onerror = () => resolve(false);
+    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 400 ? url : null);
+    xhr.onerror = () => resolve(null);
     xhr.send();
   });
 
+  // === Costruisce la lista media con Promise.all veloce ===
   async function buildFileList() {
     const mediaFiles = [];
 
-    // Fallback immagini: prova jpg poi png
+    const imagePromises = [];
     for (let i = 1; i <= 100; i++) {
       const jpg = `${folderPath}img${i}.jpg`;
       const png = `${folderPath}img${i}.png`;
 
-      const hasJpg = await checkFile(jpg);
-      const hasPng = !hasJpg ? await checkFile(png) : false;
-
-      if (hasJpg || hasPng) {
-        mediaFiles.push({
-          type: 'image',
-          src: hasJpg ? jpg : png
-        });
-      }
+      // Ogni immagine ha due promesse: jpg e png
+      imagePromises.push(
+        Promise.all([checkFile(jpg), checkFile(png)]).then(([jpgExists, pngExists]) => {
+          if (jpgExists) return { type: 'image', src: jpg };
+          if (pngExists) return { type: 'image', src: png };
+          return null;
+        })
+      );
     }
 
-    // Video: solo .mp4
+    const videoPromises = [];
     for (let i = 1; i <= 100; i++) {
       const vid = `${folderPath}vd${i}.mp4`;
-
-      const exists = await checkFile(vid);
-      if (exists) {
-        mediaFiles.push({
-          type: 'video',
-          src: vid
-        });
-      }
+      videoPromises.push(
+        checkFile(vid).then((exists) => exists ? { type: 'video', src: vid } : null)
+      );
     }
 
-    return mediaFiles;
+    const results = await Promise.all([...imagePromises, ...videoPromises]);
+    return results.filter(Boolean); // rimuove null
   }
 
-  // Costruzione dinamica della galleria
+  // === Rendering dinamico della galleria ===
   buildFileList().then((mediaFiles) => {
     mediaFiles.forEach((file, index) => {
       const galleryItem = document.createElement('div');
@@ -1998,7 +1995,6 @@ function apriShowroom(tipo) {
 
         galleryItem.appendChild(video);
 
-        // Optional: play/stop on hover
         galleryItem.addEventListener('mouseenter', () => video.play());
         galleryItem.addEventListener('mouseleave', () => video.pause());
       }
@@ -2010,6 +2006,7 @@ function apriShowroom(tipo) {
       galleryContainer.appendChild(galleryItem);
     });
 
+    // Mostra la galleria
     modalContent.innerHTML = '';
     modalContent.appendChild(galleryView);
     galleryView.style.display = 'block';
@@ -2023,6 +2020,7 @@ function apriShowroom(tipo) {
     }, 600);
   });
 }
+
 
 
 
