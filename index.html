@@ -1564,6 +1564,7 @@ function apri(index) {
   }
 
   document.getElementById('gallery-view').style.display = 'none';
+  document.getElementById('sidebar-logo').style.opacity = '1';
 
   const fineTransizione = () => { isTransitioning = false; };
 
@@ -1824,6 +1825,8 @@ function apriSubservizio(tipo) {
 
   // 🔹 Nasconde logo centrale
   document.getElementById('logo-btn').style.display = 'none';
+  document.getElementById('sidebar-logo').style.opacity = '1';
+
 
   // 🔹 Contenuto dinamico da mostrare
   let contenuto = '';
