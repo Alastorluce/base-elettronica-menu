@@ -1192,8 +1192,8 @@ video#logo-btn {
        ============================ -->
   <div id="modal" class="modal">
     <!-- Pulsante di chiusura in alto a destra -->
-    <button class="modal-close" onclick="chiudiModale()">×</button>
-
+    <button class="modal-close" onclick="apri(currentIndex)">×</button>
+    
     <!-- Contenuto dinamico interno -->
     <div id="modal-content">
       <h2>Caricamento...</h2>
@@ -1245,22 +1245,11 @@ function checkVideo(url) {
   return new Promise((resolve) => {
     const video = document.createElement('video');
     video.preload = 'metadata';
+    video.oncanplaythrough = () => resolve(url);
+    video.onerror = () => resolve(null);
     video.src = url;
-
-    let timeout = setTimeout(() => resolve(null), 1500); // fail-safe
-
-    video.onloadeddata = () => {
-      clearTimeout(timeout);
-      resolve(url); // file esiste
-    };
-
-    video.onerror = () => {
-      clearTimeout(timeout);
-      resolve(null); // file non trovato
-    };
   });
 }
-
 
 
 // ============================
@@ -1564,7 +1553,6 @@ function apri(index) {
   }
 
   document.getElementById('gallery-view').style.display = 'none';
-  document.getElementById('sidebar-logo').style.opacity = '1';
 
   const fineTransizione = () => { isTransitioning = false; };
 
@@ -1597,26 +1585,6 @@ function apri(index) {
   }
 }
 
-/**
- * ============================
- * BLOCCO: chiudiModale()
- * Chiude la modale con animazione fade-out.
- * Viene usata dal pulsante "×" e in tutti i casi in cui si vuole
- * forzare la chiusura della modale senza caricare nuovi contenuti.
- * ============================
- */
-function chiudiModale() {
-  modal.classList.remove('show');         // Rimuove visibilità attiva
-  modal.classList.add('fade-out');        // Applica dissolvenza
-
-  setTimeout(() => {
-    modal.classList.remove('fade-out');   // Rimuove classe di transizione
-    modalContent.innerHTML = '';          // Pulisce il contenuto
-    currentIndex = null;                  // Reset della sezione attiva
-  }, 600); // Durata animazione coerente con CSS transition
-}
-
-
 
 /**
  * ============================
@@ -1636,6 +1604,8 @@ function toggleSubmenu(tipo) {
   const menuItems = document.querySelectorAll('.menu-list > .menu-item');
 
   document.getElementById('gallery-view').style.display = 'none';
+
+  logo.style.opacity = '0';
 
   setTimeout(() => {
     menuItems.forEach(el => {
@@ -1675,13 +1645,11 @@ function toggleSubmenu(tipo) {
 /**
  * ============================
  * BLOCCO: ripristinaMenuPrincipale()
- * Ripristina l’interfaccia iniziale: chiude modali, slideshow, sottomenu e galleria.
- * Riabilita logo centrale e voci di menu.
+ * Ripristina l’interfaccia iniziale: nasconde sottomenu, modale, galleria e ferma slideshow
  * ============================
  */
 function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
-  isTransitioning = true;
 
   const main = document.getElementById('main');
   const sidebar = document.getElementById('sidebar');
@@ -1693,7 +1661,6 @@ function ripristinaMenuPrincipale() {
   const modal = document.getElementById('modal');
   const galleryView = document.getElementById('gallery-view');
 
-  // 🔹 Se tutto è già chiuso, esce
   if (
     submenuServizi.style.display === 'none' &&
     submenuShowroom.style.display === 'none' &&
@@ -1701,16 +1668,15 @@ function ripristinaMenuPrincipale() {
     !slideshowAttivo &&
     galleryView.style.display === 'none'
   ) {
-    isTransitioning = false;
     return;
   }
 
-  // 🔹 Anima la scomparsa della UI
+  isTransitioning = true;
+
   smallLogo.style.opacity = '0';
   main.style.opacity = '0';
 
   setTimeout(() => {
-    // 🔹 Stop slideshow se attivo
     if (slideshowInterval) {
       clearInterval(slideshowInterval);
       slideshowInterval = null;
@@ -1720,40 +1686,28 @@ function ripristinaMenuPrincipale() {
     watermark.style.display = 'none';
     document.body.style.overflow = '';
 
-    // 🔹 Chiude modale se presente
     if (modal.classList.contains('show')) {
       modal.classList.remove('show');
       modal.classList.add('fade-out');
-
       setTimeout(() => {
-        modal.classList.remove('fade-out', 'show');
+        modal.classList.remove('fade-out');
         modalContent.innerHTML = '';
         currentIndex = null;
+        isTransitioning = false;
       }, 600);
-    } else {
-      // 🔹 Anche se la modale non è visibile, resetto logica
-      modalContent.innerHTML = '';
-      modal.classList.remove('show', 'fade-out');
-      currentIndex = null;
     }
 
-    // 🔹 Chiude la galleria
     galleryView.style.display = 'none';
 
-    // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
     submenuShowroom.style.display = 'none';
-
-    // 🔹 Riabilita il menu principale
     document.querySelectorAll('.menu-list > .menu-item')
             .forEach(el => el.style.display = 'flex');
-
     sidebar.style.display = '';
 
-    // 🔹 Reset logo centrale
     centralLogo.classList.remove('loaded-img','loading','pulse');
     centralLogo.style.transition = 'none';
-    centralLogo.style.transform = 'translate(-50%, -50%) scale(2.3)';
+    centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
     centralLogo.style.opacity = '0';
     centralLogo.style.visibility = 'hidden';
 
@@ -1762,39 +1716,57 @@ function ripristinaMenuPrincipale() {
     preload.onload = () => {
       centralLogo.src = preload.src;
       void centralLogo.offsetWidth;
-
       centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
       centralLogo.style.visibility = 'visible';
       centralLogo.style.opacity = '1';
-      centralLogo.style.transform = 'translate(-50%, -50%) scale(2.3)';
+      centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
 
-      document.getElementById('logo-btn').style.display = 'block';
+      // ============================
+  // RIABILITA IL LOGO CENTRALE
+  // ============================
+  document.getElementById('logo-btn').style.display = 'block';
 
       setTimeout(() => centralLogo.classList.add('pulse'), 600);
     };
 
-    // 🔹 Rianima l'interfaccia
     main.style.opacity = '1';
     smallLogo.style.opacity = '1';
 
     setTimeout(() => {
       isTransitioning = false;
     }, 600);
+
   }, 500);
-
-
-  // 🔄 Riassegna gli onclick per le voci principali dopo reset
-document.querySelectorAll('.menu-item').forEach((el, i) => {
-  const txt = el.textContent.trim();
-
-  if (txt === 'Chi siamo') el.onclick = () => apri(0);
-  else if (txt === 'Portfolio') el.onclick = () => apri(1);
-  else if (txt === 'Preventivi e Contatti') el.onclick = () => apri(2);
-  else if (txt === 'I nostri servizi') el.onclick = () => toggleSubmenu('servizi');
-  else if (txt === 'Showroom') el.onclick = () => toggleSubmenu('showroom');
-});
-
 }
+
+// ============================
+// BLOCCO: Inizializzazione evento DOM
+// Avvia effetti, listener, e comportamenti dinamici all’avvio del sito
+// ============================
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('sidebar').classList.add('animated');
+
+  document.querySelectorAll('.menu-item').forEach(el => {
+    const delay = (Math.random() * 3).toFixed(2) + 's';
+    const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
+    el.style.setProperty('--delay', delay);
+    el.style.setProperty('--duration', speed);
+  });
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('mousedown', () => item.classList.add('pressed'));
+    item.addEventListener('mouseup', () => item.classList.remove('pressed'));
+    item.addEventListener('mouseleave', () => item.classList.remove('pressed'));
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeFullscreen();
+  });
+
+  const logoBtn = document.getElementById('logo-btn');
+  logoBtn.style.cursor = 'pointer';
+  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
+});
 
 
 
@@ -1816,22 +1788,7 @@ function apriSubservizio(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  const modal = document.getElementById('modal');
-  const modalContent = document.getElementById('modal-content');
-  const galleryView = document.getElementById('gallery-view');
-
-  // 🔹 Nasconde eventuale galleria attiva
-  galleryView.style.display = 'none';
-
-  // 🔹 Mantiene visibile il logo centrale
-document.getElementById('logo-btn').style.display = 'block';
-document.getElementById('sidebar-logo').style.opacity = '1';
-
-
-
-  // 🔹 Contenuto dinamico da mostrare
   let contenuto = '';
-
 
   switch (tipo) {
 
@@ -1966,23 +1923,13 @@ document.getElementById('sidebar-logo').style.opacity = '1';
       break;
   }
 
-  // 🔹 Se modale è già aperta, applica fade-out, poi carica e riapre
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
+  // Il contenuto viene poi iniettato nella modale (blocco seguente dello script)
+  modalContent.innerHTML = contenuto;
+showModalWithScroll();
+isTransitioning = false;
 
-    setTimeout(() => {
-      modalContent.innerHTML = contenuto;
-      showModalWithScroll(); // effetto automatico + scroll se serve
-      isTransitioning = false;
-    }, 600);
-  } else {
-    // 🔹 Altrimenti mostra direttamente
-    modalContent.innerHTML = contenuto;
-    showModalWithScroll();
-    isTransitioning = false;
-  }
 }
+
 
 // ============================
 // BLOCCO: apriShowroom(tipo)
@@ -1992,38 +1939,42 @@ function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // Chiude eventuale modale attiva
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
   }
 
-  // Prepara contenitori
   const galleryView = document.getElementById('gallery-view');
   const galleryContainer = document.getElementById('gallery-container');
   galleryContainer.innerHTML = '';
 
-  // Percorso cartella
   const folderPath = tipo === 'service'
     ? 'media/Service_e_Spettacolo/'
     : 'media/Sicurezza_Antincendio/';
 
-  // ============================
-  // BLOCCO: Build dinamico lista media
-  // Usa Promise.all e verifica reale con Image/Video
-  // ============================
+  // === Controlla esistenza file (HEAD asincrona) ===
+  const checkFile = (url) => new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('HEAD', url, true);
+    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 400 ? url : null);
+    xhr.onerror = () => resolve(null);
+    xhr.send();
+  });
+
+  // === Costruisce la lista media con Promise.all veloce ===
   async function buildFileList() {
     const mediaFiles = [];
 
     const imagePromises = [];
     for (let i = 1; i <= 100; i++) {
+      const jpg = `${folderPath}img${i}.jpg`;
+      const png = `${folderPath}img${i}.png`;
+
+      // Ogni immagine ha due promesse: jpg e png
       imagePromises.push(
-        Promise.all([
-          checkImage(`${folderPath}img${i}.jpg`),
-          checkImage(`${folderPath}img${i}.png`)
-        ]).then(([jpgOk, pngOk]) => {
-          if (jpgOk) return { type: 'image', src: jpgOk };
-          if (pngOk) return { type: 'image', src: pngOk };
+        Promise.all([checkFile(jpg), checkFile(png)]).then(([jpgExists, pngExists]) => {
+          if (jpgExists) return { type: 'image', src: jpg };
+          if (pngExists) return { type: 'image', src: png };
           return null;
         })
       );
@@ -2031,22 +1982,17 @@ function apriShowroom(tipo) {
 
     const videoPromises = [];
     for (let i = 1; i <= 100; i++) {
+      const vid = `${folderPath}vd${i}.mp4`;
       videoPromises.push(
-        checkVideo(`${folderPath}vd${i}.mp4`).then((ok) => {
-          if (ok) return { type: 'video', src: ok };
-          return null;
-        })
+        checkFile(vid).then((exists) => exists ? { type: 'video', src: vid } : null)
       );
     }
 
     const results = await Promise.all([...imagePromises, ...videoPromises]);
-    console.log("🧪 MEDIA DETECTED:", results.filter(Boolean).map(f => f.src)); // ✅ LOG DIAGNOSTICO
-    return results.filter(Boolean);
+    return results.filter(Boolean); // rimuove null
   }
 
-  // ============================
-  // BLOCCO: Costruzione Galleria
-  // ============================
+  // === Rendering dinamico della galleria ===
   buildFileList().then((mediaFiles) => {
     mediaFiles.forEach((file, index) => {
       const galleryItem = document.createElement('div');
@@ -2058,7 +2004,9 @@ function apriShowroom(tipo) {
         img.src = file.src;
         img.alt = '';
         galleryItem.appendChild(img);
-      } else if (file.type === 'video') {
+      }
+
+      else if (file.type === 'video') {
         const video = document.createElement('video');
         video.src = file.src;
         video.muted = true;
@@ -2082,23 +2030,20 @@ function apriShowroom(tipo) {
       galleryContainer.appendChild(galleryItem);
     });
 
-    // Mostra la modale galleria
-    modalContent.innerHTML = ''; // svuota modale ma non tocca #gallery-view
+    // Mostra la galleria
+    modalContent.innerHTML = '';
+    modalContent.appendChild(galleryView);
     galleryView.style.display = 'block';
 
     document.getElementById('logo-btn').style.display = 'none';
     modal.classList.remove('fade-out');
     modal.classList.add('show');
 
-    // 🔧 Resetto currentIndex per non bloccare apri()
-    currentIndex = null;
-
     setTimeout(() => {
       isTransitioning = false;
     }, 600);
   });
 }
-
 
 
 
