@@ -1703,6 +1703,9 @@ function ripristinaMenuPrincipale() {
       setTimeout(() => {
         modal.classList.remove('fade-out');
         modalContent.innerHTML = '';
+        modal.classList.remove('show', 'fade-out'); // reset stato visivo
+        currentIndex = null;                        // reset logica modale
+        isTransitioning = false;                    // sblocca animazioni
         currentIndex = null;
         modal.classList.remove('show', 'fade-out');
         isTransitioning = false;
