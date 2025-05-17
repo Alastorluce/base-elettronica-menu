@@ -1847,20 +1847,6 @@ let welcomeTimeout = setTimeout(() => {
   window.addEventListener('orientationchange', checkOrientation);
 })();
 
-
-      function toggleSubmenu(tipo) {
-  const submenuServizi = document.getElementById('submenu-servizi');
-  const submenuShowroom = document.getElementById('submenu-showroom');
-
-  if (tipo === 'servizi') {
-    submenuShowroom.style.display = 'none';
-    submenuServizi.style.display = (submenuServizi.style.display === 'flex') ? 'none' : 'flex';
-  } else if (tipo === 'showroom') {
-    submenuServizi.style.display = 'none';
-    submenuShowroom.style.display = (submenuShowroom.style.display === 'flex') ? 'none' : 'flex';
-  }
-}
-
     </script>
 </body>
 </html>
