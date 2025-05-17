@@ -1672,12 +1672,14 @@ function toggleSubmenu(tipo) {
   }, 500);
 }
 
-
 /**
  * ============================
  * BLOCCO: ripristinaMenuPrincipale()
- * Ripristina l’interfaccia iniziale: chiude modali, slideshow, sottomenu e galleria.
- * Riabilita logo centrale e voci di menu.
+ * Ripristina lo stato iniziale dell'interfaccia:
+ * - Chiude modali, slideshow e galleria showroom
+ * - Nasconde i sottomenu
+ * - Riabilita il menu principale e il logo centrale
+ * - Reintegra eventuali elementi spostati nel DOM (es. galleria)
  * ============================
  */
 function ripristinaMenuPrincipale() {
@@ -1692,9 +1694,10 @@ function ripristinaMenuPrincipale() {
   const smallLogo = document.getElementById('sidebar-logo');
   const centralLogo = document.getElementById('logo-btn');
   const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modal-content');
   const galleryView = document.getElementById('gallery-view');
 
-  // 🔹 Se tutto è già chiuso, esce
+  // 🔹 Se tutto è già chiuso, non fa nulla
   if (
     submenuServizi.style.display === 'none' &&
     submenuShowroom.style.display === 'none' &&
@@ -1716,53 +1719,60 @@ function ripristinaMenuPrincipale() {
       clearInterval(slideshowInterval);
       slideshowInterval = null;
     }
-
     slideshowAttivo = false;
+
+    // 🔹 Chiude watermark e ripristina scroll
     watermark.style.display = 'none';
     document.body.style.overflow = '';
 
-    // 🔹 Chiude modale se presente
+    // 🔹 Chiude modale se visibile
     if (modal.classList.contains('show')) {
       modal.classList.remove('show');
       modal.classList.add('fade-out');
-
       setTimeout(() => {
         modal.classList.remove('fade-out', 'show');
         modalContent.innerHTML = '';
         currentIndex = null;
       }, 600);
     } else {
-      // 🔹 Anche se la modale non è visibile, resetto logica
+      // 🔹 Pulisce comunque la modale
       modalContent.innerHTML = '';
       modal.classList.remove('show', 'fade-out');
       currentIndex = null;
     }
 
-    // 🔹 Chiude la galleria
+    // 🔹 Nasconde la galleria
     galleryView.style.display = 'none';
+
+    // 🔧 Se è stata spostata, reinserisce la galleria nel #main
+    if (!main.contains(galleryView)) {
+      main.appendChild(galleryView);
+    }
 
     // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
     submenuShowroom.style.display = 'none';
 
-    // 🔹 Riabilita il menu principale
-    document.querySelectorAll('.menu-list > .menu-item')
-            .forEach(el => el.style.display = 'flex');
+    // 🔹 Riabilita voci del menu principale
+    document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+      el.style.display = 'flex';
+    });
 
     sidebar.style.display = '';
 
-    // 🔹 Reset logo centrale
-    centralLogo.classList.remove('loaded-img','loading','pulse');
+    // 🔹 Reset del logo centrale
+    centralLogo.classList.remove('loaded-img', 'loading', 'pulse');
     centralLogo.style.transition = 'none';
     centralLogo.style.transform = 'translate(-50%, -50%) scale(2.3)';
     centralLogo.style.opacity = '0';
     centralLogo.style.visibility = 'hidden';
 
+    // 🔄 Precarica logo e riapplica effetto
     const preload = new Image();
     preload.src = 'logo.png';
     preload.onload = () => {
       centralLogo.src = preload.src;
-      centralLogo.style.display = 'block'; // 🔧 forza display visibile
+      centralLogo.style.display = 'block'; // forzato
       void centralLogo.offsetWidth;
 
       centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
@@ -1772,19 +1782,16 @@ function ripristinaMenuPrincipale() {
 
       document.getElementById('logo-btn').style.display = 'block';
 
-      setTimeout(() => centralLogo.classList.add('pulse'), 600);
+      setTimeout(() => {
+        centralLogo.classList.add('pulse');
+      }, 600);
     };
 
-    // 🔹 Rianima l'interfaccia
+    // 🔹 Rianima UI
     main.style.opacity = '1';
     smallLogo.style.opacity = '1';
 
-    setTimeout(() => {
-      isTransitioning = false;
-    }, 600);
-  }, 500);
-
-  // 🔄 Riassegna gli onclick per le voci principali dopo reset
+      // 🔄 Riassegna gli onclick per le voci principali dopo reset
 document.querySelectorAll('.menu-item').forEach((el, i) => {
   const txt = el.textContent.trim();
 
@@ -1795,7 +1802,17 @@ document.querySelectorAll('.menu-item').forEach((el, i) => {
   else if (txt === 'Showroom') el.onclick = () => toggleSubmenu('showroom');
 });
 
+
+    // 🔚 Fine transizione
+    setTimeout(() => {
+      isTransitioning = false;
+    }, 600);
+  }, 500);
 }
+
+
+
+
 
 
 
@@ -2081,8 +2098,7 @@ function apriShowroom(tipo) {
     });
 
     // Mostra la modale galleria
-    modalContent.innerHTML = '';
-    modalContent.appendChild(galleryView);
+    modalContent.innerHTML = ''; // svuota modale ma non tocca #gallery-view
     galleryView.style.display = 'block';
 
     document.getElementById('logo-btn').style.display = 'none';
