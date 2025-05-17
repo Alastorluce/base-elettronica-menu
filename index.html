@@ -1928,7 +1928,6 @@ function apriShowroom(tipo) {
     ? 'media/Service_e_Spettacolo/'
     : 'media/Sicurezza_Antincendio/';
 
-  // === Funzione helper asincrona per controllare se un file esiste ===
   const checkFile = (url) => new Promise((resolve) => {
     const xhr = new XMLHttpRequest();
     xhr.open('HEAD', url, true);
@@ -1937,11 +1936,10 @@ function apriShowroom(tipo) {
     xhr.send();
   });
 
-  // === Funzione che costruisce la lista di media dinamicamente ===
   async function buildFileList() {
     const mediaFiles = [];
 
-    // === Loop immagini (fino a 100 con fallback jpg/png) ===
+    // Fallback immagini: prova jpg poi png
     for (let i = 1; i <= 100; i++) {
       const jpg = `${folderPath}img${i}.jpg`;
       const png = `${folderPath}img${i}.png`;
@@ -1952,23 +1950,20 @@ function apriShowroom(tipo) {
       if (hasJpg || hasPng) {
         mediaFiles.push({
           type: 'image',
-          src: hasJpg ? jpg : png,
-          thumbnail: hasJpg ? jpg : png
+          src: hasJpg ? jpg : png
         });
       }
     }
 
-    // === Loop video (.mp4 fisso, thumbnail .jpg) ===
+    // Video: solo .mp4
     for (let i = 1; i <= 100; i++) {
       const vid = `${folderPath}vd${i}.mp4`;
-      const thumb = `${folderPath}vd${i}.jpg`;
 
       const exists = await checkFile(vid);
       if (exists) {
         mediaFiles.push({
           type: 'video',
-          src: vid,
-          thumbnail: thumb
+          src: vid
         });
       }
     }
@@ -1976,7 +1971,7 @@ function apriShowroom(tipo) {
     return mediaFiles;
   }
 
-  // === Genera la galleria dinamica ===
+  // Costruzione dinamica della galleria
   buildFileList().then((mediaFiles) => {
     mediaFiles.forEach((file, index) => {
       const galleryItem = document.createElement('div');
@@ -1985,38 +1980,27 @@ function apriShowroom(tipo) {
 
       if (file.type === 'image') {
         const img = document.createElement('img');
-        img.src = file.thumbnail;
+        img.src = file.src;
         img.alt = '';
         galleryItem.appendChild(img);
-      } else if (file.type === 'video') {
+      }
+
+      else if (file.type === 'video') {
         const video = document.createElement('video');
         video.src = file.src;
         video.muted = true;
         video.loop = true;
         video.autoplay = false;
         video.preload = 'metadata';
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
 
-        const indicator = document.createElement('div');
-        indicator.className = 'video-indicator';
-        indicator.textContent = 'VIDEO';
-        galleryItem.appendChild(indicator);
+        galleryItem.appendChild(video);
 
-        const img = document.createElement('img');
-        img.src = file.thumbnail;
-        img.alt = '';
-        galleryItem.appendChild(img);
-
-        galleryItem.addEventListener('mouseenter', () => {
-          img.style.display = 'none';
-          galleryItem.appendChild(video);
-          video.play();
-        });
-
-        galleryItem.addEventListener('mouseleave', () => {
-          video.pause();
-          galleryItem.removeChild(video);
-          img.style.display = 'block';
-        });
+        // Optional: play/stop on hover
+        galleryItem.addEventListener('mouseenter', () => video.play());
+        galleryItem.addEventListener('mouseleave', () => video.pause());
       }
 
       galleryItem.addEventListener('click', () => {
@@ -2026,7 +2010,6 @@ function apriShowroom(tipo) {
       galleryContainer.appendChild(galleryItem);
     });
 
-    // === Mostra modale galleria ===
     modalContent.innerHTML = '';
     modalContent.appendChild(galleryView);
     galleryView.style.display = 'block';
@@ -2040,6 +2023,7 @@ function apriShowroom(tipo) {
     }, 600);
   });
 }
+
 
 
 // ============================
