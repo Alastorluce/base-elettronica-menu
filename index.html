@@ -2016,7 +2016,7 @@ function apriShowroom(tipo) {
     const mediaFiles = [];
 
     const imagePromises = [];
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= 100; i++) {
       imagePromises.push(
         Promise.all([
           checkImage(`${folderPath}img${i}.jpg`),
@@ -2030,7 +2030,7 @@ function apriShowroom(tipo) {
     }
 
     const videoPromises = [];
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 100; i++) {
       videoPromises.push(
         checkVideo(`${folderPath}vd${i}.mp4`).then((ok) => {
           if (ok) return { type: 'video', src: ok };
@@ -2082,27 +2082,20 @@ function apriShowroom(tipo) {
       galleryContainer.appendChild(galleryItem);
     });
 
-    // ============================
-// BLOCCO: Visualizzazione Galleria (con attesa transizione fade-out)
-// ============================
+    // Mostra la modale galleria
+    modalContent.innerHTML = ''; // svuota modale ma non tocca #gallery-view
+    galleryView.style.display = 'block';
 
-// 🔹 Svuota contenuto modale
-modalContent.innerHTML = '';
+    document.getElementById('logo-btn').style.display = 'none';
+    modal.classList.remove('fade-out');
+    modal.classList.add('show');
 
-// 🔹 Nasconde logo centrale
-document.getElementById('logo-btn').style.display = 'none';
+    // 🔧 Resetto currentIndex per non bloccare apri()
+    currentIndex = null;
 
-// 🔹 Applica fade-out alla modale, poi mostra galleria
-modal.classList.remove('fade-out');
-
-// 🔹 Aspetta 600ms (durata transizione), poi mostra la galleria
-setTimeout(() => {
-  galleryView.style.display = 'block';            // mostra galleria solo dopo fade-out
-  modal.classList.add('show');                    // riattiva visibilità modale (necessario su mobile)
-  currentIndex = null;                            // resetta indice
-  isTransitioning = false;                        // consente nuova interazione
-}, 600);
-
+    setTimeout(() => {
+      isTransitioning = false;
+    }, 600);
   });
 }
 
