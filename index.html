@@ -1741,13 +1741,15 @@ function ripristinaMenuPrincipale() {
       currentIndex = null;
     }
 
-    // 🔹 Nasconde la galleria
-    galleryView.style.display = 'none';
+    // 🔹 Chiude la galleria
+galleryView.style.display = 'none';
 
-    // 🔧 Se è stata spostata, reinserisce la galleria nel #main
-    if (!main.contains(galleryView)) {
-      main.appendChild(galleryView);
-    }
+// 🔧 Se la galleria è stata spostata nella modale, riportala nel #main
+if (modalContent.contains(galleryView)) {
+  modalContent.removeChild(galleryView);
+  main.appendChild(galleryView);
+}
+
 
     // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
