@@ -1823,9 +1823,10 @@ function apriSubservizio(tipo) {
   // 🔹 Nasconde eventuale galleria attiva
   galleryView.style.display = 'none';
 
-  // 🔹 Nasconde logo centrale
-  document.getElementById('logo-btn').style.display = 'none';
-  document.getElementById('sidebar-logo').style.opacity = '1';
+  // 🔹 Mantiene visibile il logo centrale
+document.getElementById('logo-btn').style.display = 'block';
+document.getElementById('sidebar-logo').style.opacity = '1';
+
 
 
   // 🔹 Contenuto dinamico da mostrare
