@@ -1143,8 +1143,8 @@ video#logo-btn {
            Galleria multimediale suddivisa per settore (Service, Antincendio)
            ============================ -->
       <div id="submenu-showroom" style="display:none; flex-direction: column; align-items: center; width: 100%;">
-        <div class="menu-item sotto-showroom" onclick="apriShowroom('service')">Service_e_Spettacolo</div>
-        <div class="menu-item sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza_Antincendio</div>
+        <div class="menu-item sotto-showroom" onclick="apriShowroom('service')">Service e Spettacolo</div>
+        <div class="menu-item sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza Antincendio</div>
 
         <!-- Voce per tornare al menu principale -->
         <div class="menu-item sotto-showroom" onclick="ripristinaMenuPrincipale()"
@@ -1739,6 +1739,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
+
 /**
  * ============================
  * BLOCCO: apriSubservizio(tipo)
@@ -1920,8 +1922,8 @@ function apriShowroom(tipo) {
 
   // Determina il percorso delle risorse multimediali in base alla categoria
   const folderPath = tipo === 'service'
-    ? 'media/Service e spettacolo/'
-    : 'media/Sicurezza Antincendio/';
+    ? 'media/Service_e_Spettacolo/'
+    : 'media/Sicurezza_Antincendio/';
 
   // Simulazione: lista dei file immagine e video (da sostituire con fetch reale se necessario)
   const mediaFiles = [];
@@ -2184,6 +2186,23 @@ document.addEventListener('DOMContentLoaded', function () {
       el.classList.remove('pressed');
     });
   });
+});
+
+
+// ============================
+// BLOCCO: click su radar-glow chiude la modale
+// Permette di chiudere la modale cliccando sul titolo .radar-glow (es. "Chi siamo")
+// ============================
+document.getElementById('modal').addEventListener('click', function (e) {
+  if (e.target.classList.contains('radar-glow')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      currentIndex = null;
+    }, 600);
+  }
 });
 
 // ============================
