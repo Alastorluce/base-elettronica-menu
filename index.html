@@ -1696,6 +1696,12 @@ function ripristinaMenuPrincipale() {
       centralLogo.style.visibility = 'visible';
       centralLogo.style.opacity = '1';
       centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
+
+      // ============================
+  // RIABILITA IL LOGO CENTRALE
+  // ============================
+  document.getElementById('logo-btn').style.display = 'block';
+
       setTimeout(() => centralLogo.classList.add('pulse'), 600);
     };
 
@@ -2010,12 +2016,22 @@ function apriShowroom(tipo) {
   });
 
   // === Mostra la sezione galleria ===
-  document.getElementById('gallery-view').style.display = 'block';
+const galleryView = document.getElementById('gallery-view');
+galleryView.style.display = 'block';
 
-  // Timeout per fine transizione
-  setTimeout(() => {
-    isTransitioning = false;
-  }, 600);
+modalContent.innerHTML = '';
+modalContent.appendChild(galleryView);
+
+modal.classList.remove('fade-out');
+modal.classList.add('show');
+
+document.getElementById('logo-btn').style.display = 'none';
+
+// Timeout per fine transizione
+setTimeout(() => {
+  isTransitioning = false;
+}, 600);
+
 }
 
 // ============================
@@ -2047,6 +2063,24 @@ function openFullscreen(file) {
     img.src = file.src;
     img.alt = 'Immagine a schermo intero';
     fullscreenContent.appendChild(img);
+
+
+    // ============================
+// INSERISCE IL WATERMARK NELLA VISTA FULLSCREEN
+// (appare in basso a destra con opacità ridotta, su immagine o video)
+// ============================
+const wm = document.createElement('img');
+wm.src = 'logo.png'; // oppure 'logo_watermark.png' se vuoi un file separato
+wm.style.position = 'absolute';
+wm.style.bottom = '20px';
+wm.style.right = '20px';
+wm.style.opacity = '0.1';
+wm.style.maxWidth = '200px';
+wm.style.pointerEvents = 'none'; // ← non blocca i click sul video
+fullscreenContent.appendChild(wm);
+
+
+
   } else if (file.type === 'video') {
     // Inserisce video con controlli attivi
     const video = document.createElement('video');
@@ -2055,6 +2089,21 @@ function openFullscreen(file) {
     video.autoplay = true;
     video.loop = false;
     fullscreenContent.appendChild(video);
+
+    // ============================
+// INSERISCE IL WATERMARK NELLA VISTA FULLSCREEN
+// (appare in basso a destra con opacità ridotta, su immagine o video)
+// ============================
+const wm = document.createElement('img');
+wm.src = 'logo.png'; // oppure 'logo_watermark.png' se vuoi un file separato
+wm.style.position = 'absolute';
+wm.style.bottom = '20px';
+wm.style.right = '20px';
+wm.style.opacity = '0.1';
+wm.style.maxWidth = '200px';
+wm.style.pointerEvents = 'none'; // ← non blocca i click sul video
+fullscreenContent.appendChild(wm);
+
   }
 
   // Attiva l’overlay fullscreen
