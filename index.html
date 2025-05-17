@@ -1583,13 +1583,13 @@ function toggleSubmenu(tipo) {
 
   logo.style.opacity = '0';
 
-  menuItems.forEach(el => {
-  if (el.parentElement.id !== 'submenu-servizi' && el.parentElement.id !== 'submenu-showroom') {
-    el.style.display = 'none';
-    el.classList.remove('animated');
-  }
-});
-
+  setTimeout(() => {
+    menuItems.forEach(el => {
+      if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+        el.style.display = 'none';
+        el.classList.remove('animated');
+      }
+    });
 
     if (tipo === 'servizi') {
       submenuShowroom.style.display = 'none';
@@ -1894,6 +1894,10 @@ function apriSubservizio(tipo) {
   }
 
   // Il contenuto viene poi iniettato nella modale (blocco seguente dello script)
+  modalContent.innerHTML = contenuto;
+showModalWithScroll();
+isTransitioning = false;
+
 }
 
 
