@@ -1909,130 +1909,141 @@ isTransitioning = false;
 
 // ============================
 // BLOCCO: apriShowroom(tipo)
-// Visualizza la galleria multimediale dinamica in base alla categoria selezionata:
-//  - 'service' → cartella "Service e spettacolo"
-//  - 'antincendio' → cartella "Sicurezza Antincendio"
-// Simula il caricamento di immagini e video dal file system e costruisce dinamicamente la galleria.
+// Visualizza la galleria multimediale solo con immagini/video realmente esistenti
 // ============================
 function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // Se una modale è attiva, la chiudiamo
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
   }
 
-  // === SEZIONE: Preparazione galleria ===
-
-  // Container dove verranno iniettati gli elementi multimediali
+  const galleryView = document.getElementById('gallery-view');
   const galleryContainer = document.getElementById('gallery-container');
-  galleryContainer.innerHTML = ''; // Pulisce il contenuto esistente
+  galleryContainer.innerHTML = '';
 
-  // Determina il percorso delle risorse multimediali in base alla categoria
   const folderPath = tipo === 'service'
     ? 'media/Service_e_Spettacolo/'
     : 'media/Sicurezza_Antincendio/';
 
-  // Simulazione: lista dei file immagine e video (da sostituire con fetch reale se necessario)
   const mediaFiles = [];
+  let pendingChecks = 0;
 
-  // === SEZIONE: Popolamento simulato di immagini ===
+  function fileExists(url, callback) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('HEAD', url, true);
+    xhr.onload = () => callback(xhr.status >= 200 && xhr.status < 400);
+    xhr.onerror = () => callback(false);
+    xhr.send();
+  }
+
+  function checkComplete() {
+    if (--pendingChecks === 0) {
+      buildGallery(mediaFiles);
+    }
+  }
+
+  // Verifica immagini
+  for (let i = 1; i <= 20; i++) {
+    const imgSrc = `${folderPath}img${i}.jpg`;
+    pendingChecks++;
+    fileExists(imgSrc, (exists) => {
+      if (exists) {
+        mediaFiles.push({
+          type: 'image',
+          src: imgSrc,
+          thumbnail: imgSrc
+        });
+      }
+      checkComplete();
+    });
+  }
+
+  // Verifica video
   for (let i = 1; i <= 10; i++) {
-    mediaFiles.push({
-      type: 'image',
-      src: `${folderPath}img${i}.jpg`,
-      thumbnail: `${folderPath}img${i}.jpg`
+    const vidSrc = `${folderPath}vd${i}.mp4`;
+    const thumbSrc = `${folderPath}vd${i}.jpg`;
+    pendingChecks++;
+    fileExists(vidSrc, (exists) => {
+      if (exists) {
+        mediaFiles.push({
+          type: 'video',
+          src: vidSrc,
+          thumbnail: thumbSrc
+        });
+      }
+      checkComplete();
     });
   }
 
-  // === SEZIONE: Popolamento simulato di video ===
-  for (let i = 1; i <= 5; i++) {
-    mediaFiles.push({
-      type: 'video',
-      src: `${folderPath}vd${i}.mp4`,
-      thumbnail: `${folderPath}vd${i}.jpg`
+  function buildGallery(files) {
+    files.forEach((file, index) => {
+      const galleryItem = document.createElement('div');
+      galleryItem.className = 'gallery-item';
+      galleryItem.dataset.index = index;
+
+      if (file.type === 'image') {
+        const img = document.createElement('img');
+        img.src = file.thumbnail;
+        img.alt = '';
+        galleryItem.appendChild(img);
+      }
+
+      else if (file.type === 'video') {
+        const video = document.createElement('video');
+        video.src = file.src;
+        video.muted = true;
+        video.loop = true;
+        video.autoplay = false;
+        video.preload = 'metadata';
+
+        const indicator = document.createElement('div');
+        indicator.className = 'video-indicator';
+        indicator.textContent = 'VIDEO';
+        galleryItem.appendChild(indicator);
+
+        const img = document.createElement('img');
+        img.src = file.thumbnail;
+        img.alt = '';
+        galleryItem.appendChild(img);
+
+        galleryItem.addEventListener('mouseenter', () => {
+          img.style.display = 'none';
+          galleryItem.appendChild(video);
+          video.play();
+        });
+
+        galleryItem.addEventListener('mouseleave', () => {
+          video.pause();
+          galleryItem.removeChild(video);
+          img.style.display = 'block';
+        });
+      }
+
+      galleryItem.addEventListener('click', () => {
+        openFullscreen(file);
+      });
+
+      galleryContainer.appendChild(galleryItem);
     });
+
+    // Mostra sezione galleria nella modale
+    modalContent.innerHTML = '';
+    modalContent.appendChild(galleryView);
+    galleryView.style.display = 'block';
+
+    document.getElementById('logo-btn').style.display = 'none';
+    modal.classList.remove('fade-out');
+    modal.classList.add('show');
+
+    setTimeout(() => {
+      isTransitioning = false;
+    }, 600);
   }
-
-  // === SEZIONE: Costruzione dinamica della galleria ===
-  mediaFiles.forEach((file, index) => {
-    // Contenitore principale del singolo elemento
-    const galleryItem = document.createElement('div');
-    galleryItem.className = 'gallery-item';
-    galleryItem.dataset.index = index;
-
-    // Se è immagine
-    if (file.type === 'image') {
-      const img = document.createElement('img');
-      img.src = file.thumbnail;
-      img.alt = `Immagine ${index + 1}`;
-      galleryItem.appendChild(img);
-    }
-
-    // Se è video, crea anteprima e overlay testuale
-    else if (file.type === 'video') {
-      const video = document.createElement('video');
-      video.src = file.src;
-      video.muted = true;
-      video.loop = true;
-      video.autoplay = false;
-      video.preload = 'metadata';
-
-      // Indicatore testuale "VIDEO"
-      const indicator = document.createElement('div');
-      indicator.className = 'video-indicator';
-      indicator.textContent = 'VIDEO';
-      galleryItem.appendChild(indicator);
-
-      // Thumbnail immagine del video
-      const img = document.createElement('img');
-      img.src = file.thumbnail;
-      img.alt = `Video ${index + 1}`;
-      galleryItem.appendChild(img);
-
-      // Hover: sostituisce immagine con video
-      galleryItem.addEventListener('mouseenter', () => {
-        img.style.display = 'none';
-        galleryItem.appendChild(video);
-        video.play();
-      });
-
-      galleryItem.addEventListener('mouseleave', () => {
-        video.pause();
-        galleryItem.removeChild(video);
-        img.style.display = 'block';
-      });
-    }
-
-    // Evento click → attiva visualizzazione fullscreen
-    galleryItem.addEventListener('click', () => {
-      openFullscreen(file);
-    });
-
-    // Inserisce il contenuto nel DOM
-    galleryContainer.appendChild(galleryItem);
-  });
-
-  // === Mostra la sezione galleria ===
-const galleryView = document.getElementById('gallery-view');
-galleryView.style.display = 'block';
-
-modalContent.innerHTML = '';
-modalContent.appendChild(galleryView);
-
-modal.classList.remove('fade-out');
-modal.classList.add('show');
-
-document.getElementById('logo-btn').style.display = 'none';
-
-// Timeout per fine transizione
-setTimeout(() => {
-  isTransitioning = false;
-}, 600);
-
 }
+
 
 // ============================
 // BLOCCO: openFullscreen(file)
