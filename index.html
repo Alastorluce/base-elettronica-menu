@@ -1192,8 +1192,8 @@ video#logo-btn {
        ============================ -->
   <div id="modal" class="modal">
     <!-- Pulsante di chiusura in alto a destra -->
-    <button class="modal-close" onclick="apri(currentIndex)">×</button>
-    
+    <button class="modal-close" onclick="chiudiModale()">×</button>
+
     <!-- Contenuto dinamico interno -->
     <div id="modal-content">
       <h2>Caricamento...</h2>
@@ -1596,6 +1596,26 @@ function apri(index) {
   }
 }
 
+/**
+ * ============================
+ * BLOCCO: chiudiModale()
+ * Chiude la modale con animazione fade-out.
+ * Viene usata dal pulsante "×" e in tutti i casi in cui si vuole
+ * forzare la chiusura della modale senza caricare nuovi contenuti.
+ * ============================
+ */
+function chiudiModale() {
+  modal.classList.remove('show');         // Rimuove visibilità attiva
+  modal.classList.add('fade-out');        // Applica dissolvenza
+
+  setTimeout(() => {
+    modal.classList.remove('fade-out');   // Rimuove classe di transizione
+    modalContent.innerHTML = '';          // Pulisce il contenuto
+    currentIndex = null;                  // Reset della sezione attiva
+  }, 600); // Durata animazione coerente con CSS transition
+}
+
+
 
 /**
  * ============================
@@ -1656,11 +1676,13 @@ function toggleSubmenu(tipo) {
 /**
  * ============================
  * BLOCCO: ripristinaMenuPrincipale()
- * Ripristina l’interfaccia iniziale: nasconde sottomenu, modale, galleria e ferma slideshow
+ * Ripristina l’interfaccia iniziale: chiude modali, slideshow, sottomenu e galleria.
+ * Riabilita logo centrale e voci di menu.
  * ============================
  */
 function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
+  isTransitioning = true;
 
   const main = document.getElementById('main');
   const sidebar = document.getElementById('sidebar');
@@ -1672,6 +1694,7 @@ function ripristinaMenuPrincipale() {
   const modal = document.getElementById('modal');
   const galleryView = document.getElementById('gallery-view');
 
+  // 🔹 Se tutto è già chiuso, esce
   if (
     submenuServizi.style.display === 'none' &&
     submenuShowroom.style.display === 'none' &&
@@ -1679,15 +1702,16 @@ function ripristinaMenuPrincipale() {
     !slideshowAttivo &&
     galleryView.style.display === 'none'
   ) {
+    isTransitioning = false;
     return;
   }
 
-  isTransitioning = true;
-
+  // 🔹 Anima la scomparsa della UI
   smallLogo.style.opacity = '0';
   main.style.opacity = '0';
 
   setTimeout(() => {
+    // 🔹 Stop slideshow se attivo
     if (slideshowInterval) {
       clearInterval(slideshowInterval);
       slideshowInterval = null;
@@ -1697,32 +1721,40 @@ function ripristinaMenuPrincipale() {
     watermark.style.display = 'none';
     document.body.style.overflow = '';
 
+    // 🔹 Chiude modale se presente
     if (modal.classList.contains('show')) {
       modal.classList.remove('show');
       modal.classList.add('fade-out');
+
       setTimeout(() => {
-        modal.classList.remove('fade-out');
+        modal.classList.remove('fade-out', 'show');
         modalContent.innerHTML = '';
-        modal.classList.remove('show', 'fade-out'); // reset stato visivo
-        currentIndex = null;                        // reset logica modale
-        isTransitioning = false;                    // sblocca animazioni
         currentIndex = null;
-        modal.classList.remove('show', 'fade-out');
-        isTransitioning = false;
       }, 600);
+    } else {
+      // 🔹 Anche se la modale non è visibile, resetto logica
+      modalContent.innerHTML = '';
+      modal.classList.remove('show', 'fade-out');
+      currentIndex = null;
     }
 
+    // 🔹 Chiude la galleria
     galleryView.style.display = 'none';
 
+    // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
     submenuShowroom.style.display = 'none';
+
+    // 🔹 Riabilita il menu principale
     document.querySelectorAll('.menu-list > .menu-item')
             .forEach(el => el.style.display = 'flex');
+
     sidebar.style.display = '';
 
+    // 🔹 Reset logo centrale
     centralLogo.classList.remove('loaded-img','loading','pulse');
     centralLogo.style.transition = 'none';
-    centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
+    centralLogo.style.transform = 'translate(-50%, -50%) scale(2.3)';
     centralLogo.style.opacity = '0';
     centralLogo.style.visibility = 'hidden';
 
@@ -1731,57 +1763,39 @@ function ripristinaMenuPrincipale() {
     preload.onload = () => {
       centralLogo.src = preload.src;
       void centralLogo.offsetWidth;
+
       centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
       centralLogo.style.visibility = 'visible';
       centralLogo.style.opacity = '1';
-      centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
+      centralLogo.style.transform = 'translate(-50%, -50%) scale(2.3)';
 
-      // ============================
-  // RIABILITA IL LOGO CENTRALE
-  // ============================
-  document.getElementById('logo-btn').style.display = 'block';
+      document.getElementById('logo-btn').style.display = 'block';
 
       setTimeout(() => centralLogo.classList.add('pulse'), 600);
     };
 
+    // 🔹 Rianima l'interfaccia
     main.style.opacity = '1';
     smallLogo.style.opacity = '1';
 
     setTimeout(() => {
       isTransitioning = false;
     }, 600);
-
   }, 500);
-}
 
-// ============================
-// BLOCCO: Inizializzazione evento DOM
-// Avvia effetti, listener, e comportamenti dinamici all’avvio del sito
-// ============================
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('sidebar').classList.add('animated');
 
-  document.querySelectorAll('.menu-item').forEach(el => {
-    const delay = (Math.random() * 3).toFixed(2) + 's';
-    const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
-    el.style.setProperty('--delay', delay);
-    el.style.setProperty('--duration', speed);
-  });
+  // 🔄 Riassegna gli onclick per le voci principali dopo reset
+document.querySelectorAll('.menu-item').forEach((el, i) => {
+  const txt = el.textContent.trim();
 
-  document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('mousedown', () => item.classList.add('pressed'));
-    item.addEventListener('mouseup', () => item.classList.remove('pressed'));
-    item.addEventListener('mouseleave', () => item.classList.remove('pressed'));
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeFullscreen();
-  });
-
-  const logoBtn = document.getElementById('logo-btn');
-  logoBtn.style.cursor = 'pointer';
-  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
+  if (txt === 'Chi siamo') el.onclick = () => apri(0);
+  else if (txt === 'Portfolio') el.onclick = () => apri(1);
+  else if (txt === 'Preventivi e Contatti') el.onclick = () => apri(2);
+  else if (txt === 'I nostri servizi') el.onclick = () => toggleSubmenu('servizi');
+  else if (txt === 'Showroom') el.onclick = () => toggleSubmenu('showroom');
 });
+
+}
 
 
 
@@ -1803,7 +1817,19 @@ function apriSubservizio(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modal-content');
+  const galleryView = document.getElementById('gallery-view');
+
+  // 🔹 Nasconde eventuale galleria attiva
+  galleryView.style.display = 'none';
+
+  // 🔹 Nasconde logo centrale
+  document.getElementById('logo-btn').style.display = 'none';
+
+  // 🔹 Contenuto dinamico da mostrare
   let contenuto = '';
+
 
   switch (tipo) {
 
@@ -1938,13 +1964,23 @@ function apriSubservizio(tipo) {
       break;
   }
 
-  // Il contenuto viene poi iniettato nella modale (blocco seguente dello script)
-  modalContent.innerHTML = contenuto;
-showModalWithScroll();
-isTransitioning = false;
+  // 🔹 Se modale è già aperta, applica fade-out, poi carica e riapre
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
 
+    setTimeout(() => {
+      modalContent.innerHTML = contenuto;
+      showModalWithScroll(); // effetto automatico + scroll se serve
+      isTransitioning = false;
+    }, 600);
+  } else {
+    // 🔹 Altrimenti mostra direttamente
+    modalContent.innerHTML = contenuto;
+    showModalWithScroll();
+    isTransitioning = false;
+  }
 }
-
 
 // ============================
 // BLOCCO: apriShowroom(tipo)
@@ -2045,8 +2081,7 @@ function apriShowroom(tipo) {
     });
 
     // Mostra la modale galleria
-    modalContent.innerHTML = '';
-    modalContent.appendChild(galleryView);
+    modalContent.innerHTML = ''; // svuota modale ma non tocca #gallery-view
     galleryView.style.display = 'block';
 
     document.getElementById('logo-btn').style.display = 'none';
