@@ -1988,6 +1988,7 @@ function apriShowroom(tipo) {
     }
 
     const results = await Promise.all([...imagePromises, ...videoPromises]);
+    console.log("🧪 MEDIA DETECTED:", results.filter(Boolean).map(f => f.src)); // ✅ LOG DIAGNOSTICO
     return results.filter(Boolean);
   }
 
