@@ -55,6 +55,8 @@ body {
       overflow: hidden;
     }
 
+
+
 /* ============================
    BLOCCO: Animazioni chiave
    Questo blocco definisce animazioni di base usate per elementi in entrata, pulsazioni e dissolvenze.
@@ -1226,6 +1228,28 @@ video#logo-btn {
 
 <script>
 
+// ============================
+// BLOCCO: Verifica esistenza immagine/video
+// ============================
+
+function checkImage(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(url);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
+function checkVideo(url) {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.oncanplaythrough = () => resolve(url);
+    video.onerror = () => resolve(null);
+    video.src = url;
+  });
+}
 
 
 // ============================
@@ -1669,6 +1693,7 @@ function ripristinaMenuPrincipale() {
         modal.classList.remove('fade-out');
         modalContent.innerHTML = '';
         currentIndex = null;
+        modal.classList.remove('show', 'fade-out');
         isTransitioning = false;
       }, 600);
     }
@@ -1915,42 +1940,38 @@ function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
+  // Chiude eventuale modale attiva
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
   }
 
+  // Prepara contenitori
   const galleryView = document.getElementById('gallery-view');
   const galleryContainer = document.getElementById('gallery-container');
   galleryContainer.innerHTML = '';
 
+  // Percorso cartella
   const folderPath = tipo === 'service'
     ? 'media/Service_e_Spettacolo/'
     : 'media/Sicurezza_Antincendio/';
 
-  // === Controlla esistenza file (HEAD asincrona) ===
-  const checkFile = (url) => new Promise((resolve) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('HEAD', url, true);
-    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 400 ? url : null);
-    xhr.onerror = () => resolve(null);
-    xhr.send();
-  });
-
-  // === Costruisce la lista media con Promise.all veloce ===
+  // ============================
+  // BLOCCO: Build dinamico lista media
+  // Usa Promise.all e verifica reale con Image/Video
+  // ============================
   async function buildFileList() {
     const mediaFiles = [];
 
     const imagePromises = [];
     for (let i = 1; i <= 100; i++) {
-      const jpg = `${folderPath}img${i}.jpg`;
-      const png = `${folderPath}img${i}.png`;
-
-      // Ogni immagine ha due promesse: jpg e png
       imagePromises.push(
-        Promise.all([checkFile(jpg), checkFile(png)]).then(([jpgExists, pngExists]) => {
-          if (jpgExists) return { type: 'image', src: jpg };
-          if (pngExists) return { type: 'image', src: png };
+        Promise.all([
+          checkImage(`${folderPath}img${i}.jpg`),
+          checkImage(`${folderPath}img${i}.png`)
+        ]).then(([jpgOk, pngOk]) => {
+          if (jpgOk) return { type: 'image', src: jpgOk };
+          if (pngOk) return { type: 'image', src: pngOk };
           return null;
         })
       );
@@ -1958,17 +1979,21 @@ function apriShowroom(tipo) {
 
     const videoPromises = [];
     for (let i = 1; i <= 100; i++) {
-      const vid = `${folderPath}vd${i}.mp4`;
       videoPromises.push(
-        checkFile(vid).then((exists) => exists ? { type: 'video', src: vid } : null)
+        checkVideo(`${folderPath}vd${i}.mp4`).then((ok) => {
+          if (ok) return { type: 'video', src: ok };
+          return null;
+        })
       );
     }
 
     const results = await Promise.all([...imagePromises, ...videoPromises]);
-    return results.filter(Boolean); // rimuove null
+    return results.filter(Boolean);
   }
 
-  // === Rendering dinamico della galleria ===
+  // ============================
+  // BLOCCO: Costruzione Galleria
+  // ============================
   buildFileList().then((mediaFiles) => {
     mediaFiles.forEach((file, index) => {
       const galleryItem = document.createElement('div');
@@ -1980,9 +2005,7 @@ function apriShowroom(tipo) {
         img.src = file.src;
         img.alt = '';
         galleryItem.appendChild(img);
-      }
-
-      else if (file.type === 'video') {
+      } else if (file.type === 'video') {
         const video = document.createElement('video');
         video.src = file.src;
         video.muted = true;
@@ -2006,7 +2029,7 @@ function apriShowroom(tipo) {
       galleryContainer.appendChild(galleryItem);
     });
 
-    // Mostra la galleria
+    // Mostra la modale galleria
     modalContent.innerHTML = '';
     modalContent.appendChild(galleryView);
     galleryView.style.display = 'block';
@@ -2015,11 +2038,15 @@ function apriShowroom(tipo) {
     modal.classList.remove('fade-out');
     modal.classList.add('show');
 
+    // 🔧 Resetto currentIndex per non bloccare apri()
+    currentIndex = null;
+
     setTimeout(() => {
       isTransitioning = false;
     }, 600);
   });
 }
+
 
 
 
