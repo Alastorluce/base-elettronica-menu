@@ -1245,11 +1245,22 @@ function checkVideo(url) {
   return new Promise((resolve) => {
     const video = document.createElement('video');
     video.preload = 'metadata';
-    video.oncanplaythrough = () => resolve(url);
-    video.onerror = () => resolve(null);
     video.src = url;
+
+    let timeout = setTimeout(() => resolve(null), 1500); // fail-safe
+
+    video.onloadeddata = () => {
+      clearTimeout(timeout);
+      resolve(url); // file esiste
+    };
+
+    video.onerror = () => {
+      clearTimeout(timeout);
+      resolve(null); // file non trovato
+    };
   });
 }
+
 
 
 // ============================
