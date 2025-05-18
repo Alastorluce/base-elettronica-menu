@@ -1679,6 +1679,7 @@ function chiudiModale() {
       modal.classList.remove('fade-out');
       modalContent.innerHTML = '';
       currentIndex = null;
+      currentSubmenu = null;  // <–– azzera lo stato
     }, 600);
     return;
   }
@@ -2263,6 +2264,11 @@ document.addEventListener('DOMContentLoaded', function () {
         attivaSlideshow();
       }, { passive: false });
     });
+
+    // 6) Collego solo le "×" della modale principale a chiudiModale()
+  document.querySelectorAll('#modal .modal-close').forEach(btn =>
+    btn.addEventListener('click', chiudiModale)
+  );
   // ============================
   // BLOCCO: ottimizzazione per dispositivi mobili
   // Abilita la chiusura modale tramite "×" e il tocco su elementi speciali
