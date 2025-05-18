@@ -2279,6 +2279,24 @@ fullscreenContent.appendChild(wm);
 }
 
 // ============================
+// BLOCCO: Attiva fullscreen nativo su mobile landscape
+// Se il device è mobile e in orizzontale, attiva il fullscreen nativo del browser
+// ============================
+if (
+  /Mobi|Android/i.test(navigator.userAgent) &&
+  window.innerWidth > window.innerHeight // orientamento orizzontale
+) {
+  const requestFull = fullscreenView.requestFullscreen ||
+                      fullscreenView.webkitRequestFullscreen ||
+                      fullscreenView.msRequestFullscreen;
+
+  if (requestFull) requestFull.call(fullscreenView);
+}
+
+
+
+  
+// ============================
 // BLOCCO: closeFullscreen()
 // Chiude la visualizzazione a schermo intero e ferma il video se presente
 // ============================
@@ -2293,6 +2311,22 @@ function closeFullscreen() {
   }
 }
 
+
+// ============================
+    // BLOCCO: Esci da fullscreen nativo se attivo (solo mobile)
+    // ============================
+    if (
+      (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) &&
+      window.matchMedia('(max-width: 768px)').matches
+    ) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }  
 // ============================
 // BLOCCO: attivaSlideshow()
 // Funzione placeholder per slideshow: definita ma non ancora implementata
