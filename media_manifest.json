@@ -1,0 +1,12 @@
+{
+  "service": {
+    "folder": "media/Service_e_Spettacolo/",
+    "image": { "prefix": "img", "from": 1, "to": 100, "exts": ["jpg","png"] },
+    "video": { "prefix": "vd",  "from": 1, "to": 100, "exts": ["mp4"] }
+  },
+  "antincendio": {
+    "folder": "media/Sicurezza_Antincendio/",
+    "image": { "prefix": "img", "from": 1, "to": 100, "exts": ["jpg","png"] },
+    "video": { "prefix": "vd",  "from": 1, "to": 100, "exts": ["mp4"] }
+  }
+}
