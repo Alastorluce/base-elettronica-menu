@@ -1061,14 +1061,6 @@ video#logo-btn {
   cursor: pointer;
 }
 
-/* Posiziona la X in alto a destra anche nel fullscreen */
-#fullscreen-view .modal-close {
-  display: block;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 1001;
-}
 
 </style>
 </head>
@@ -1201,7 +1193,7 @@ video#logo-btn {
   <div id="modal" class="modal">
   <!-- Pulsante di chiusura in alto a destra -->
 
-  <button class="modal-close" onclick="chiudiModale()">×</button>
+  <button class="modal-close" onclick="ripristinaMenuPrincipale()">×</button>
 
     
     <!-- Contenuto dinamico interno -->
@@ -1222,13 +1214,9 @@ video#logo-btn {
        BLOCCO: Vista fullscreen per media
        Overlay a schermo intero per immagini o video cliccati dalla galleria
        ============================ -->
-
-<div class="fullscreen-view" id="fullscreen-view">
-  <!-- ✔️ usa la stessa classe e markup della modale: -->
-  <button class="modal-close" onclick="chiudiModale()">×</button>
-
-  <div class="fullscreen-content" id="fullscreen-content"></div>
-</div>
+  <div class="fullscreen-view" id="fullscreen-view">
+    <div class="fullscreen-content" id="fullscreen-content"></div>
+  </div>
 
 </div> <!-- fine #main -->
 
@@ -1653,39 +1641,6 @@ function toggleSubmenu(tipo) {
     logo.style.opacity = '1';
     isTransitioning = false;
   }, 500);
-}
-
-/**
- * Chiude la modale o la gallery:
- * se sono in Showroom-gallery, nasconde solo la gallery e riapre il sotto-menu;
- * altrimenti richiama il reset completo.
- */
-function chiudiModale() {
-  const galleryView = document.getElementById('gallery-view');
-
-  // 1) Se sto nella gallery di Showroom
-  if (galleryView.style.display === 'block' && currentSubmenu === 'showroom') {
-    galleryView.style.display = 'none';
-    toggleSubmenu('showroom');
-    return;
-  }
-
-  // 2) Se una modale qualsiasi è aperta E ho un sotto-menu attivo (servizi o showroom)
-  if (modal.classList.contains('show') && currentSubmenu) {
-    // chiudo soltanto la modale, senza toccare il menu sottostante
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-      currentSubmenu = null;  // <–– azzera lo stato
-    }, 600);
-    return;
-  }
-
-  // 3) Altrimenti (nessun submenu attivo) faccio il reset completo
-  ripristinaMenuPrincipale();
 }
 
 
@@ -2132,6 +2087,15 @@ function openFullscreen(file) {
   // Pulisce il contenuto precedente (evita duplicazioni)
   fullscreenContent.innerHTML = '';
 
+  // === CREAZIONE DEL PULSANTE DI CHIUSURA "×" ===
+  const closeButton = document.createElement('button');
+  closeButton.className = 'close-fullscreen';
+  closeButton.innerHTML = '&times;';
+  closeButton.addEventListener('click', (e) => {
+    e.stopPropagation(); // evita propagazione verso il fullscreenView
+    closeFullscreen();   // chiude la vista
+  });
+  fullscreenContent.appendChild(closeButton);
 
   // === CREAZIONE DEL CONTENUTO MULTIMEDIALE ===
   if (file.type === 'image') {
@@ -2256,43 +2220,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // === 5) Assicura che "Clicca qui" funzioni al tocco (per slideshow) ===
-  document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-    el.addEventListener('touchstart', e => {
-      e.preventDefault();  // evita doppio tocco
-      attivaSlideshow();
-    }, { passive: false });
-  });
-
-  // === 6) Collego solo le "×" della modale principale a chiudiModale() ===
-  document.querySelectorAll('#modal .modal-close').forEach(btn => {
-    btn.addEventListener('click', chiudiModale);
-  });
-
-  // === 7) Chiude il fullscreen senza toccare la modale ===
-  document.querySelectorAll('#fullscreen-view .modal-close').forEach(btn => {
-    btn.addEventListener('click', closeFullscreen);
-  });
-
-  // === 8) Ottimizzazione per dispositivi mobili ===
-  if (window.matchMedia('(max-width: 768px)').matches) {
-    const modal = document.getElementById('modal');
-    // Collega tutte le × (close) presenti nella modale alle stesse logiche
-    modal.querySelectorAll('.modal-close').forEach(btn => {
-      btn.addEventListener('click', chiudiModale);
-    });
-  }
-
   // ============================
   // BLOCCO: ottimizzazione per dispositivi mobili
   // Abilita la chiusura modale tramite "×" e il tocco su elementi speciali
   // ============================
-  
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+
+    // 1) Collega tutte le × (close) per chiudere modale
+    modal.querySelectorAll('.modal-close').forEach(btn =>
+  btn.addEventListener('click', ripristinaMenuPrincipale)
+);
 
 
-
-    
-  
+    // 2) Assicura che "Clicca qui" funzioni al tocco (per slideshow)
+    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
+      el.addEventListener('touchstart', e => {
+        e.preventDefault();  // evita doppio tocco
+        attivaSlideshow();
+      }, { passive: false });
+    });
+  }
 
   // ============================
   // BLOCCO: Gestione click sul logo centrale (img o video)
