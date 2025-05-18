@@ -2309,24 +2309,23 @@ function closeFullscreen() {
   if (video) {
     video.pause();
   }
+
+  // ============================
+  // BLOCCO: Esci da fullscreen nativo se attivo (solo mobile)
+  // ============================
+  if (
+    (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) &&
+    window.matchMedia('(max-width: 768px)').matches
+  ) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
 }
-
-
-// ============================
-    // BLOCCO: Esci da fullscreen nativo se attivo (solo mobile)
-    // ============================
-    if (
-      (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) &&
-      window.matchMedia('(max-width: 768px)').matches
-    ) {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-    }  
 // ============================
 // BLOCCO: attivaSlideshow()
 // Funzione placeholder per slideshow: definita ma non ancora implementata
