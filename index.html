@@ -1328,22 +1328,26 @@ function preloadTipo(tipo) {
   for (let i = cfg.image.from; i <= cfg.image.to; i++) {
     cfg.image.exts.forEach(ext => {
       const img = new Image();
+      img.decoding = "async";
+      img.loading = "eager"; // forza il browser a caricarle subito
       img.src = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
     });
   }
 
-  // — Preload video (metadata per cache veloce)
+  // — Preload video: solo i primi 2 con preload='auto', gli altri con metadata
   for (let i = cfg.video.from; i <= cfg.video.to; i++) {
     cfg.video.exts.forEach(ext => {
       const video = document.createElement('video');
-      video.preload = 'metadata';
+
+      // Preload aggressivo solo sui primi 2 video
+      video.preload = (i - cfg.video.from < 2) ? 'auto' : 'metadata';
+
       video.muted   = true;
       video.src     = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
       container.appendChild(video);
     });
   }
 }
-
 // ============================
 // BLOCCO: Verifica esistenza immagine/video
 // ============================
@@ -1360,9 +1364,33 @@ function checkImage(url) {
 function checkVideo(url) {
   return new Promise((resolve) => {
     const video = document.createElement('video');
-    video.preload = 'metadata';
-    video.oncanplaythrough = () => resolve(url);
-    video.onerror = () => resolve(null);
+    let resolved = false;
+
+    video.preload = 'auto';
+    video.muted = true;
+
+    video.oncanplaythrough = () => {
+      if (!resolved) {
+        resolved = true;
+        resolve(url);
+      }
+    };
+
+    video.onerror = () => {
+      if (!resolved) {
+        resolved = true;
+        resolve(null);
+      }
+    };
+
+    // Timeout di sicurezza (5 secondi)
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        resolve(null);
+      }
+    }, 5000);
+
     video.src = url;
   });
 }
