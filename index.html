@@ -1772,6 +1772,34 @@ function closeModalAndReset() {
 
 
 
+// ============================
+// BLOCCO: Inizializzazione evento DOM
+// Avvia effetti, listener, e comportamenti dinamici all’avvio del sito
+// ============================
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('sidebar').classList.add('animated');
+
+  document.querySelectorAll('.menu-item').forEach(el => {
+    const delay = (Math.random() * 3).toFixed(2) + 's';
+    const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
+    el.style.setProperty('--delay', delay);
+    el.style.setProperty('--duration', speed);
+  });
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('mousedown', () => item.classList.add('pressed'));
+    item.addEventListener('mouseup', () => item.classList.remove('pressed'));
+    item.addEventListener('mouseleave', () => item.classList.remove('pressed'));
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeFullscreen();
+  });
+
+  const logoBtn = document.getElementById('logo-btn');
+  logoBtn.style.cursor = 'pointer';
+  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
+});
 
 
 
