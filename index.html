@@ -2060,21 +2060,24 @@ function apriShowroom(tipo) {
         item.className = 'gallery-item';
 
         const vid = document.createElement('video');
-        vid.muted       = true;       // necessario per autoplay silenzioso
-        vid.loop        = true;       // loop continuo
-        vid.autoplay    = true;       // parte subito
-        vid.playsInline = true;       // evita forzare il fullscreen su iOS/Android
-        vid.preload     = 'metadata'; // basta metadata per la cache
+        vid.muted       = true;
+        vid.loop        = true;
+        vid.autoplay    = true;
+        vid.playsInline = true;
+        vid.preload     = 'metadata';
         vid.src         = url;
         vid.style.objectFit = 'cover';
-        item.appendChild(vid);
+        // SE NON C’È FILE, nascondi l’item
+        vid.onerror = () => item.style.display = 'none';
 
+        item.appendChild(vid);
         item.addEventListener('click', () =>
           openFullscreen({ type: 'video', src: url })
         );
         galleryContainer.appendChild(item);
       });
     }
+
 
     // ============================
     // BLOCCO: Iniezione e animazione della modale
