@@ -1739,30 +1739,25 @@ function ripristinaMenuPrincipale() {
   }, 500);
 }
 
-/**
- * ============================
- * BLOCCO: closeModalAndReset
- * Funzione che chiude la modale con fade‐out, pulisce il contenuto
- * e ripristina il menu principale, sbloccando le animazioni.
- * ============================
- */
+// ============================
+// BLOCCO: closeModalAndReset
+// Funzione che chiude la modale con fade‐out, pulisce il contenuto
+// e ripristina il menu principale, sbloccando le animazioni.
+// ============================
 function closeModalAndReset() {
-  // 1) Rimuovo la classe .show (fa scomparire la modale) e
-  //    aggiungo .fade-out (attiva la transizione di dissolvenza)
+  // 1) Rimuovo la classe .show e aggiungo .fade-out
   modal.classList.remove('show');
   modal.classList.add('fade-out');
 
   // 2) Dopo 600ms (corrispondenti a transition: opacity 0.6s)
-  //    eseguo il reset del contenuto e dello stato
+  //    resetto il contenuto e lo stato
   setTimeout(() => {
-    // rimuovo .fade-out per pulire le classi
     modal.classList.remove('fade-out');
-    // svuoto completamente il contenuto HTML
     modalContent.innerHTML = '';
-    // resetto l’indice di apertura
     currentIndex = null;
-    // ——— QUI: forza chiusura dei sotto-menu e ripristino del menu principale ———
-    document.getElementById('submenu-servizi').style.display = 'none';
+
+    // ——— INSERISCI QUI: reset completo della sidebar e dei sotto‐menu ———
+    document.getElementById('submenu-servizi').style.display   = 'none';
     document.getElementById('submenu-showroom').style.display = 'none';
     document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
       el.style.display = 'flex';
@@ -1770,13 +1765,14 @@ function closeModalAndReset() {
     document.getElementById('sidebar').style.display = 'flex';
     // ——————————————————————————————————————————————————————————————————————
 
-    // 3) Chiamo la funzione che riporta l’interfaccia al menu principale
+    // 3) Ora effettuo il resto del ripristino standard
     ripristinaMenuPrincipale();
 
-    // 4) Sblocco eventuali click/blocchi di animazione
+    // 4) Sblocco eventuali blocchi di animazione
     isTransitioning = false;
   }, 600);
 }
+
 
 
 
