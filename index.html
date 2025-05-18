@@ -1661,31 +1661,30 @@ function ripristinaMenuPrincipale() {
   const modal = document.getElementById('modal');
   const galleryView = document.getElementById('gallery-view');
 
+  // ✅ FIX MOBILE: Se modale e galleria sono chiuse ma lo showroom è ancora visibile
   if (
-  submenuServizi.style.display === 'none' &&
-  submenuShowroom.style.display === 'none' &&
-  !modal.classList.contains('show') &&
-  !slideshowAttivo &&
-  galleryView.style.display === 'none'
-) {
-  // Aggiunto: reset del submenu se è congelato
-  currentSubmenu = null;
+    submenuServizi.style.display === 'none' &&
+    submenuShowroom.style.display === 'none' &&
+    !modal.classList.contains('show') &&
+    !slideshowAttivo &&
+    galleryView.style.display === 'none'
+  ) {
+    currentSubmenu = null;
 
-  // Forza riattivazione voci menu principali
-  document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
-    if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
-      el.style.display = 'flex';
-    }
-  });
+    // ✅ Forza il ripristino del menu principale anche su mobile
+    document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+      if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+        el.style.display = 'flex';
+      }
+    });
 
-  document.getElementById('sidebar-logo').style.opacity = '1';
-  document.getElementById('logo-btn').style.display = 'block';
-  return;
-}
+    smallLogo.style.opacity = '1';
+    centralLogo.style.display = 'block';
 
+    return;
+  }
 
   isTransitioning = true;
-
   smallLogo.style.opacity = '0';
   main.style.opacity = '0';
 
@@ -1711,14 +1710,20 @@ function ripristinaMenuPrincipale() {
     }
 
     galleryView.style.display = 'none';
+    currentSubmenu = null; // ✅ RESET esplicito anche qui
 
     submenuServizi.style.display = 'none';
     submenuShowroom.style.display = 'none';
-    document.querySelectorAll('.menu-list > .menu-item')
-            .forEach(el => el.style.display = 'flex');
+
+    document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+      if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+        el.style.display = 'flex';
+      }
+    });
+
     sidebar.style.display = '';
 
-    centralLogo.classList.remove('loaded-img','loading','pulse');
+    centralLogo.classList.remove('loaded-img', 'loading', 'pulse');
     centralLogo.style.transition = 'none';
     centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
     centralLogo.style.opacity = '0';
@@ -1733,12 +1738,7 @@ function ripristinaMenuPrincipale() {
       centralLogo.style.visibility = 'visible';
       centralLogo.style.opacity = '1';
       centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
-
-      // ============================
-  // RIABILITA IL LOGO CENTRALE
-  // ============================
-  document.getElementById('logo-btn').style.display = 'block';
-
+      document.getElementById('logo-btn').style.display = 'block';
       setTimeout(() => centralLogo.classList.add('pulse'), 600);
     };
 
@@ -1751,6 +1751,7 @@ function ripristinaMenuPrincipale() {
 
   }, 500);
 }
+
 
 // ============================
 // BLOCCO: Inizializzazione evento DOM
