@@ -2255,6 +2255,20 @@ document.addEventListener('DOMContentLoaded', function () {
     // 1) Collega tutte le × (close) per chiudere modale
 modal.querySelectorAll('.modal-close').forEach(btn => {
   btn.addEventListener('click', () => {
+    // se è il welcome message, fermo l’auto-hide
+    if (
+      modal.classList.contains('show') &&
+      modalContent.innerHTML.includes("Base Elettronica Service") &&
+      autoHide !== null
+    ) {
+      clearTimeout(autoHide);
+      autoHide = null;
+      document.getElementById('modal-blocker').style.display = 'none';
+    }
+    // uso la routine centralizzata per chiudere tutto
+    closeModalAndReset();
+  });
+  btn.addEventListener('click', () => {
   closeModalAndReset();
 });
 
