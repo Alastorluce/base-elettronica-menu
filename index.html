@@ -2027,13 +2027,14 @@ function apriShowroom(tipo) {
           item.appendChild(img);
         } else {
   const video = document.createElement('video');
-      video.src         = file.src;
-      video.muted       = true;
-      video.loop        = true;
-      video.autoplay    = true;     // ← parte subito
-      video.playsInline = true;     // ← su iOS/Android
-      video.preload     = 'auto';   // ← scarica frame
-      item.appendChild(video);
+  video.src          = file.src;
+  video.muted        = true;           // necessario per autoplay silenzioso
+  video.loop         = true;
+  video.autoplay     = true;           // parte immediatamente
+  video.playsInline  = true;           // su iOS/Android
+  video.preload      = 'auto';         // scarica qualche fotogramma
+  video.style.objectFit = 'cover';     // mantiene il tuo stile
+  item.appendChild(video);
 }
 
 
@@ -2108,13 +2109,25 @@ fullscreenContent.appendChild(wm);
 
 
   } else if (file.type === 'video') {
-    // Inserisce video con controlli attivi
-    const video = document.createElement('video');
-    video.src = file.src;
-    video.controls = true;
-    video.autoplay = true;
-    video.loop = false;
-    fullscreenContent.appendChild(video);
+  // Inserisce video in autoplay silenzioso
+  const video = document.createElement('video');
+  video.src         = file.src;
+  video.muted       = true;           // silenzioso → sblocca autoplay
+  video.autoplay    = true;           // parte automaticamente
+  video.playsInline = true;           // evita forzature di fullscreen su iOS/Android
+  video.loop        = false;          // o true se vuoi il loop anche in fullscreen
+  video.controls    = true;           // mantieni i controlli utente
+  video.preload     = 'auto';         // scarica i primi fotogrammi
+
+  fullscreenContent.appendChild(video);
+
+  // In caso il browser non avviasse subito il play, forzalo qui:
+  video.load();
+  video.play().catch(() => {
+    // se play() viene bloccato, niente panico: l’utente potrà comunque cliccare “play” manuale
+  });
+
+
 
     // ============================
 // INSERISCE IL WATERMARK NELLA VISTA FULLSCREEN
