@@ -667,6 +667,59 @@ body {
   }
 }
 
+/* ============================
+   BLOCCO: Effetto radar glow per pulsanti "X"
+   ============================ */
+
+.modal-close,
+.close-fullscreen {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1001;
+  line-height: 40px;
+  text-align: center;
+  overflow: hidden; /* necessario per gradient animato */
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5),
+              inset -2px -2px 6px rgba(255,255,255,0.1);
+}
+
+.modal-close::before,
+.close-fullscreen::before {
+  content: '×';
+  display: block;
+  height: 100%;
+  width: 100%;
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    #444343 0%,
+    #727272 40%,
+    #ffffff 50%,
+    #727272 60%,
+    #444343 80%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: radarTextScan 4s linear infinite;
+}
+
+/* Rimuove il testo visibile diretto */
+.modal-close,
+.close-fullscreen {
+  color: transparent !important;
+}
+
 
 /* ============================
    BLOCCO: Stile lista a punti
