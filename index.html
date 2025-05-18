@@ -1655,6 +1655,25 @@ function toggleSubmenu(tipo) {
   }, 500);
 }
 
+/**
+ * Chiude la modale o la gallery:
+ * se sono in Showroom-gallery, nasconde solo la gallery e riapre il sotto-menu;
+ * altrimenti richiama il reset completo.
+ */
+function chiudiModale() {
+  const galleryView = document.getElementById('gallery-view');
+
+  // se la gallery è aperta e siamo nel sotto-menu showroom
+  if (galleryView.style.display === 'block' && currentSubmenu === 'showroom') {
+    // 1) nascondo la gallery
+    galleryView.style.display = 'none';
+    // 2) riapro il sotto-menu Showroom
+    toggleSubmenu('showroom');
+  } else {
+    // altrimenti chiudo tutto come prima
+    ripristinaMenuPrincipale();
+  }
+}
 
 /**
  * ============================
@@ -2233,8 +2252,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 1) Collega tutte le × (close) per chiudere modale
     modal.querySelectorAll('.modal-close').forEach(btn =>
-  btn.addEventListener('click', ripristinaMenuPrincipale)
+  btn.addEventListener('click', chiudiModale)
 );
+
 
 
     // 2) Assicura che "Clicca qui" funzioni al tocco (per slideshow)
