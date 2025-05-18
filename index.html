@@ -1650,65 +1650,80 @@ function toggleSubmenu(tipo) {
  */
 function ripristinaMenuPrincipale() {
   if (isTransitioning) return;
+  isTransitioning = true;
 
-  const main = document.getElementById('main');
-  const sidebar = document.getElementById('sidebar');
-  const submenuServizi = document.getElementById('submenu-servizi');
+  const main            = document.getElementById('main');
+  const sidebar         = document.getElementById('sidebar');
+  const submenuServizi  = document.getElementById('submenu-servizi');
   const submenuShowroom = document.getElementById('submenu-showroom');
-  const watermark = document.getElementById('watermark-logo');
-  const smallLogo = document.getElementById('sidebar-logo');
-  const centralLogo = document.getElementById('logo-btn');
-  const modal = document.getElementById('modal');
-  const galleryView = document.getElementById('gallery-view');
+  const watermark       = document.getElementById('watermark-logo');
+  const smallLogo       = document.getElementById('sidebar-logo');
+  const centralLogo     = document.getElementById('logo-btn');
+  const modalElem       = document.getElementById('modal');
+  const modalContent    = document.getElementById('modal-content');
+  const galleryView     = document.getElementById('gallery-view');
 
+  // Se siamo già in main e non c'è niente di aperto, esco
   if (
     submenuServizi.style.display === 'none' &&
     submenuShowroom.style.display === 'none' &&
-    !modal.classList.contains('show') &&
+    !modalElem.classList.contains('show') &&
     !slideshowAttivo &&
     galleryView.style.display === 'none'
   ) {
+    isTransitioning = false;
     return;
   }
 
-  isTransitioning = true;
+  // Riattivo subito il logo centrale (non aspetto il preload)
+  centralLogo.style.display = 'block';
 
   smallLogo.style.opacity = '0';
-  main.style.opacity = '0';
+  main.style.opacity     = '0';
 
   setTimeout(() => {
+    // 1) Stoppo eventuale slideshow
     if (slideshowInterval) {
       clearInterval(slideshowInterval);
       slideshowInterval = null;
     }
-
     slideshowAttivo = false;
-    watermark.style.display = 'none';
+
+    watermark.style.display      = 'none';
     document.body.style.overflow = '';
 
-    if (modal.classList.contains('show')) {
-      modal.classList.remove('show');
-      modal.classList.add('fade-out');
+    // 2) Se la modale era aperta, la chiudo e sposto la gallery-view fuori
+    if (modalElem.classList.contains('show')) {
+      modalElem.classList.remove('show');
+      modalElem.classList.add('fade-out');
+
       setTimeout(() => {
-        modal.classList.remove('fade-out');
+        // Sposto gallery-view sotto #main se all'interno della modale
+        if (modalContent.contains(galleryView)) {
+          modalContent.removeChild(galleryView);
+          main.appendChild(galleryView);
+        }
+        modalElem.classList.remove('fade-out');
         modalContent.innerHTML = '';
         currentIndex = null;
-        isTransitioning = false;
       }, 600);
     }
 
-    galleryView.style.display = 'none';
-
-    submenuServizi.style.display = 'none';
+    // 3) Hide gallery-view e sub-menu
+    galleryView.style.display     = 'none';
+    submenuServizi.style.display  = 'none';
     submenuShowroom.style.display = 'none';
+
+    // 4) Rimetto visibili le voci principali
     document.querySelectorAll('.menu-list > .menu-item')
             .forEach(el => el.style.display = 'flex');
     sidebar.style.display = '';
 
+    // 5) Reset e pulse logo centrale
     centralLogo.classList.remove('loaded-img','loading','pulse');
     centralLogo.style.transition = 'none';
-    centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
-    centralLogo.style.opacity = '0';
+    centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
+    centralLogo.style.opacity    = '0';
     centralLogo.style.visibility = 'hidden';
 
     const preload = new Image();
@@ -1718,26 +1733,22 @@ function ripristinaMenuPrincipale() {
       void centralLogo.offsetWidth;
       centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
       centralLogo.style.visibility = 'visible';
-      centralLogo.style.opacity = '1';
-      centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
-
-      // ============================
-  // RIABILITA IL LOGO CENTRALE
-  // ============================
-  document.getElementById('logo-btn').style.display = 'block';
-
+      centralLogo.style.opacity    = '1';
+      centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
       setTimeout(() => centralLogo.classList.add('pulse'), 600);
     };
 
-    main.style.opacity = '1';
+    main.style.opacity     = '1';
     smallLogo.style.opacity = '1';
 
+    // 6) Fine transizione: riabilito le interazioni
     setTimeout(() => {
       isTransitioning = false;
-    }, 600);
+    }, 700);
 
   }, 500);
 }
+
 
 // ============================
 // BLOCCO: Inizializzazione evento DOM
@@ -2216,21 +2227,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalContent = document.getElementById('modal-content');
 
     // 1) Collega tutte le × (close) per chiudere modale
-    modal.querySelectorAll('.modal-close').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (modal.classList.contains('show') && modalContent.innerHTML.includes("Base Elettronica Service") && autoHide !== null) {
-          clearTimeout(autoHide);
-          autoHide = null;
-          document.getElementById('modal-blocker').style.display = 'none';
-        }
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-        }, 600);
-      });
-    });
+    modal.querySelectorAll('.modal-close').forEach(btn =>
+  btn.addEventListener('click', ripristinaMenuPrincipale)
+);
+
 
     // 2) Assicura che "Clicca qui" funzioni al tocco (per slideshow)
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
