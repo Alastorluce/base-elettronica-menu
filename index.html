@@ -2274,6 +2274,15 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.addEventListener('click', closeFullscreen);
   });
 
+  // === 8) Ottimizzazione per dispositivi mobili ===
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    const modal = document.getElementById('modal');
+    // Collega tutte le × (close) presenti nella modale alle stesse logiche
+    modal.querySelectorAll('.modal-close').forEach(btn => {
+      btn.addEventListener('click', chiudiModale);
+    });
+  }
+
   // ============================
   // BLOCCO: ottimizzazione per dispositivi mobili
   // Abilita la chiusura modale tramite "×" e il tocco su elementi speciali
