@@ -1193,7 +1193,8 @@ video#logo-btn {
   <div id="modal" class="modal">
   <!-- Pulsante di chiusura in alto a destra -->
 
-  <button class="modal-close" onclick="ripristinaMenuPrincipale()">×</button>
+  <button class="modal-close" onclick="closeModalOnly()">×</button>
+
 
     
     <!-- Contenuto dinamico interno -->
@@ -2230,8 +2231,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 1) Collega tutte le × (close) per chiudere modale
     modal.querySelectorAll('.modal-close').forEach(btn =>
-  btn.addEventListener('click', ripristinaMenuPrincipale)
+  btn.removeEventListener('click', ripristinaMenuPrincipale),
+  btn.addEventListener('click', closeModalOnly)
 );
+
 
 
     // 2) Assicura che "Clicca qui" funzioni al tocco (per slideshow)
@@ -2415,6 +2418,23 @@ let welcomeTimeout = setTimeout(() => {
   window.addEventListener('resize', checkOrientation);
   window.addEventListener('orientationchange', checkOrientation);
 })();
+
+
+/**
+ * Chiude soltanto la modale, senza toccare lo stato del menu laterale
+ */
+function closeModalOnly() {
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+    // dopo l’animazione toglie il contenuto
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = '';
+      currentIndex = null;
+    }, 600);
+  }
+}
 
 
 </script>
