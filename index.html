@@ -1201,7 +1201,7 @@ video#logo-btn {
   <div id="modal" class="modal">
   <!-- Pulsante di chiusura in alto a destra -->
 
-  <button class="modal-close" onclick="ripristinaMenuPrincipale()">×</button>
+  <button class="modal-close">×</button>
 
     
     <!-- Contenuto dinamico interno -->
@@ -1661,18 +1661,24 @@ function toggleSubmenu(tipo) {
  * altrimenti richiama il reset completo.
  */
 function chiudiModale() {
-  const galleryView = document.getElementById('gallery-view');
+  const gallery = document.getElementById('gallery-view');
+  const fullscreen = document.getElementById('fullscreen-view');
 
-  // 1) Se sto nella gallery di Showroom
-  if (galleryView.style.display === 'block' && currentSubmenu === 'showroom') {
-    galleryView.style.display = 'none';
+  // se sono in fullscreen…
+  if (fullscreen.classList.contains('active')) {
+    fullscreen.classList.remove('active');
+    const video = fullscreen.querySelector('video');
+    if (video) video.pause();
+    return;
+  }
+  // se sono nella gallery sotto-showroom…
+  if (gallery.style.display === 'block' && currentSubmenu === 'showroom') {
+    gallery.style.display = 'none';
     toggleSubmenu('showroom');
     return;
   }
-
-  // 2) Se una modale qualsiasi è aperta E ho un sotto-menu attivo (servizi o showroom)
+  // se ho una modale aperta ma c’è un submenu attivo…
   if (modal.classList.contains('show') && currentSubmenu) {
-    // chiudo soltanto la modale, senza toccare il menu sottostante
     modal.classList.remove('show');
     modal.classList.add('fade-out');
     setTimeout(() => {
@@ -1682,10 +1688,10 @@ function chiudiModale() {
     }, 600);
     return;
   }
-
-  // 3) Altrimenti (nessun submenu attivo) faccio il reset completo
+  // altrimenti torno al menu principale
   ripristinaMenuPrincipale();
 }
+
 
 
 /**
@@ -2229,55 +2235,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // === 2) Assegna animazione outline personalizzata a ogni menu-item ===
   document.querySelectorAll('.menu-item').forEach(el => {
-    const delay = (Math.random() * 3).toFixed(2) + 's';           // delay casuale tra 0 e 3s
-    const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';     // durata tra 5 e 6.5s
+    const delay = (Math.random() * 3).toFixed(2) + 's';
+    const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
     el.style.setProperty('--delay', delay);
     el.style.setProperty('--duration', speed);
   });
 
   // === 3) Gestione pressione pulsanti: effetto 'pressed' al click ===
   document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('mousedown', function () {
-      this.classList.add('pressed');
-    });
-    item.addEventListener('mouseup', function () {
-      this.classList.remove('pressed');
-    });
-    item.addEventListener('mouseleave', function () {
-      this.classList.remove('pressed');
-    });
+    item.addEventListener('mousedown',  () => item.classList.add('pressed'));
+    item.addEventListener('mouseup',    () => item.classList.remove('pressed'));
+    item.addEventListener('mouseleave', () => item.classList.remove('pressed'));
   });
 
-  // === 4) ESC chiude fullscreen view ===
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeFullscreen(); // chiude solo la galleria fullscreen
-    }
+  // === 4) ESC chiude il fullscreen view ===
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeFullscreen();
   });
 
-  // ============================
-  // BLOCCO: ottimizzazione per dispositivi mobili
-  // Abilita la chiusura modale tramite "×" e il tocco su elementi speciali
-  // ============================
-  if (window.matchMedia('(max-width: 768px)').matches) {
-    const modal = document.getElementById('modal');
-    const modalContent = document.getElementById('modal-content');
+  // === 5) Aggancio tutte le "×" alla funzione chiudiModale() ===
+  document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', chiudiModale);
+  });
 
-    // 1) Collega tutte le × (close) per chiudere modale
-    modal.querySelectorAll('.modal-close').forEach(btn =>
-  btn.addEventListener('click', chiudiModale)
-);
+});  // <-- chiude DOMContentLoaded
 
 
-
-    // 2) Assicura che "Clicca qui" funzioni al tocco (per slideshow)
-    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-      el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tocco
-        attivaSlideshow();
-      }, { passive: false });
-    });
-  }
+  
+  
+ 
 
   // ============================
   // BLOCCO: Gestione click sul logo centrale (img o video)
@@ -2305,7 +2291,7 @@ document.addEventListener('DOMContentLoaded', function () {
       el.classList.remove('pressed');
     });
   });
-});
+
 
 
 // ============================
