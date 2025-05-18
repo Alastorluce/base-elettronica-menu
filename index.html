@@ -1098,6 +1098,31 @@ video#logo-btn {
   border-radius: 4px;
 }
 
+.fullscreen-content img,
+.fullscreen-content video {
+  max-width: 100%;
+  max-height: 90vh;
+  display: block;
+  border-radius: 4px;
+}
+
+/* ============================
+   BLOCCO: Rimozione comandi video in fullscreen
+   ============================ */
+.fullscreen-content video::-webkit-media-controls {
+  display: none !important;
+}
+.fullscreen-content video::-moz-media-controls {
+  display: none !important;
+}
+.fullscreen-content video::-ms-media-controls {
+  display: none !important;
+}
+.fullscreen-content video {
+  outline: none;
+  background-color: black;
+  border-radius: 4px;
+}           
 
 /* ============================
    BLOCCO: Pulsante di chiusura fullscreen (identico modale mobile)
