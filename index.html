@@ -1737,34 +1737,21 @@ function ripristinaMenuPrincipale() {
       currentIndex = null;
     }
 
-    // 🔹 Chiude e rimuove la galleria dal DOM se presente nella modale
-    if (galleryView.parentElement === modalContent) {
-      galleryView.style.display = 'none';
-      modalContent.removeChild(galleryView);
-    }
-
-    // 🔹 Reset logico dello stato submenu attivo
-    currentSubmenu = null;
+    // 🔹 Chiude la galleria
+    galleryView.style.display = 'none';
 
     // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
     submenuShowroom.style.display = 'none';
 
-    // 🔹 Riabilita solo i menu-item del menu principale
-    document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
-      const inSubmenu =
-        el.closest('#submenu-servizi') !== null ||
-        el.closest('#submenu-showroom') !== null;
+    // 🔹 Riabilita il menu principale
+    document.querySelectorAll('.menu-list > .menu-item')
+            .forEach(el => el.style.display = 'flex');
 
-      if (!inSubmenu) {
-        el.style.display = 'flex';
-      } else {
-        el.style.display = 'none';
-      }
-    });
+    sidebar.style.display = '';
 
     // 🔹 Reset logo centrale
-    centralLogo.classList.remove('loaded-img', 'loading', 'pulse');
+    centralLogo.classList.remove('loaded-img','loading','pulse');
     centralLogo.style.transition = 'none';
     centralLogo.style.transform = 'translate(-50%, -50%) scale(2.3)';
     centralLogo.style.opacity = '0';
@@ -1781,7 +1768,6 @@ function ripristinaMenuPrincipale() {
       centralLogo.style.opacity = '1';
       centralLogo.style.transform = 'translate(-50%, -50%) scale(2.3)';
 
-      // 🔹 Rende nuovamente visibile il logo centrale
       document.getElementById('logo-btn').style.display = 'block';
 
       setTimeout(() => centralLogo.classList.add('pulse'), 600);
@@ -1794,10 +1780,7 @@ function ripristinaMenuPrincipale() {
     setTimeout(() => {
       isTransitioning = false;
     }, 600);
-
   }, 500);
-}
-
 
 
   // 🔄 Riassegna gli onclick per le voci principali dopo reset
