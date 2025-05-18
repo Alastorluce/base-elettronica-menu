@@ -1745,8 +1745,16 @@ function ripristinaMenuPrincipale() {
     submenuShowroom.style.display = 'none';
 
     // 🔹 Riabilita il menu principale
-    document.querySelectorAll('.menu-list > .menu-item')
-            .forEach(el => el.style.display = 'flex');
+    // 🔹 Riabilita solo i menu-item del menu principale
+document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+  const inSubmenu = el.closest('#submenu-servizi') || el.closest('#submenu-showroom');
+  if (!inSubmenu) {
+    el.style.display = 'flex';
+  } else {
+    el.style.display = 'none';
+  }
+});
+
 
     sidebar.style.display = '';
 
