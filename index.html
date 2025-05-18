@@ -1737,15 +1737,8 @@ function ripristinaMenuPrincipale() {
       currentIndex = null;
     }
 
-    // 🔹 Chiude la galleria (mobile fix incluso)
-galleryView.style.display = 'none';
-
-// 🔹 Resetta anche eventuali contenuti HTML residui nella galleria
-const galleryContainer = document.getElementById('gallery-container');
-if (galleryContainer) {
-  galleryContainer.innerHTML = '';  // pulizia forzata in caso di blocco su mobile
-}
-
+    // 🔹 Chiude la galleria
+    galleryView.style.display = 'none';
 
     // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
@@ -1828,13 +1821,7 @@ function apriSubservizio(tipo) {
   const galleryView = document.getElementById('gallery-view');
 
   // 🔹 Nasconde eventuale galleria attiva
-  // 🔹 Chiude e reinserisce correttamente la galleria nel main se è ancora dentro la modale (caso mobile)
-if (galleryView && galleryView.parentElement !== main) {
-  modalContent.removeChild(galleryView);
-  main.appendChild(galleryView);
-}
-galleryView.style.display = 'none';
-
+  galleryView.style.display = 'none';
 
   // 🔹 Mantiene visibile il logo centrale
 document.getElementById('logo-btn').style.display = 'block';
@@ -2097,7 +2084,6 @@ function apriShowroom(tipo) {
 
     // Mostra la modale galleria
     modalContent.innerHTML = ''; // svuota modale ma non tocca #gallery-view
-    galleryView.scrollTop = 0; // reset scroll
     galleryView.style.display = 'block';
 
     document.getElementById('logo-btn').style.display = 'none';
