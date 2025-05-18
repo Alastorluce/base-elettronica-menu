@@ -1821,7 +1821,13 @@ function apriSubservizio(tipo) {
   const galleryView = document.getElementById('gallery-view');
 
   // 🔹 Nasconde eventuale galleria attiva
-  galleryView.style.display = 'none';
+  // 🔹 Chiude e reinserisce correttamente la galleria nel main se è ancora dentro la modale (caso mobile)
+if (galleryView && galleryView.parentElement !== main) {
+  modalContent.removeChild(galleryView);
+  main.appendChild(galleryView);
+}
+currentSubmenu = null;
+
 
   // 🔹 Mantiene visibile il logo centrale
 document.getElementById('logo-btn').style.display = 'block';
