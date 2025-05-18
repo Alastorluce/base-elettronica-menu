@@ -1967,111 +1967,94 @@ function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
+  // 1) se la modale è già visibile, lancio subito il fade-out
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
   }
 
-  const galleryView = document.getElementById('gallery-view');
-  const galleryContainer = document.getElementById('gallery-container');
-  galleryContainer.innerHTML = '';
+  // 2) dopo 0.6s (fade-out) costruisco e mostro la gallery
+  setTimeout(() => {
+    const galleryView = document.getElementById('gallery-view');
+    const galleryContainer = document.getElementById('gallery-container');
 
-  const folderPath = tipo === 'service'
-    ? 'media/Service_e_Spettacolo/'
-    : 'media/Sicurezza_Antincendio/';
+    // svuoto sempre il container
+    galleryContainer.innerHTML = '';
 
-  // === Controlla esistenza file (HEAD asincrona) ===
-  const checkFile = (url) => new Promise((resolve) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('HEAD', url, true);
-    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 400 ? url : null);
-    xhr.onerror = () => resolve(null);
-    xhr.send();
-  });
+    // scelgo la cartella giusta
+    const folderPath = tipo === 'service'
+      ? 'media/Service_e_Spettacolo/'
+      : 'media/Sicurezza_Antincendio/';
 
-  // === Costruisce la lista media con Promise.all veloce ===
-  async function buildFileList() {
-    const mediaFiles = [];
-
-    const imagePromises = [];
-    for (let i = 1; i <= 100; i++) {
-      const jpg = `${folderPath}img${i}.jpg`;
-      const png = `${folderPath}img${i}.png`;
-
-      // Ogni immagine ha due promesse: jpg e png
-      imagePromises.push(
-        Promise.all([checkFile(jpg), checkFile(png)]).then(([jpgExists, pngExists]) => {
-          if (jpgExists) return { type: 'image', src: jpg };
-          if (pngExists) return { type: 'image', src: png };
-          return null;
-        })
-      );
-    }
-
-    const videoPromises = [];
-    for (let i = 1; i <= 100; i++) {
-      const vid = `${folderPath}vd${i}.mp4`;
-      videoPromises.push(
-        checkFile(vid).then((exists) => exists ? { type: 'video', src: vid } : null)
-      );
-    }
-
-    const results = await Promise.all([...imagePromises, ...videoPromises]);
-    return results.filter(Boolean); // rimuove null
-  }
-
-  // === Rendering dinamico della galleria ===
-  buildFileList().then((mediaFiles) => {
-    mediaFiles.forEach((file, index) => {
-      const galleryItem = document.createElement('div');
-      galleryItem.className = 'gallery-item';
-      galleryItem.dataset.index = index;
-
-      if (file.type === 'image') {
-        const img = document.createElement('img');
-        img.src = file.src;
-        img.alt = '';
-        galleryItem.appendChild(img);
-      }
-
-      else if (file.type === 'video') {
-        const video = document.createElement('video');
-        video.src = file.src;
-        video.muted = true;
-        video.loop = true;
-        video.autoplay = false;
-        video.preload = 'metadata';
-        video.style.width = '100%';
-        video.style.height = '100%';
-        video.style.objectFit = 'cover';
-
-        galleryItem.appendChild(video);
-
-        galleryItem.addEventListener('mouseenter', () => video.play());
-        galleryItem.addEventListener('mouseleave', () => video.pause());
-      }
-
-      galleryItem.addEventListener('click', () => {
-        openFullscreen(file);
-      });
-
-      galleryContainer.appendChild(galleryItem);
+    // helper per HEAD asincrona
+    const checkFile = url => new Promise(res => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('HEAD', url, true);
+      xhr.onload  = () => res(xhr.status >= 200 && xhr.status < 400 ? url : null);
+      xhr.onerror = () => res(null);
+      xhr.send();
     });
 
-    // Mostra la galleria
-    modalContent.innerHTML = '';
-    modalContent.appendChild(galleryView);
-    galleryView.style.display = 'block';
+    // costruisco la lista completa di immagini + video
+    async function buildFileList() {
+      const p = [];
+      for (let i = 1; i <= 100; i++) {
+        const jpg = `${folderPath}img${i}.jpg`;
+        const png = `${folderPath}img${i}.png`;
+        p.push(
+          Promise.all([checkFile(jpg), checkFile(png)])
+            .then(([j, q]) => j ? {type:'image',src:j}
+                               : q ? {type:'image',src:q}
+                                   : null)
+        );
+        const vid = `${folderPath}vd${i}.mp4`;
+        p.push(
+          checkFile(vid).then(u => u ? {type:'video',src:u} : null)
+        );
+      }
+      return (await Promise.all(p)).filter(x => x);
+    }
 
-    document.getElementById('logo-btn').style.display = 'none';
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
+    // 3) popolo la galleria
+    buildFileList().then(mediaFiles => {
+      mediaFiles.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
 
-    setTimeout(() => {
-      isTransitioning = false;
-    }, 600);
-  });
+        if (file.type === 'image') {
+          const img = document.createElement('img');
+          img.src = file.src;
+          item.appendChild(img);
+        } else {
+          const video = document.createElement('video');
+          video.src    = file.src;
+          video.muted  = true;
+          video.loop   = true;
+          video.preload = 'metadata';
+          item.appendChild(video);
+          item.addEventListener('mouseenter', () => video.play());
+          item.addEventListener('mouseleave', () => video.pause());
+        }
+
+        item.addEventListener('click', () => openFullscreen(file));
+        galleryContainer.appendChild(item);
+      });
+
+      // 4) inietto la gallery nella modale
+      modalContent.innerHTML = '';
+      modalContent.appendChild(galleryView);
+      galleryView.style.display = 'block';
+
+      // 5) fade-in
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+
+      // 6) sblocco i click dopo la transizione
+      setTimeout(() => { isTransitioning = false; }, 600);
+    });
+  }, 600);
 }
+
 
 
 
