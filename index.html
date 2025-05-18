@@ -1098,12 +1098,23 @@ video#logo-btn {
   border-radius: 4px;
 }
 
-.fullscreen-content img,
-.fullscreen-content video {
-  max-width: 100%;
-  max-height: 90vh;
-  display: block;
-  border-radius: 4px;
+/* ============================
+   BLOCCO: Adattamento video fullscreen per orientamento
+   ============================ */
+@media (orientation: portrait) {
+  .fullscreen-content video {
+    width: 100vw;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+@media (orientation: landscape) {
+  .fullscreen-content video {
+    height: 100vh;
+    width: auto;
+    object-fit: contain;
+  }
 }
 
 /* ============================
