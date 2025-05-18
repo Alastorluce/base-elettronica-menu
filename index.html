@@ -2270,15 +2270,7 @@ fullscreenContent.appendChild(wm);
   // Attiva l’overlay fullscreen
   fullscreenView.classList.add('active');
 
-  // Permette la chiusura cliccando sullo sfondo esterno
-  fullscreenView.addEventListener('click', (e) => {
-    if (e.target === fullscreenView) {
-      closeFullscreen(); // chiude solo se si clicca fuori dal contenuto
-    }
-  });
-}
-
-// ============================
+  // ============================
 // BLOCCO: Attiva fullscreen nativo su mobile landscape
 // Se il device è mobile e in orizzontale, attiva il fullscreen nativo del browser
 // ============================
@@ -2292,6 +2284,16 @@ if (
 
   if (requestFull) requestFull.call(fullscreenView);
 }
+
+  // Permette la chiusura cliccando sullo sfondo esterno
+  fullscreenView.addEventListener('click', (e) => {
+    if (e.target === fullscreenView) {
+      closeFullscreen(); // chiude solo se si clicca fuori dal contenuto
+    }
+  });
+}
+
+
 
 
 
