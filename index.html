@@ -2178,12 +2178,15 @@ fullscreenContent.appendChild(wm);
   // Inserisce video in autoplay silenzioso
   const video = document.createElement('video');
   video.src         = file.src;
-  video.muted       = true;           // silenzioso → sblocca autoplay
-  video.autoplay    = true;           // parte automaticamente
-  video.playsInline = true;           // evita forzature di fullscreen su iOS/Android
-  video.loop        = false;          // o true se vuoi il loop anche in fullscreen
-  video.controls    = true;           // mantieni i controlli utente
-  video.preload     = 'auto';         // scarica i primi fotogrammi
+  video.muted       = true;        // silenzioso → sblocca autoplay
+  video.autoplay    = true;        // parte automaticamente
+  video.playsInline = true;        // evita forzature fullscreen su mobile
+  video.loop        = true;        // per loop continuo
+  video.controls    = false;       // <-- CONTROLLI NASCOSTI
+  video.preload     = 'auto';      // caricamento automatico
+
+  // Evita interazioni del mouse col video
+  video.style.pointerEvents = 'none';
 
   fullscreenContent.appendChild(video);
 
