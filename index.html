@@ -2007,9 +2007,24 @@ function apriShowroom(tipo) {
                                : q ? {type:'image',src:q}
                                    : null)
         );
+        
+        // Cerca il video nella cartella corrente
         const vid = `${folderPath}vd${i}.mp4`;
+        
+        // Cerca anche in Service_e_Spettacolo se siamo in Sicurezza_Antincendio e viceversa
+        const altFolderPath = folderPath.includes('Sicurezza_Antincendio') 
+          ? 'media/Service_e_Spettacolo/' 
+          : 'media/Sicurezza_Antincendio/';
+        const altVid = `${altFolderPath}vd${i}.mp4`;
+        
         p.push(
-          checkFile(vid).then(u => u ? {type:'video',src:u} : null)
+          Promise.all([checkFile(vid), checkFile(altVid)])
+            .then(([v, altV]) => {
+              if (v) return {type:'video', src:v};
+              if (altV) return {type:'video', src:altV};
+              // Se il video non esiste in nessuna cartella, crea un placeholder
+              return {type:'videoPlaceholder', id:`vd${i}`};
+            })
         );
       }
       return (await Promise.all(p)).filter(x => x);
@@ -2025,17 +2040,37 @@ function apriShowroom(tipo) {
           const img = document.createElement('img');
           img.src = file.src;
           item.appendChild(img);
-        } else {
-  const video = document.createElement('video');
-  video.src          = file.src;
-  video.muted        = true;           // necessario per autoplay silenzioso
-  video.loop         = true;
-  video.autoplay     = true;           // parte immediatamente
-  video.playsInline  = true;           // su iOS/Android
-  video.preload      = 'auto';         // scarica qualche fotogramma
-  video.style.objectFit = 'cover';     // mantiene il tuo stile
-  item.appendChild(video);
-}
+        } else if (file.type === 'video') {
+          const video = document.createElement('video');
+          video.src          = file.src;
+          video.muted        = true;           // necessario per autoplay silenzioso
+          video.loop         = true;
+          video.autoplay     = true;           // parte immediatamente
+          video.playsInline  = true;           // su iOS/Android
+          video.preload      = 'auto';         // scarica qualche fotogramma
+          video.style.objectFit = 'cover';     // mantiene il tuo stile
+          item.appendChild(video);
+        } else if (file.type === 'videoPlaceholder') {
+          // Crea un placeholder per i video mancanti
+          const placeholder = document.createElement('div');
+          placeholder.className = 'video-placeholder';
+          placeholder.innerHTML = `
+            <div class="placeholder-icon">▶️</div>
+            <div class="placeholder-text">Video non disponibile</div>
+          `;
+          placeholder.style.backgroundColor = '#111';
+          placeholder.style.display = 'flex';
+          placeholder.style.flexDirection = 'column';
+          placeholder.style.justifyContent = 'center';
+          placeholder.style.alignItems = 'center';
+          placeholder.style.width = '100%';
+          placeholder.style.height = '100%';
+          placeholder.style.color = '#00a6ff';
+          placeholder.style.textAlign = 'center';
+          placeholder.style.padding = '10px';
+          placeholder.dataset.videoId = file.id;
+          item.appendChild(placeholder);
+        }
 
 
         item.addEventListener('click', () => openFullscreen(file));
@@ -2108,6 +2143,30 @@ fullscreenContent.appendChild(wm);
 
 
 
+  } else if (file.type === 'videoPlaceholder') {
+    // Mostra un messaggio per i video non disponibili
+    const placeholderMsg = document.createElement('div');
+    placeholderMsg.style.textAlign = 'center';
+    placeholderMsg.style.padding = '2em';
+    placeholderMsg.style.color = '#00a6ff';
+    placeholderMsg.innerHTML = `
+      <div style="font-size: 3em; margin-bottom: 0.5em;">▶️</div>
+      <h2>Video non disponibile</h2>
+      <p>Il video richiesto non è disponibile al momento.</p>
+    `;
+    fullscreenContent.appendChild(placeholderMsg);
+    
+    // Aggiungi watermark anche qui
+    const wm = document.createElement('img');
+    wm.src = 'logo.png';
+    wm.style.position = 'absolute';
+    wm.style.bottom = '20px';
+    wm.style.right = '20px';
+    wm.style.opacity = '0.1';
+    wm.style.maxWidth = '200px';
+    wm.style.pointerEvents = 'none';
+    fullscreenContent.appendChild(wm);
+    
   } else if (file.type === 'video') {
   // Inserisce video in autoplay silenzioso
   const video = document.createElement('video');
