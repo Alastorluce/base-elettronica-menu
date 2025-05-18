@@ -2256,19 +2256,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // === 5) Assicura che "Clicca qui" funzioni al tocco (per slideshow) ===
+  document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
+    el.addEventListener('touchstart', e => {
+      e.preventDefault();  // evita doppio tocco
+      attivaSlideshow();
+    }, { passive: false });
+  });
 
-  // 5) Assicura che "Clicca qui" funzioni al tocco (per slideshow)
-    document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
-      el.addEventListener('touchstart', e => {
-        e.preventDefault();  // evita doppio tocco
-        attivaSlideshow();
-      }, { passive: false });
-    });
+  // === 6) Collego solo le "×" della modale principale a chiudiModale() ===
+  document.querySelectorAll('#modal .modal-close').forEach(btn => {
+    btn.addEventListener('click', chiudiModale);
+  });
 
-    // 6) Collego solo le "×" della modale principale a chiudiModale()
-  document.querySelectorAll('#modal .modal-close').forEach(btn =>
-    btn.addEventListener('click', chiudiModale)
-  );
+  // === 7) Chiude il fullscreen senza toccare la modale ===
+  document.querySelectorAll('#fullscreen-view .modal-close').forEach(btn => {
+    btn.addEventListener('click', closeFullscreen);
+  });
+
+}); // <-- chiude DOMContentLoaded
+
   // ============================
   // BLOCCO: ottimizzazione per dispositivi mobili
   // Abilita la chiusura modale tramite "×" e il tocco su elementi speciali
@@ -2306,7 +2313,7 @@ document.addEventListener('DOMContentLoaded', function () {
       el.classList.remove('pressed');
     });
   });
-});
+
 
 
 // ============================
