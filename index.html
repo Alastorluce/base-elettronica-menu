@@ -1772,34 +1772,6 @@ function closeModalAndReset() {
 
 
 
-// ============================
-// BLOCCO: Inizializzazione evento DOM
-// Avvia effetti, listener, e comportamenti dinamici all’avvio del sito
-// ============================
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('sidebar').classList.add('animated');
-
-  document.querySelectorAll('.menu-item').forEach(el => {
-    const delay = (Math.random() * 3).toFixed(2) + 's';
-    const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
-    el.style.setProperty('--delay', delay);
-    el.style.setProperty('--duration', speed);
-  });
-
-  document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('mousedown', () => item.classList.add('pressed'));
-    item.addEventListener('mouseup', () => item.classList.remove('pressed'));
-    item.addEventListener('mouseleave', () => item.classList.remove('pressed'));
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeFullscreen();
-  });
-
-  const logoBtn = document.getElementById('logo-btn');
-  logoBtn.style.cursor = 'pointer';
-  logoBtn.addEventListener('click', ripristinaMenuPrincipale);
-});
 
 
 
@@ -2209,8 +2181,24 @@ function attivaSlideshow() {
 // ============================
 document.addEventListener('DOMContentLoaded', function () {
 
-  // === 1) Attiva l'animazione della sidebar iniziale ===
-  document.getElementById('sidebar').classList.add('animated');
+      // 1) Collega tutte le × (close) per chiudere modale
+    modal.querySelectorAll('.modal-close').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // se è il welcome message, blocco l’auto-hide
+        if (
+          modal.classList.contains('show')
+          && modalContent.innerHTML.includes("Base Elettronica Service")
+          && autoHide !== null
+        ) {
+          clearTimeout(autoHide);
+          autoHide = null;
+          document.getElementById('modal-blocker').style.display = 'none';
+        }
+        // USO la routine centralizzata per chiudere e tornare al menu
+        closeModalAndReset();
+      });
+    });
+
 
   // === 2) Assegna animazione outline personalizzata a ogni menu-item ===
   document.querySelectorAll('.menu-item').forEach(el => {
