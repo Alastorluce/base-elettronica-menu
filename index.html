@@ -2003,13 +2003,9 @@ function apriSubservizio(tipo) {
 
 // ============================
 // BLOCCO: apriShowroom(tipo)
-// Visualizza la galleria multimediale solo con immagini/video realmente esistenti - con Promise.all e fallback jpg/png
+// Crea e mostra la gallery usando mediaConfig con verifica effettiva dei file
 // ============================
-// ============================
-// BLOCCO: apriShowroom(tipo)
-// Crea e mostra subito la gallery usando mediaConfig, senza controlli HEAD
-// ============================
-function apriShowroom(tipo) {
+async function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
@@ -2020,7 +2016,7 @@ function apriShowroom(tipo) {
   }
 
   // 2) dopo 0.6s (fade-out) costruisco e mostro la gallery
-  setTimeout(() => {
+  setTimeout(async () => {
     const galleryView      = document.getElementById('gallery-view');
     const galleryContainer = document.getElementById('gallery-container');
 
@@ -2030,54 +2026,68 @@ function apriShowroom(tipo) {
     // prendo la configurazione (folder, range, estensioni) dal JSON già caricato
     const cfg = mediaConfig[tipo];
 
+    const promises = [];
+
     // ============================
-    // BLOCCO: Generazione anteprime immagini
+    // BLOCCO: Generazione anteprime immagini con verifica file
     // ============================
     for (let i = cfg.image.from; i <= cfg.image.to; i++) {
-      cfg.image.exts.forEach(ext => {
-        const url  = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
-        const item = document.createElement('div');
-        item.className = 'gallery-item';
+      for (const ext of cfg.image.exts) {
+        const url = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
+        promises.push(
+          checkImage(url).then(exists => {
+            if (exists) {
+              const item = document.createElement('div');
+              item.className = 'gallery-item';
 
-        const img = document.createElement('img');
-        img.src = url;
-        item.appendChild(img);
+              const img = document.createElement('img');
+              img.src = url;
+              item.appendChild(img);
 
-        item.addEventListener('click', () =>
-          openFullscreen({ type: 'image', src: url })
+              item.addEventListener('click', () =>
+                openFullscreen({ type: 'image', src: url })
+              );
+              galleryContainer.appendChild(item);
+            }
+          })
         );
-        galleryContainer.appendChild(item);
-      });
+      }
     }
 
     // ============================
-    // BLOCCO: Generazione anteprime video
+    // BLOCCO: Generazione anteprime video con verifica file
     // ============================
     for (let i = cfg.video.from; i <= cfg.video.to; i++) {
-      cfg.video.exts.forEach(ext => {
-        const url  = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
-        const item = document.createElement('div');
-        item.className = 'gallery-item';
+      for (const ext of cfg.video.exts) {
+        const url = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
+        promises.push(
+          checkVideo(url).then(exists => {
+            if (exists) {
+              const item = document.createElement('div');
+              item.className = 'gallery-item';
 
-        const vid = document.createElement('video');
-        vid.muted       = true;
-        vid.loop        = true;
-        vid.autoplay    = true;
-        vid.playsInline = true;
-        vid.preload     = 'metadata';
-        vid.src         = url;
-        vid.style.objectFit = 'cover';
-        // SE NON C’È FILE, nascondi l’item
-        vid.onerror = () => item.style.display = 'none';
+              const vid = document.createElement('video');
+              vid.muted       = true;
+              vid.loop        = true;
+              vid.autoplay    = true;
+              vid.playsInline = true;
+              vid.preload     = 'metadata';
+              vid.src         = url;
+              vid.style.objectFit = 'cover';
 
-        item.appendChild(vid);
-        item.addEventListener('click', () =>
-          openFullscreen({ type: 'video', src: url })
+              item.appendChild(vid);
+              item.addEventListener('click', () =>
+                openFullscreen({ type: 'video', src: url })
+              );
+              galleryContainer.appendChild(item);
+            }
+          })
         );
-        galleryContainer.appendChild(item);
-      });
+      }
     }
 
+    // Attendo che TUTTI i file siano stati verificati prima di mostrare la gallery
+    await Promise.all(promises);
 
     // ============================
     // BLOCCO: Iniezione e animazione della modale
@@ -2092,6 +2102,7 @@ function apriShowroom(tipo) {
     setTimeout(() => { isTransitioning = false; }, 600);
   }, 600);
 }
+
 
 
 
