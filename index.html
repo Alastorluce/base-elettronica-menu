@@ -1967,111 +1967,104 @@ function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  if (modal.classList.contains('show')) {
+  // 1) se la modale era già aperta, lancio il fade-out
+  const wasOpen = modal.classList.contains('show');
+  if (wasOpen) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
   }
 
+  // 2) preparo il contenitore della gallery
   const galleryView = document.getElementById('gallery-view');
   const galleryContainer = document.getElementById('gallery-container');
   galleryContainer.innerHTML = '';
 
-  const folderPath = tipo === 'service'
+  const folderPath = (tipo === 'service')
     ? 'media/Service_e_Spettacolo/'
     : 'media/Sicurezza_Antincendio/';
 
-  // === Controlla esistenza file (HEAD asincrona) ===
+  // 3) funzione di utilità per verificare HEAD
   const checkFile = (url) => new Promise((resolve) => {
     const xhr = new XMLHttpRequest();
     xhr.open('HEAD', url, true);
-    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 400 ? url : null);
+    xhr.onload  = () => resolve(xhr.status >= 200 && xhr.status < 400 ? url : null);
     xhr.onerror = () => resolve(null);
     xhr.send();
   });
 
-  // === Costruisce la lista media con Promise.all veloce ===
+  // 4) costruisco la lista di tutti i media (immagini + video)
   async function buildFileList() {
-    const mediaFiles = [];
+    const promises = [];
 
-    const imagePromises = [];
     for (let i = 1; i <= 100; i++) {
       const jpg = `${folderPath}img${i}.jpg`;
       const png = `${folderPath}img${i}.png`;
-
-      // Ogni immagine ha due promesse: jpg e png
-      imagePromises.push(
-        Promise.all([checkFile(jpg), checkFile(png)]).then(([jpgExists, pngExists]) => {
-          if (jpgExists) return { type: 'image', src: jpg };
-          if (pngExists) return { type: 'image', src: png };
-          return null;
-        })
+      promises.push(
+        Promise.all([checkFile(jpg), checkFile(png)])
+          .then(([j, p]) => j ? { type: 'image', src: j }
+                             : p ? { type: 'image', src: p }
+                                 : null)
       );
-    }
 
-    const videoPromises = [];
-    for (let i = 1; i <= 100; i++) {
       const vid = `${folderPath}vd${i}.mp4`;
-      videoPromises.push(
-        checkFile(vid).then((exists) => exists ? { type: 'video', src: vid } : null)
+      promises.push(
+        checkFile(vid).then(u => u ? { type: 'video', src: u } : null)
       );
     }
 
-    const results = await Promise.all([...imagePromises, ...videoPromises]);
-    return results.filter(Boolean); // rimuove null
+    const results = await Promise.all(promises);
+    return results.filter(Boolean);
   }
 
-  // === Rendering dinamico della galleria ===
-  buildFileList().then((mediaFiles) => {
-    mediaFiles.forEach((file, index) => {
-      const galleryItem = document.createElement('div');
-      galleryItem.className = 'gallery-item';
-      galleryItem.dataset.index = index;
+  // 5) funzione che popola la gallery e fa il fade-in
+  function renderGallery() {
+    buildFileList().then(mediaFiles => {
+      mediaFiles.forEach((file, idx) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.dataset.index = idx;
 
-      if (file.type === 'image') {
-        const img = document.createElement('img');
-        img.src = file.src;
-        img.alt = '';
-        galleryItem.appendChild(img);
-      }
+        if (file.type === 'image') {
+          const img = document.createElement('img');
+          img.src = file.src;
+          item.appendChild(img);
+        } else {
+          const video = document.createElement('video');
+          video.src = file.src;
+          video.muted = true;
+          video.loop  = true;
+          item.appendChild(video);
+          item.addEventListener('mouseenter', () => video.play());
+          item.addEventListener('mouseleave', () => video.pause());
+        }
 
-      else if (file.type === 'video') {
-        const video = document.createElement('video');
-        video.src = file.src;
-        video.muted = true;
-        video.loop = true;
-        video.autoplay = false;
-        video.preload = 'metadata';
-        video.style.width = '100%';
-        video.style.height = '100%';
-        video.style.objectFit = 'cover';
-
-        galleryItem.appendChild(video);
-
-        galleryItem.addEventListener('mouseenter', () => video.play());
-        galleryItem.addEventListener('mouseleave', () => video.pause());
-      }
-
-      galleryItem.addEventListener('click', () => {
-        openFullscreen(file);
+        item.addEventListener('click', () => openFullscreen(file));
+        galleryContainer.appendChild(item);
       });
 
-      galleryContainer.appendChild(galleryItem);
+      // inserisco la gallery nella modale
+      modalContent.innerHTML = '';
+      modalContent.appendChild(galleryView);
+      galleryView.style.display = 'block';
+
+      // fade-in della modale
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+
+      // fine transizione
+      setTimeout(() => { isTransitioning = false; }, 600);
     });
+  }
 
-    // Mostra la galleria
-    modalContent.innerHTML = '';
-    modalContent.appendChild(galleryView);
-    galleryView.style.display = 'block';
-
-    document.getElementById('logo-btn').style.display = 'none';
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
-
-    setTimeout(() => {
-      isTransitioning = false;
-    }, 600);
-  });
+  // 6) se era aperta, aspetto il fade-out (0.6s), altrimenti apro subito
+  if (wasOpen) {
+    setTimeout(renderGallery, 600);
+  } else {
+    renderGallery();
+  }
 }
+
+  
 
 
 
