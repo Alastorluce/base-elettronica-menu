@@ -2306,6 +2306,17 @@ fullscreenContent.appendChild(wm);
   // Attiva l’overlay fullscreen
   fullscreenView.classList.add('active');
 
+  // Attiva fullscreen nativo solo su dispositivi mobili
+if (window.matchMedia('(max-width: 768px)').matches) {
+  const el = fullscreenView;
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
   // Permette la chiusura cliccando sullo sfondo esterno
   fullscreenView.addEventListener('click', (e) => {
     if (e.target === fullscreenView) {
@@ -2318,16 +2329,7 @@ fullscreenContent.appendChild(wm);
 // BLOCCO: closeFullscreen()
 // Chiude la visualizzazione a schermo intero e ferma il video se presente
 // ============================
-function closeFullscreen() {
-  const fullscreenView = document.getElementById('fullscreen-view');
-  fullscreenView.classList.remove('active'); // rimuove visibilità
 
-  // Se è presente un video in riproduzione, lo ferma
-  const video = fullscreenView.querySelector('video');
-  if (video) {
-    video.pause();
-  }
-}
 
 // ============================
 // BLOCCO: attivaSlideshow()
@@ -2345,7 +2347,30 @@ function attivaSlideshow() {
 // ============================
 document.addEventListener('DOMContentLoaded', function () {
 
-  // === 1) Attiva l'animazione della sidebar iniziale ===
+  // === 1) Attiva l'animazione function closeFullscreen() {
+  const fullscreenView = document.getElementById('fullscreen-view');
+  fullscreenView.classList.remove('active'); // rimuove visibilità
+
+  // Se è presente un video in riproduzione, lo ferma
+  const video = fullscreenView.querySelector('video');
+  if (video) {
+    video.pause();
+  }
+
+  // Uscita da fullscreen nativo solo se attivo e solo su mobile
+  if (
+    (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) &&
+    window.matchMedia('(max-width: 768px)').matches
+  ) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+}della sidebar iniziale ===
   document.getElementById('sidebar').classList.add('animated');
 
   // === 2) Assegna animazione outline personalizzata a ogni menu-item ===
