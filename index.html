@@ -1739,6 +1739,39 @@ function ripristinaMenuPrincipale() {
   }, 500);
 }
 
+/**
+ * ============================
+ * BLOCCO: closeModalAndReset
+ * Funzione che chiude la modale con fade‐out, pulisce il contenuto
+ * e ripristina il menu principale, sbloccando le animazioni.
+ * ============================
+ */
+function closeModalAndReset() {
+  // 1) Rimuovo la classe .show (fa scomparire la modale) e
+  //    aggiungo .fade-out (attiva la transizione di dissolvenza)
+  modal.classList.remove('show');
+  modal.classList.add('fade-out');
+
+  // 2) Dopo 600ms (corrispondenti a transition: opacity 0.6s)
+  //    eseguo il reset del contenuto e dello stato
+  setTimeout(() => {
+    // rimuovo .fade-out per pulire le classi
+    modal.classList.remove('fade-out');
+    // svuoto completamente il contenuto HTML
+    modalContent.innerHTML = '';
+    // resetto l’indice di apertura
+    currentIndex = null;
+
+    // 3) Chiamo la funzione che riporta l’interfaccia al menu principale
+    ripristinaMenuPrincipale();
+
+    // 4) Sblocco eventuali click/blocchi di animazione
+    isTransitioning = false;
+  }, 600);
+}
+
+
+
 // ============================
 // BLOCCO: Inizializzazione evento DOM
 // Avvia effetti, listener, e comportamenti dinamici all’avvio del sito
@@ -2216,21 +2249,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalContent = document.getElementById('modal-content');
 
     // 1) Collega tutte le × (close) per chiudere modale
-    modal.querySelectorAll('.modal-close').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (modal.classList.contains('show') && modalContent.innerHTML.includes("Base Elettronica Service") && autoHide !== null) {
-          clearTimeout(autoHide);
-          autoHide = null;
-          document.getElementById('modal-blocker').style.display = 'none';
-        }
-        modal.classList.remove('show');
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-          modal.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-        }, 600);
-      });
-    });
+modal.querySelectorAll('.modal-close').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // se è il welcome message, fermo l’auto-hide
+    if (
+      modal.classList.contains('show') &&
+      modalContent.innerHTML.includes("Base Elettronica Service") &&
+      autoHide !== null
+    ) {
+      clearTimeout(autoHide);
+      autoHide = null;
+      document.getElementById('modal-blocker').style.display = 'none';
+    }
+    // uso la routine centralizzata per chiudere tutto
+    closeModalAndReset();
+  });
+});
+
 
     // 2) Assicura che "Clicca qui" funzioni al tocco (per slideshow)
     document.querySelectorAll('span[onclick="attivaSlideshow()"]').forEach(el => {
@@ -2269,22 +2304,18 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-
 // ============================
 // BLOCCO: click su radar-glow chiude la modale
 // Permette di chiudere la modale cliccando sul titolo .radar-glow (es. "Chi siamo")
+// Ora utilizza closeModalAndReset() per gestire fade-out, pulizia e ritorno al menu
 // ============================
 document.getElementById('modal').addEventListener('click', function (e) {
   if (e.target.classList.contains('radar-glow')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-    }, 600);
+    // Chiamata unica: fade-out → svuota contenuto → ripristina menu principale
+    closeModalAndReset();
   }
 });
+
 
 // ============================
 // BLOCCO: orientationchange (mobile)
