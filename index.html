@@ -1230,6 +1230,48 @@ video#logo-btn {
 
 
 <script>
+// ============================
+// BLOCCO: Configurazione Gallery
+// Carica il file media_manifest.json e memorizza in mediaConfig
+// ============================
+let mediaConfig = null;
+
+fetch('media_manifest.json')
+  .then(response => response.json())
+  .then(cfg => {
+    mediaConfig = cfg;
+    // Pre-carica TUTTI i media in background
+    ['service', 'antincendio'].forEach(tipo => preloadTipo(tipo));
+  })
+  .catch(err => console.error('Errore caricamento media_manifest.json:', err));
+
+// ============================
+// BLOCCO: preloadTipo(tipo)
+// Preload di immagini (.jpg, .png) e video (.mp4) definiti in mediaConfig
+// ============================
+function preloadTipo(tipo) {
+  const cfg = mediaConfig[tipo];
+  const container = document.getElementById('video-preload-container');
+
+  // — Preload immagini
+  for (let i = cfg.image.from; i <= cfg.image.to; i++) {
+    cfg.image.exts.forEach(ext => {
+      const img = new Image();
+      img.src = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
+    });
+  }
+
+  // — Preload video (metadata per cache veloce)
+  for (let i = cfg.video.from; i <= cfg.video.to; i++) {
+    cfg.video.exts.forEach(ext => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.muted   = true;
+      video.src     = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
+      container.appendChild(video);
+    });
+  }
+}
 
 // ============================
 // BLOCCO: Verifica esistenza immagine/video
@@ -1963,6 +2005,10 @@ function apriSubservizio(tipo) {
 // BLOCCO: apriShowroom(tipo)
 // Visualizza la galleria multimediale solo con immagini/video realmente esistenti - con Promise.all e fallback jpg/png
 // ============================
+// ============================
+// BLOCCO: apriShowroom(tipo)
+// Crea e mostra subito la gallery usando mediaConfig, senza controlli HEAD
+// ============================
 function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
@@ -1975,87 +2021,75 @@ function apriShowroom(tipo) {
 
   // 2) dopo 0.6s (fade-out) costruisco e mostro la gallery
   setTimeout(() => {
-    const galleryView = document.getElementById('gallery-view');
+    const galleryView      = document.getElementById('gallery-view');
     const galleryContainer = document.getElementById('gallery-container');
 
     // svuoto sempre il container
     galleryContainer.innerHTML = '';
 
-    // scelgo la cartella giusta
-    const folderPath = tipo === 'service'
-      ? 'media/Service_e_Spettacolo/'
-      : 'media/Sicurezza_Antincendio/';
+    // prendo la configurazione (folder, range, estensioni) dal JSON già caricato
+    const cfg = mediaConfig[tipo];
 
-    // helper per HEAD asincrona
-    const checkFile = url => new Promise(res => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('HEAD', url, true);
-      xhr.onload  = () => res(xhr.status >= 200 && xhr.status < 400 ? url : null);
-      xhr.onerror = () => res(null);
-      xhr.send();
-    });
-
-    // costruisco la lista completa di immagini + video
-    async function buildFileList() {
-      const p = [];
-      for (let i = 1; i <= 100; i++) {
-        const jpg = `${folderPath}img${i}.jpg`;
-        const png = `${folderPath}img${i}.png`;
-        p.push(
-          Promise.all([checkFile(jpg), checkFile(png)])
-            .then(([j, q]) => j ? {type:'image',src:j}
-                               : q ? {type:'image',src:q}
-                                   : null)
-        );
-        const vid = `${folderPath}vd${i}.mp4`;
-        p.push(
-          checkFile(vid).then(u => u ? {type:'video',src:u} : null)
-        );
-      }
-      return (await Promise.all(p)).filter(x => x);
-    }
-
-    // 3) popolo la galleria
-    buildFileList().then(mediaFiles => {
-      mediaFiles.forEach(file => {
+    // ============================
+    // BLOCCO: Generazione anteprime immagini
+    // ============================
+    for (let i = cfg.image.from; i <= cfg.image.to; i++) {
+      cfg.image.exts.forEach(ext => {
+        const url  = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
         const item = document.createElement('div');
         item.className = 'gallery-item';
 
-        if (file.type === 'image') {
-          const img = document.createElement('img');
-          img.src = file.src;
-          item.appendChild(img);
-        } else {
-  const video = document.createElement('video');
-  video.src          = file.src;
-  video.muted        = true;           // necessario per autoplay silenzioso
-  video.loop         = true;
-  video.autoplay     = true;           // parte immediatamente
-  video.playsInline  = true;           // su iOS/Android
-  video.preload      = 'auto';         // scarica qualche fotogramma
-  video.style.objectFit = 'cover';     // mantiene il tuo stile
-  item.appendChild(video);
-}
+        const img = document.createElement('img');
+        img.src = url;
+        item.appendChild(img);
 
-
-        item.addEventListener('click', () => openFullscreen(file));
+        item.addEventListener('click', () =>
+          openFullscreen({ type: 'image', src: url })
+        );
         galleryContainer.appendChild(item);
       });
+    }
 
-      // 4) inietto la gallery nella modale
-      modalContent.innerHTML = '';
-      modalContent.appendChild(galleryView);
-      galleryView.style.display = 'block';
+    // ============================
+    // BLOCCO: Generazione anteprime video
+    // ============================
+    for (let i = cfg.video.from; i <= cfg.video.to; i++) {
+      cfg.video.exts.forEach(ext => {
+        const url  = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
 
-      // 5) fade-in
-      modal.classList.remove('fade-out');
-      modal.classList.add('show');
+        const vid = document.createElement('video');
+        vid.muted       = true;       // necessario per autoplay silenzioso
+        vid.loop        = true;       // loop continuo
+        vid.autoplay    = true;       // parte subito
+        vid.playsInline = true;       // evita forzare il fullscreen su iOS/Android
+        vid.preload     = 'metadata'; // basta metadata per la cache
+        vid.src         = url;
+        vid.style.objectFit = 'cover';
+        item.appendChild(vid);
 
-      // 6) sblocco i click dopo la transizione
-      setTimeout(() => { isTransitioning = false; }, 600);
-    });
+        item.addEventListener('click', () =>
+          openFullscreen({ type: 'video', src: url })
+        );
+        galleryContainer.appendChild(item);
+      });
+    }
+
+    // ============================
+    // BLOCCO: Iniezione e animazione della modale
+    // ============================
+    modalContent.innerHTML = '';
+    modalContent.appendChild(galleryView);
+    galleryView.style.display = 'block';
+    modal.classList.remove('fade-out');
+    modal.classList.add('show');
+
+    // 3) al termine della transizione riabilito i click
+    setTimeout(() => { isTransitioning = false; }, 600);
   }, 600);
 }
+
 
 
 
