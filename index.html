@@ -2027,16 +2027,13 @@ function apriShowroom(tipo) {
           item.appendChild(img);
         } else {
   const video = document.createElement('video');
-  video.src        = file.src;
-  video.muted      = true;
-  video.loop       = true;
-  video.autoplay   = true;         // ← fa partire subito il video
-  video.playsInline = true;        // ← su iOS/Android
-  video.preload    = 'metadata';
-  // opzionale: if you still want hover play/pause, tieni i listener
-  item.appendChild(video);
-  item.addEventListener('mouseenter', () => video.play());
-  item.addEventListener('mouseleave', () => video.pause());
+      video.src         = file.src;
+      video.muted       = true;
+      video.loop        = true;
+      video.autoplay    = true;     // ← parte subito
+      video.playsInline = true;     // ← su iOS/Android
+      video.preload     = 'auto';   // ← scarica frame
+      item.appendChild(video);
 }
 
 
