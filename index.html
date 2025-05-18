@@ -1061,6 +1061,14 @@ video#logo-btn {
   cursor: pointer;
 }
 
+/* Posiziona la X in alto a destra anche nel fullscreen */
+#fullscreen-view .modal-close {
+  display: block;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1001;
+}
 
 </style>
 </head>
@@ -1193,7 +1201,7 @@ video#logo-btn {
   <div id="modal" class="modal">
   <!-- Pulsante di chiusura in alto a destra -->
 
-  <button class="modal-close" onclick="chiudiModale()">×</button>
+  <button class="modal-close" onclick="ripristinaMenuPrincipale()">×</button>
 
     
     <!-- Contenuto dinamico interno -->
@@ -1214,9 +1222,13 @@ video#logo-btn {
        BLOCCO: Vista fullscreen per media
        Overlay a schermo intero per immagini o video cliccati dalla galleria
        ============================ -->
-  <div class="fullscreen-view" id="fullscreen-view">
-    <div class="fullscreen-content" id="fullscreen-content"></div>
-  </div>
+
+<div class="fullscreen-view" id="fullscreen-view">
+  <!-- ✔️ usa la stessa classe e markup della modale: -->
+  <button class="modal-close" onclick="closeFullscreen()">×</button>
+
+  <div class="fullscreen-content" id="fullscreen-content"></div>
+</div>
 
 </div> <!-- fine #main -->
 
@@ -2087,15 +2099,6 @@ function openFullscreen(file) {
   // Pulisce il contenuto precedente (evita duplicazioni)
   fullscreenContent.innerHTML = '';
 
-  // === CREAZIONE DEL PULSANTE DI CHIUSURA "×" ===
-  const closeButton = document.createElement('button');
-  closeButton.className = 'close-fullscreen';
-  closeButton.innerHTML = '&times;';
-  closeButton.addEventListener('click', (e) => {
-    e.stopPropagation(); // evita propagazione verso il fullscreenView
-    closeFullscreen();   // chiude la vista
-  });
-  fullscreenContent.appendChild(closeButton);
 
   // === CREAZIONE DEL CONTENUTO MULTIMEDIALE ===
   if (file.type === 'image') {
