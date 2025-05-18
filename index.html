@@ -1047,17 +1047,12 @@ video#logo-btn {
 
 
 /* ============================
-   BLOCCO: Bottone di chiusura fullscreen
-   “X” per chiudere la vista a schermo intero
-/* ============================
-   BLOCCO: Pulsante di chiusura fullscreen
-   Stile identico a quello della modale mobile
+   BLOCCO: Pulsante di chiusura fullscreen (identico modale mobile)
    ============================ */
-.close-fullscreen.modal-close {
-  display: block !important;
+.close-fullscreen {
   position: fixed;
-  top: 20px; /* distanza dal bordo superiore */
-  right: 20px; /* distanza dal bordo destro */
+  top: 20px;            /* Posiziona chiaramente in alto a destra */
+  right: 20px;          /* Ben distante dai bordi */
   width: 40px;
   height: 40px;
   font-size: 30px;
@@ -1067,7 +1062,7 @@ video#logo-btn {
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 1001;
+  z-index: 2000;        /* Z-index alto per stare sopra fullscreen */
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1078,9 +1073,10 @@ video#logo-btn {
   transition: transform 0.2s ease-in-out, opacity 0.2s ease;
 }
 
-.close-fullscreen.modal-close:hover {
+.close-fullscreen:hover {
   transform: scale(1.1);
 }
+
 
 
 
