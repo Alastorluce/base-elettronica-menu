@@ -1738,7 +1738,13 @@ function ripristinaMenuPrincipale() {
     }
 
     // 🔹 Chiude la galleria
-    galleryView.style.display = 'none';
+    // 🔹 Chiude e rimuove la galleria dal DOM se presente nella modale
+if (galleryView.parentElement === modalContent) {
+  galleryView.style.display = 'none';
+  modalContent.removeChild(galleryView); // evita che resti "appesa"
+}
+// 🔹 Reset logico dello stato submenu attivo
+currentSubmenu = null;
 
     // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
@@ -1755,8 +1761,7 @@ document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
   }
 });
 
-// 🔹 Reset logico dello stato submenu attivo
-currentSubmenu = null;
+
 
     sidebar.style.display = '';
 
