@@ -1737,8 +1737,15 @@ function ripristinaMenuPrincipale() {
       currentIndex = null;
     }
 
-    // 🔹 Chiude la galleria
-    galleryView.style.display = 'none';
+    // 🔹 Chiude la galleria (mobile fix incluso)
+galleryView.style.display = 'none';
+
+// 🔹 Resetta anche eventuali contenuti HTML residui nella galleria
+const galleryContainer = document.getElementById('gallery-container');
+if (galleryContainer) {
+  galleryContainer.innerHTML = '';  // pulizia forzata in caso di blocco su mobile
+}
+
 
     // 🔹 Nasconde i sottomenu
     submenuServizi.style.display = 'none';
@@ -1826,7 +1833,7 @@ if (galleryView && galleryView.parentElement !== main) {
   modalContent.removeChild(galleryView);
   main.appendChild(galleryView);
 }
-currentSubmenu = null;
+galleryView.style.display = 'none';
 
 
   // 🔹 Mantiene visibile il logo centrale
@@ -2090,6 +2097,7 @@ function apriShowroom(tipo) {
 
     // Mostra la modale galleria
     modalContent.innerHTML = ''; // svuota modale ma non tocca #gallery-view
+    galleryView.scrollTop = 0; // reset scroll
     galleryView.style.display = 'block';
 
     document.getElementById('logo-btn').style.display = 'none';
