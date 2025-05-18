@@ -1662,14 +1662,27 @@ function ripristinaMenuPrincipale() {
   const galleryView = document.getElementById('gallery-view');
 
   if (
-    submenuServizi.style.display === 'none' &&
-    submenuShowroom.style.display === 'none' &&
-    !modal.classList.contains('show') &&
-    !slideshowAttivo &&
-    galleryView.style.display === 'none'
-  ) {
-    return;
-  }
+  submenuServizi.style.display === 'none' &&
+  submenuShowroom.style.display === 'none' &&
+  !modal.classList.contains('show') &&
+  !slideshowAttivo &&
+  galleryView.style.display === 'none'
+) {
+  // Aggiunto: reset del submenu se è congelato
+  currentSubmenu = null;
+
+  // Forza riattivazione voci menu principali
+  document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+    if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+      el.style.display = 'flex';
+    }
+  });
+
+  document.getElementById('sidebar-logo').style.opacity = '1';
+  document.getElementById('logo-btn').style.display = 'block';
+  return;
+}
+
 
   isTransitioning = true;
 
