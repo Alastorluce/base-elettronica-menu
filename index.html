@@ -2026,15 +2026,19 @@ function apriShowroom(tipo) {
           img.src = file.src;
           item.appendChild(img);
         } else {
-          const video = document.createElement('video');
-          video.src    = file.src;
-          video.muted  = true;
-          video.loop   = true;
-          video.preload = 'metadata';
-          item.appendChild(video);
-          item.addEventListener('mouseenter', () => video.play());
-          item.addEventListener('mouseleave', () => video.pause());
-        }
+  const video = document.createElement('video');
+  video.src        = file.src;
+  video.muted      = true;
+  video.loop       = true;
+  video.autoplay   = true;         // ← fa partire subito il video
+  video.playsInline = true;        // ← su iOS/Android
+  video.preload    = 'metadata';
+  // opzionale: if you still want hover play/pause, tieni i listener
+  item.appendChild(video);
+  item.addEventListener('mouseenter', () => video.play());
+  item.addEventListener('mouseleave', () => video.pause());
+}
+
 
         item.addEventListener('click', () => openFullscreen(file));
         galleryContainer.appendChild(item);
