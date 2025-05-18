@@ -1761,6 +1761,14 @@ function closeModalAndReset() {
     modalContent.innerHTML = '';
     // resetto l’indice di apertura
     currentIndex = null;
+    // ——— QUI: forza chiusura dei sotto-menu e ripristino del menu principale ———
+    document.getElementById('submenu-servizi').style.display = 'none';
+    document.getElementById('submenu-showroom').style.display = 'none';
+    document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+      el.style.display = 'flex';
+    });
+    document.getElementById('sidebar').style.display = 'flex';
+    // ——————————————————————————————————————————————————————————————————————
 
     // 3) Chiamo la funzione che riporta l’interfaccia al menu principale
     ripristinaMenuPrincipale();
