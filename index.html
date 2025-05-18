@@ -1245,22 +1245,11 @@ function checkVideo(url) {
   return new Promise((resolve) => {
     const video = document.createElement('video');
     video.preload = 'metadata';
+    video.oncanplaythrough = () => resolve(url);
+    video.onerror = () => resolve(null);
     video.src = url;
-
-    let timeout = setTimeout(() => resolve(null), 1500); // fail-safe
-
-    video.onloadeddata = () => {
-      clearTimeout(timeout);
-      resolve(url); // file esiste
-    };
-
-    video.onerror = () => {
-      clearTimeout(timeout);
-      resolve(null); // file non trovato
-    };
   });
 }
-
 
 
 // ============================
@@ -1703,11 +1692,7 @@ function ripristinaMenuPrincipale() {
       setTimeout(() => {
         modal.classList.remove('fade-out');
         modalContent.innerHTML = '';
-        modal.classList.remove('show', 'fade-out'); // reset stato visivo
-        currentIndex = null;                        // reset logica modale
-        isTransitioning = false;                    // sblocca animazioni
         currentIndex = null;
-        modal.classList.remove('show', 'fade-out');
         isTransitioning = false;
       }, 600);
     }
@@ -1938,11 +1923,25 @@ function apriSubservizio(tipo) {
       break;
   }
 
-  // Il contenuto viene poi iniettato nella modale (blocco seguente dello script)
-  modalContent.innerHTML = contenuto;
-showModalWithScroll();
-isTransitioning = false;
+  // 2) Se la modale è già aperta, faccio il fade-out, cambio contenuto e poi fade-in
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
 
+    // dopo la durata della transizione (600 ms)
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = contenuto;
+      showModalWithScroll();   // riattiva lo show + auto-scroll
+      isTransitioning = false;
+    }, 600);
+
+  } else {
+    // 3) Se la modale è chiusa, apro normalmente
+    modalContent.innerHTML = contenuto;
+    showModalWithScroll();
+    isTransitioning = false;
+  }
 }
 
 
@@ -1954,38 +1953,42 @@ function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // Chiude eventuale modale attiva
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
   }
 
-  // Prepara contenitori
   const galleryView = document.getElementById('gallery-view');
   const galleryContainer = document.getElementById('gallery-container');
   galleryContainer.innerHTML = '';
 
-  // Percorso cartella
   const folderPath = tipo === 'service'
     ? 'media/Service_e_Spettacolo/'
     : 'media/Sicurezza_Antincendio/';
 
-  // ============================
-  // BLOCCO: Build dinamico lista media
-  // Usa Promise.all e verifica reale con Image/Video
-  // ============================
+  // === Controlla esistenza file (HEAD asincrona) ===
+  const checkFile = (url) => new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('HEAD', url, true);
+    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 400 ? url : null);
+    xhr.onerror = () => resolve(null);
+    xhr.send();
+  });
+
+  // === Costruisce la lista media con Promise.all veloce ===
   async function buildFileList() {
     const mediaFiles = [];
 
     const imagePromises = [];
     for (let i = 1; i <= 100; i++) {
+      const jpg = `${folderPath}img${i}.jpg`;
+      const png = `${folderPath}img${i}.png`;
+
+      // Ogni immagine ha due promesse: jpg e png
       imagePromises.push(
-        Promise.all([
-          checkImage(`${folderPath}img${i}.jpg`),
-          checkImage(`${folderPath}img${i}.png`)
-        ]).then(([jpgOk, pngOk]) => {
-          if (jpgOk) return { type: 'image', src: jpgOk };
-          if (pngOk) return { type: 'image', src: pngOk };
+        Promise.all([checkFile(jpg), checkFile(png)]).then(([jpgExists, pngExists]) => {
+          if (jpgExists) return { type: 'image', src: jpg };
+          if (pngExists) return { type: 'image', src: png };
           return null;
         })
       );
@@ -1993,22 +1996,17 @@ function apriShowroom(tipo) {
 
     const videoPromises = [];
     for (let i = 1; i <= 100; i++) {
+      const vid = `${folderPath}vd${i}.mp4`;
       videoPromises.push(
-        checkVideo(`${folderPath}vd${i}.mp4`).then((ok) => {
-          if (ok) return { type: 'video', src: ok };
-          return null;
-        })
+        checkFile(vid).then((exists) => exists ? { type: 'video', src: vid } : null)
       );
     }
 
     const results = await Promise.all([...imagePromises, ...videoPromises]);
-    console.log("🧪 MEDIA DETECTED:", results.filter(Boolean).map(f => f.src)); // ✅ LOG DIAGNOSTICO
-    return results.filter(Boolean);
+    return results.filter(Boolean); // rimuove null
   }
 
-  // ============================
-  // BLOCCO: Costruzione Galleria
-  // ============================
+  // === Rendering dinamico della galleria ===
   buildFileList().then((mediaFiles) => {
     mediaFiles.forEach((file, index) => {
       const galleryItem = document.createElement('div');
@@ -2020,7 +2018,9 @@ function apriShowroom(tipo) {
         img.src = file.src;
         img.alt = '';
         galleryItem.appendChild(img);
-      } else if (file.type === 'video') {
+      }
+
+      else if (file.type === 'video') {
         const video = document.createElement('video');
         video.src = file.src;
         video.muted = true;
@@ -2044,7 +2044,7 @@ function apriShowroom(tipo) {
       galleryContainer.appendChild(galleryItem);
     });
 
-    // Mostra la modale galleria
+    // Mostra la galleria
     modalContent.innerHTML = '';
     modalContent.appendChild(galleryView);
     galleryView.style.display = 'block';
@@ -2053,15 +2053,11 @@ function apriShowroom(tipo) {
     modal.classList.remove('fade-out');
     modal.classList.add('show');
 
-    // 🔧 Resetto currentIndex per non bloccare apri()
-    currentIndex = null;
-
     setTimeout(() => {
       isTransitioning = false;
     }, 600);
   });
 }
-
 
 
 
