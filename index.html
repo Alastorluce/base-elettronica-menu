@@ -2111,24 +2111,34 @@ function apriSubservizio(tipo) {
 // BLOCCO: apriShowroom(tipo)
 // Galleria con anteprime animate e loop di segmenti casuali
 // ============================
+// ============================
+// BLOCCO: apriShowroom(tipo)
+// Galleria con anteprime animate segmentate e rendering ottimizzato
+// ============================
 async function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
+  // Chiudo la modale esistente
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
   }
 
+  // Attendo la fine della transizione
   setTimeout(async () => {
-    const galleryView = document.getElementById('gallery-view');
+    const galleryView      = document.getElementById('gallery-view');
     const galleryContainer = document.getElementById('gallery-container');
+
     galleryContainer.innerHTML = '';
     document.body.style.overflow = 'hidden';
 
     const cfg = mediaConfig[tipo];
     const promises = [];
 
+    // ============================
+    // BLOCCO: Costruzione video preview
+    // ============================
     for (let i = cfg.video.from; i <= cfg.video.to; i++) {
       cfg.video.exts.forEach(ext => {
         const urlLow  = `${cfg.folder}${cfg.video.prefix}${i}_low.${ext}`;
@@ -2138,25 +2148,27 @@ async function apriShowroom(tipo) {
         item.className = 'gallery-item';
 
         const vid = document.createElement('video');
-vid.src         = urlLow;
-vid.muted       = true;
-vid.playsInline = true;
-vid.setAttribute('playsinline', '');
-vid.setAttribute('webkit-playsinline', '');
-vid.loop        = false;
-vid.autoplay    = true;
-vid.preload     = 'auto';
+        vid.src         = urlLow;
+        vid.muted       = true;
+        vid.playsInline = true;
+        vid.setAttribute('playsinline', '');
+        vid.setAttribute('webkit-playsinline', '');
+        vid.autoplay    = true;
+        vid.loop        = false;
+        vid.preload     = 'auto';
 
-// Ottimizzazione rendering mobile
-vid.style.willChange = 'transform, opacity';
-vid.style.contain = 'layout paint style';
-        vid.style.objectFit = 'cover';
-        vid.style.transform = 'scale(0.75)';
-        vid.style.opacity = '1';
+        // Ottimizzazioni per rendering mobile
+        vid.style.objectFit   = 'cover';
+        vid.style.width       = '100%';
+        vid.style.height      = '100%';
+        vid.style.transform   = 'scale(0.75)';
+        vid.style.opacity     = '1';
+        vid.style.transition  = 'opacity 1s ease';
         vid.style.borderRadius = '6px';
-        vid.style.transition = 'opacity 1s ease';
+        vid.style.contain     = 'layout paint style';
+        vid.style.willChange  = 'transform, opacity';
 
-        // Gestione ciclica del segmento random da 3s
+        // Gestione dei segmenti random da 3 secondi con fade
         vid.addEventListener('loadedmetadata', () => {
           const changeSegment = () => {
             if (vid.duration && vid.duration > 3) {
@@ -2169,26 +2181,34 @@ vid.style.contain = 'layout paint style';
               setTimeout(() => {
                 vid.style.opacity = '0';
                 setTimeout(() => {
-                  changeSegment(); // ricorsivo
-                }, 1000); // pausa 1s tra fade
+                  changeSegment();
+                }, 1000); // fade out
               }, 3000); // durata segmento
             }
           };
           changeSegment();
         });
 
+        // Click per fullscreen con file video completo
         item.appendChild(vid);
+        item.addEventListener('click', () =>
+          openFullscreen({ type: 'video', src: urlFull })
+        );
 
         galleryContainer.appendChild(item);
       });
     }
 
+    // ============================
+    // BLOCCO: Visualizzazione modale
+    // ============================
     modalContent.innerHTML = '';
     modalContent.appendChild(galleryView);
     galleryView.style.display = 'block';
     modal.classList.remove('fade-out');
     modal.classList.add('show');
 
+    // Sblocco finale
     setTimeout(() => { isTransitioning = false; }, 600);
   }, 600);
 }
