@@ -1316,14 +1316,38 @@ fetch('media_manifest.json')
   })
   .catch(err => console.error('Errore caricamento media_manifest.json:', err));
 
+
 // ============================
-// BLOCCO: preloadTipo(tipo)
-// Preload di immagini (.jpg, .png) e video (.mp4) definiti in mediaConfig
+// BLOCCO: preloadTipo(tipo) OTTIMIZZATO
+// Carica video in bassa risoluzione su mobile
 // ============================
 function preloadTipo(tipo) {
   const cfg = mediaConfig[tipo];
   const container = document.getElementById('video-preload-container');
+  const isMobile = window.innerWidth <= 768;
 
+  // — Preload immagini
+  for (let i = cfg.image.from; i <= cfg.image.to; i++) {
+    cfg.image.exts.forEach(ext => {
+      const img = new Image();
+      img.decoding = "async";
+      img.loading = "eager";
+      img.src = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
+    });
+  }
+
+  // — Preload video (mobile usa _low)
+  for (let i = cfg.video.from; i <= cfg.video.to; i++) {
+    cfg.video.exts.forEach(ext => {
+      const video = document.createElement('video');
+      const suffix = isMobile ? '_low' : '';
+      video.src = `${cfg.folder}${cfg.video.prefix}${i}${suffix}.${ext}`;
+      video.preload = (i - cfg.video.from < 2) ? 'auto' : 'metadata';
+      video.muted = true;
+      container.appendChild(video);
+    });
+  }
+}
   // — Preload immagini
   for (let i = cfg.image.from; i <= cfg.image.to; i++) {
     cfg.image.exts.forEach(ext => {
