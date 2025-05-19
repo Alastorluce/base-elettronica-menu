@@ -2110,22 +2110,27 @@ function apriSubservizio(tipo) {
 // Crea e mostra la gallery usando mediaConfig con verifica effettiva dei file
 // Versione ottimizzata con anteprime ridotte e preload batch
 // ============================
+
+
+// ============================
+// BLOCCO: apriShowroom(tipo)
+// Galleria con anteprima ottimizzata: solo 1 video in autoplay
+// ============================
 async function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // 1) se la modale è già visibile, lancio subito il fade-out
+  // Chiudo la modale attuale con fade-out
   if (modal.classList.contains('show')) {
     modal.classList.remove('show');
     modal.classList.add('fade-out');
   }
 
-  // 2) dopo 0.6s (fade-out) costruisco e mostro la gallery
   setTimeout(async () => {
     const galleryView      = document.getElementById('gallery-view');
     const galleryContainer = document.getElementById('gallery-container');
 
-    // Svuoto la galleria precedente
+    // Reset contenuto
     galleryContainer.innerHTML = '';
     document.body.style.overflow = 'hidden';
 
@@ -2133,7 +2138,7 @@ async function apriShowroom(tipo) {
     const promises = [];
 
     // ============================
-    // BLOCCO: Costruzione elementi immagine
+    // BLOCCO: Costruzione immagini
     // ============================
     for (let i = cfg.image.from; i <= cfg.image.to; i++) {
       cfg.image.exts.forEach(ext => {
@@ -2166,8 +2171,10 @@ async function apriShowroom(tipo) {
     }
 
     // ============================
-    // BLOCCO: Costruzione elementi video
+    // BLOCCO: Costruzione video - solo 1 autoplay
     // ============================
+    const autoplayIndex = Math.floor(Math.random() * (cfg.video.to - cfg.video.from + 1)) + cfg.video.from;
+
     for (let i = cfg.video.from; i <= cfg.video.to; i++) {
       cfg.video.exts.forEach(ext => {
         const url = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
@@ -2178,22 +2185,28 @@ async function apriShowroom(tipo) {
               item.className = 'gallery-item';
 
               const vid = document.createElement('video');
-              vid.loop        = true;
-              vid.autoplay    = true;
               vid.muted       = true;
               vid.playsInline = true;
-              vid.preload     = 'metadata';
+              vid.preload     = 'auto';
               vid.src         = validUrl;
+              vid.loop        = true;
+              vid.controls    = false;
               vid.style.objectFit = 'cover';
 
-              // BLOCCO: Ridimensionamento anteprima
+              // Riduzione anteprima
               vid.style.width        = '100%';
               vid.style.height       = '100%';
-              vid.style.maxWidth     = '100%';
-              vid.style.maxHeight    = '100%';
               vid.style.transform    = 'scale(0.75)';
               vid.style.opacity      = '0.9';
               vid.style.borderRadius = '6px';
+
+              // Solo 1 video autoplay
+              if (i === autoplayIndex) {
+                vid.autoplay = true;
+              } else {
+                vid.autoplay = false;
+                vid.pause();
+              }
 
               item.appendChild(vid);
               item.addEventListener('click', () =>
@@ -2208,12 +2221,12 @@ async function apriShowroom(tipo) {
     }
 
     // ============================
-    // BLOCCO: Attesa preload completato
+    // BLOCCO: Attesa completamento
     // ============================
     await Promise.all(promises);
 
     // ============================
-    // BLOCCO: Iniezione e visualizzazione della galleria
+    // BLOCCO: Visualizzazione
     // ============================
     modalContent.innerHTML = '';
     modalContent.appendChild(galleryView);
@@ -2221,7 +2234,6 @@ async function apriShowroom(tipo) {
     modal.classList.remove('fade-out');
     modal.classList.add('show');
 
-    // 3) al termine della transizione riabilito i click
     setTimeout(() => { isTransitioning = false; }, 600);
   }, 600);
 }
