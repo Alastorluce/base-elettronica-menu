@@ -2135,12 +2135,18 @@ async function apriShowroom(tipo) {
         item.className = 'gallery-item';
 
         const vid = document.createElement('video');
-        vid.src         = urlLow;
-        vid.muted       = true;
-        vid.playsInline = true;
-        vid.loop        = false;
-        vid.autoplay    = true;
-        vid.preload     = 'auto';
+vid.src         = urlLow;
+vid.muted       = true;
+vid.playsInline = true;
+vid.setAttribute('playsinline', '');
+vid.setAttribute('webkit-playsinline', '');
+vid.loop        = false;
+vid.autoplay    = true;
+vid.preload     = 'auto';
+
+// Ottimizzazione rendering mobile
+vid.style.willChange = 'transform, opacity';
+vid.style.contain = 'layout paint style';
         vid.style.objectFit = 'cover';
         vid.style.transform = 'scale(0.75)';
         vid.style.opacity = '1';
