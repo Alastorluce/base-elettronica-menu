@@ -1469,6 +1469,18 @@ function creaAnteprimaVideo(url, container) {
     setInterval(randomJump, 3000);
   });
 }
+
+
+
+// ============================
+// BLOCCO: simulaFullscreenVerticale(video)
+// Applica stile fullscreen simulato al video (senza API browser)
+// ============================
+function simulaFullscreenVerticale(video) {
+  video.classList.add('video-fullscreen-sim');
+  video.muted = true;
+  video.play();
+}  
 // ============================
 // BLOCCO: Script principale
 // Gestisce tutte le logiche dinamiche della pagina: scroll automatici, modali, menu, galleria, ecc.
