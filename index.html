@@ -170,6 +170,24 @@ body {
       }
     }
 
+/* ============================
+   BLOCCO: video-preview-container
+   Ottimizzazione rendering anche in verticale
+   ============================ */
+.video-preview-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: black;
+}
+
+.video-preview-container video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
     
 /* ============================
    BLOCCO: Scroll personalizzato (auto-hide)
