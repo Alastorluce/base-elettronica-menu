@@ -2104,6 +2104,12 @@ function apriSubservizio(tipo) {
 // BLOCCO: apriShowroom(tipo)
 // Crea e mostra la gallery usando mediaConfig con verifica effettiva dei file
 // ============================
+
+// ============================
+// BLOCCO: apriShowroom(tipo)
+// Crea e mostra la gallery usando mediaConfig con verifica effettiva dei file
+// Versione ottimizzata SENZA poster, con preload batch e hover-play
+// ============================
 async function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
@@ -2125,7 +2131,7 @@ async function apriShowroom(tipo) {
     // prendo la configurazione (folder, range, estensioni) dal JSON già caricato
     const cfg = mediaConfig[tipo];
 
-    const promises = [];
+    const imgTasks = [];
 
     // ============================
     // BLOCCO: Generazione anteprime immagini con verifica file
@@ -2133,7 +2139,7 @@ async function apriShowroom(tipo) {
     for (let i = cfg.image.from; i <= cfg.image.to; i++) {
       for (const ext of cfg.image.exts) {
         const url = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
-        promises.push(
+        imgTasks.push(
           checkImage(url).then(exists => {
             if (exists) {
               const item = document.createElement('div');
@@ -2153,40 +2159,55 @@ async function apriShowroom(tipo) {
       }
     }
 
-    // ============================
-    // BLOCCO: Generazione anteprime video con verifica file
-    // ============================
-    for (let i = cfg.video.from; i <= cfg.video.to; i++) {
-      for (const ext of cfg.video.exts) {
-        const url = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
-        promises.push(
-          checkVideo(url).then(exists => {
-            if (exists) {
-              const item = document.createElement('div');
-              item.className = 'gallery-item';
+    await Promise.all(imgTasks);
 
-              const vid = document.createElement('video');
-              vid.muted       = true;
-              vid.loop        = true;
-              vid.autoplay    = true;
-              vid.playsInline = true;
-              vid.preload     = 'metadata';
-              vid.src         = url;
-              vid.style.objectFit = 'cover';
+    // ============================
+    // BLOCCO: Generazione anteprime video con verifica file (batch ottimizzato)
+    // ============================
+    const batchSize = 5;
+    for (let i = cfg.video.from; i <= cfg.video.to; i += batchSize) {
+      const batchTasks = [];
 
-              item.appendChild(vid);
-              item.addEventListener('click', () =>
-                openFullscreen({ type: 'video', src: url })
-              );
-              galleryContainer.appendChild(item);
-            }
-          })
-        );
+      for (let j = i; j < i + batchSize && j <= cfg.video.to; j++) {
+        for (const ext of cfg.video.exts) {
+          const url = `${cfg.folder}${cfg.video.prefix}${j}.${ext}`;
+
+          batchTasks.push(
+            checkVideo(url).then(exists => {
+              if (exists) {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+
+                const vid = document.createElement('video');
+                vid.muted       = true;
+                vid.loop        = false;
+                vid.autoplay    = false;
+                vid.playsInline = true;
+                vid.preload     = 'metadata';
+                vid.src         = url;
+                vid.style.objectFit = 'cover';
+
+                // Riproduzione su hover
+                vid.addEventListener('mouseenter', () => vid.play());
+                vid.addEventListener('mouseleave', () => {
+                  vid.pause();
+                  vid.currentTime = 0;
+                });
+
+                item.appendChild(vid);
+                item.addEventListener('click', () =>
+                  openFullscreen({ type: 'video', src: url })
+                );
+                galleryContainer.appendChild(item);
+              }
+            })
+          );
+        }
       }
-    }
 
-    // Attendo che TUTTI i file siano stati verificati prima di mostrare la gallery
-    await Promise.all(promises);
+      await Promise.all(batchTasks);
+      await new Promise(resolve => setTimeout(resolve, 100)); // piccola pausa tra i batch
+    }
 
     // ============================
     // BLOCCO: Iniezione e animazione della modale
@@ -2201,7 +2222,6 @@ async function apriShowroom(tipo) {
     setTimeout(() => { isTransitioning = false; }, 600);
   }, 600);
 }
-
 
 
 
