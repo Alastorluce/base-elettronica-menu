@@ -2174,7 +2174,10 @@ vid.style.contain = 'layout paint style';
           changeSegment();
         });
 
-        item.appendChild(vid);
+        const wrapper = document.createElement('div');
+wrapper.className = 'video-preview-container';
+wrapper.appendChild(vid);
+item.appendChild(wrapper);
         item.addEventListener('click', () =>
           openFullscreen({ type: 'video', src: urlFull })
         );
