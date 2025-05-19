@@ -1419,7 +1419,44 @@ function checkVideo(url) {
   });
 }
 
+// ============================
+// BLOCCO: creaAnteprimaVideo
+// Genera una preview video animata con fade e salti casuali
+// ============================
+function creaAnteprimaVideo(url, container) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'gallery-item';
 
+  const video = document.createElement('video');
+  video.src = url;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.autoplay = true;
+  video.style.opacity = 0;
+  video.style.transition = 'opacity 1s ease-in-out';
+
+  wrapper.appendChild(video);
+  container.appendChild(wrapper);
+
+  video.addEventListener('loadedmetadata', () => {
+    const durata = video.duration;
+
+    function randomJump() {
+      const start = Math.random() * Math.max(durata - 3, 0);
+      video.currentTime = start;
+
+      video.style.opacity = 0;
+      setTimeout(() => {
+        video.play();
+        video.style.opacity = 1;
+      }, 500);
+    }
+
+    randomJump();
+    setInterval(randomJump, 3000);
+  });
+}
 // ============================
 // BLOCCO: Script principale
 // Gestisce tutte le logiche dinamiche della pagina: scroll automatici, modali, menu, galleria, ecc.
