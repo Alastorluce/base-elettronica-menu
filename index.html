@@ -2104,6 +2104,12 @@ function apriSubservizio(tipo) {
 // BLOCCO: apriShowroom(tipo)
 // Crea e mostra la gallery usando mediaConfig con verifica effettiva dei file
 // ============================
+
+// ============================
+// BLOCCO: apriShowroom(tipo)
+// Crea e mostra la gallery usando mediaConfig con verifica effettiva dei file
+// Versione ottimizzata con anteprime ridotte e preload batch
+// ============================
 async function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
@@ -2119,77 +2125,95 @@ async function apriShowroom(tipo) {
     const galleryView      = document.getElementById('gallery-view');
     const galleryContainer = document.getElementById('gallery-container');
 
-    // svuoto sempre il container
+    // Svuoto la galleria precedente
     galleryContainer.innerHTML = '';
+    document.body.style.overflow = 'hidden';
 
-    // prendo la configurazione (folder, range, estensioni) dal JSON già caricato
     const cfg = mediaConfig[tipo];
-
     const promises = [];
 
     // ============================
-    // BLOCCO: Generazione anteprime immagini con verifica file
+    // BLOCCO: Costruzione elementi immagine
     // ============================
     for (let i = cfg.image.from; i <= cfg.image.to; i++) {
-      for (const ext of cfg.image.exts) {
+      cfg.image.exts.forEach(ext => {
         const url = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
         promises.push(
-          checkImage(url).then(exists => {
-            if (exists) {
+          checkImage(url).then(validUrl => {
+            if (validUrl) {
               const item = document.createElement('div');
               item.className = 'gallery-item';
 
-              const img = document.createElement('img');
-              img.src = url;
-              item.appendChild(img);
+              const img = new Image();
+              img.src = validUrl;
+              img.loading = 'eager';
+              img.decoding = 'async';
+              img.style.objectFit = 'cover';
+              img.style.transform = 'scale(0.75)';
+              img.style.opacity = '0.9';
+              img.style.borderRadius = '6px';
 
+              item.appendChild(img);
               item.addEventListener('click', () =>
-                openFullscreen({ type: 'image', src: url })
+                openFullscreen({ type: 'image', src: validUrl })
               );
+
               galleryContainer.appendChild(item);
             }
           })
         );
-      }
+      });
     }
 
     // ============================
-    // BLOCCO: Generazione anteprime video con verifica file
+    // BLOCCO: Costruzione elementi video
     // ============================
     for (let i = cfg.video.from; i <= cfg.video.to; i++) {
-      for (const ext of cfg.video.exts) {
+      cfg.video.exts.forEach(ext => {
         const url = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
         promises.push(
-          checkVideo(url).then(exists => {
-            if (exists) {
+          checkVideo(url).then(validUrl => {
+            if (validUrl) {
               const item = document.createElement('div');
               item.className = 'gallery-item';
 
               const vid = document.createElement('video');
-              vid.muted       = true;
               vid.loop        = true;
               vid.autoplay    = true;
+              vid.muted       = true;
               vid.playsInline = true;
               vid.preload     = 'metadata';
-              vid.src         = url;
+              vid.src         = validUrl;
               vid.style.objectFit = 'cover';
+
+              // BLOCCO: Ridimensionamento anteprima
+              vid.style.width        = '100%';
+              vid.style.height       = '100%';
+              vid.style.maxWidth     = '100%';
+              vid.style.maxHeight    = '100%';
+              vid.style.transform    = 'scale(0.75)';
+              vid.style.opacity      = '0.9';
+              vid.style.borderRadius = '6px';
 
               item.appendChild(vid);
               item.addEventListener('click', () =>
-                openFullscreen({ type: 'video', src: url })
+                openFullscreen({ type: 'video', src: validUrl })
               );
+
               galleryContainer.appendChild(item);
             }
           })
         );
-      }
+      });
     }
 
-    // Attendo che TUTTI i file siano stati verificati prima di mostrare la gallery
+    // ============================
+    // BLOCCO: Attesa preload completato
+    // ============================
     await Promise.all(promises);
 
     // ============================
-    // BLOCCO: Iniezione e animazione della modale
+    // BLOCCO: Iniezione e visualizzazione della galleria
     // ============================
     modalContent.innerHTML = '';
     modalContent.appendChild(galleryView);
@@ -2201,8 +2225,6 @@ async function apriShowroom(tipo) {
     setTimeout(() => { isTransitioning = false; }, 600);
   }, 600);
 }
-
-
 
 
 
