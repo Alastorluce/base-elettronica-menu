@@ -1097,7 +1097,19 @@ video#logo-btn {
   display: block;
   border-radius: 4px;
 }
-
+/* ============================
+   BLOCCO: Simulazione fullscreen verticale video
+   Evita l’uso dell’API fullscreen per compatibilità mobile
+   ============================ */
+.video-fullscreen-sim {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+}
 
 /* ============================
    BLOCCO: Pulsante di chiusura fullscreen (identico modale mobile)
