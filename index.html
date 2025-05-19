@@ -1041,6 +1041,8 @@ video#logo-btn {
   height: 100%;
   object-fit: cover;
   display: block;
+  contain: layout paint style;
+  will-change: transform, opacity;
 }
 
 
@@ -2175,13 +2177,7 @@ vid.style.contain = 'layout paint style';
           changeSegment();
         });
 
-        const wrapper = document.createElement('div');
-wrapper.className = 'video-preview-container';
-wrapper.appendChild(vid);
-item.appendChild(wrapper);
-        item.addEventListener('click', () =>
-          openFullscreen({ type: 'video', src: urlFull })
-        );
+        item.appendChild(vid);
 
         galleryContainer.appendChild(item);
       });
