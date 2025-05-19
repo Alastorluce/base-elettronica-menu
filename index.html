@@ -2107,6 +2107,131 @@ function apriSubservizio(tipo) {
 // BLOCCO: apriShowroom(tipo)
 // Crea e mostra la gallery usando mediaConfig con verifica effettiva dei file
 // ============================
+
+// ============================
+// BLOCCO: apriShowroom(tipo)
+// Galleria con immagini e video segmentati con fade dinamico
+// ============================
+async function apriShowroom(tipo) {
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  if (modal.classList.contains('show')) {
+    modal.classList.remove('show');
+    modal.classList.add('fade-out');
+  }
+
+  setTimeout(async () => {
+    const galleryView = document.getElementById('gallery-view');
+    const galleryContainer = document.getElementById('gallery-container');
+    galleryContainer.innerHTML = '';
+    document.body.style.overflow = 'hidden';
+
+    const cfg = mediaConfig[tipo];
+    const promises = [];
+
+    // ============================
+    // BLOCCO: Immagini
+    // ============================
+    for (let i = cfg.image.from; i <= cfg.image.to; i++) {
+      for (const ext of cfg.image.exts) {
+        const url = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
+        promises.push(
+          checkImage(url).then(exists => {
+            if (exists) {
+              const item = document.createElement('div');
+              item.className = 'gallery-item';
+
+              const img = document.createElement('img');
+              img.src = url;
+              img.decoding = 'async';
+              img.loading = 'lazy';
+
+              item.appendChild(img);
+              item.addEventListener('click', () =>
+                openFullscreen({ type: 'image', src: url })
+              );
+              galleryContainer.appendChild(item);
+            }
+          })
+        );
+      }
+    }
+
+    // ============================
+    // BLOCCO: Video preview dinamici
+    // ============================
+    for (let i = cfg.video.from; i <= cfg.video.to; i++) {
+      for (const ext of cfg.video.exts) {
+        const urlLow  = `${cfg.folder}${cfg.video.prefix}${i}_low.${ext}`;
+        const urlFull = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
+
+        promises.push(
+          checkVideo(urlLow).then(exists => {
+            if (exists) {
+              const item = document.createElement('div');
+              item.className = 'gallery-item';
+
+              const vid = document.createElement('video');
+              vid.src = urlLow;
+              vid.muted = true;
+              vid.playsInline = true;
+              vid.setAttribute('playsinline', '');
+              vid.setAttribute('webkit-playsinline', '');
+              vid.autoplay = true;
+              vid.loop = false;
+              vid.preload = 'auto';
+
+              // Stili animazione e prestazioni
+              vid.style.objectFit = 'cover';
+              vid.style.opacity = '1';
+              vid.style.transition = 'opacity 1s ease';
+              vid.style.borderRadius = '6px';
+              vid.style.contain = 'layout paint style';
+              vid.style.willChange = 'transform, opacity';
+
+              // Loop di 3 secondi con fade
+              vid.addEventListener('loadedmetadata', () => {
+                const cycle = () => {
+                  if (vid.duration > 3) {
+                    const start = Math.random() * (vid.duration - 3);
+                    vid.currentTime = start;
+                    vid.play();
+                    vid.style.opacity = '1';
+
+                    setTimeout(() => {
+                      vid.style.opacity = '0';
+                      setTimeout(cycle, 1000);
+                    }, 3000);
+                  }
+                };
+                cycle();
+              });
+
+              item.appendChild(vid);
+              item.addEventListener('click', () =>
+                openFullscreen({ type: 'video', src: urlFull })
+              );
+              galleryContainer.appendChild(item);
+            }
+          })
+        );
+      }
+    }
+
+    // Attendi completamento verifiche prima di mostrare
+    await Promise.all(promises);
+
+    modalContent.innerHTML = '';
+    modalContent.appendChild(galleryView);
+    galleryView.style.display = 'block';
+    modal.classList.remove('fade-out');
+    modal.classList.add('show');
+
+    setTimeout(() => { isTransitioning = false; }, 600);
+  }, 600);
+}
+  
 // ============================
 // BLOCCO: apriShowroom(tipo)
 // Galleria con anteprime animate e loop di segmenti casuali
@@ -2175,43 +2300,7 @@ async function apriShowroom(tipo) {
               const max = vid.duration - 3;
               const start = Math.random() * max;
               vid.currentTime = start;
-              vid.play();
-              vid.style.opacity = '1';
 
-              setTimeout(() => {
-                vid.style.opacity = '0';
-                setTimeout(() => {
-                  changeSegment();
-                }, 1000); // fade out
-              }, 3000); // durata segmento
-            }
-          };
-          changeSegment();
-        });
-
-        // Click per fullscreen con file video completo
-        item.appendChild(vid);
-        item.addEventListener('click', () =>
-          openFullscreen({ type: 'video', src: urlFull })
-        );
-
-        galleryContainer.appendChild(item);
-      });
-    }
-
-    // ============================
-    // BLOCCO: Visualizzazione modale
-    // ============================
-    modalContent.innerHTML = '';
-    modalContent.appendChild(galleryView);
-    galleryView.style.display = 'block';
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
-
-    // Sblocco finale
-    setTimeout(() => { isTransitioning = false; }, 600);
-  }, 600);
-}
 
 
 
