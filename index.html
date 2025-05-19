@@ -2222,11 +2222,17 @@ async function apriShowroom(tipo) {
     // Attendi completamento verifiche prima di mostrare
     await Promise.all(promises);
 
-    modalContent.innerHTML = '';
-    modalContent.appendChild(galleryView);
-    galleryView.style.display = 'block';
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
+    // Rimuove galleryView da #main se già presente
+const main = document.getElementById('main');
+if (main.contains(galleryView)) {
+  main.removeChild(galleryView);
+}
+
+modalContent.innerHTML = '';
+modalContent.appendChild(galleryView);
+galleryView.style.display = 'block';
+modal.classList.remove('fade-out');
+modal.classList.add('show');
 
     setTimeout(() => { isTransitioning = false; }, 600);
   }, 600);
