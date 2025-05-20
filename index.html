@@ -1,37 +1,29 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
-
-  <!-- ============================
+<!-- ============================
        BLOCCO: Configurazioni base HEAD
        ============================ -->
-
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- Responsivo su dispositivi mobili -->
-  <title>Base Elettronica Service - Menu</title>
-
-  <!-- Font elegante arrotondato per UI -->
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
-
-  <!-- ============================
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><!-- Responsivo su dispositivi mobili -->
+<title>Base Elettronica Service - Menu</title>
+<!-- Font elegante arrotondato per UI -->
+<link href="https://fonts.googleapis.com/css?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<!-- ============================
        BLOCCO: Favicon e icone mobile
        ============================ -->
-
-  <!-- 🔹 Icona desktop / favicon per tutti i browser -->
-  <link rel="icon" type="image/x-icon" href="logo_multires.ico">
-
-  <!-- 🔹 Icona PNG moderna per browser e retina -->
-  <link rel="icon" type="image/png" sizes="256x256" href="logo_256.png">
-  <link rel="apple-touch-icon" sizes="512x512" href="logo_512.png">
-
-  <!-- 🔹 Manifest per Android (shortcut con icona corretta) -->
-  <link rel="manifest" href="manifest.json">
-
-  <!-- ============================
+<!-- 🔹 Icona desktop / favicon per tutti i browser -->
+<link href="logo_multires.ico" rel="icon" type="image/x-icon"/>
+<!-- 🔹 Icona PNG moderna per browser e retina -->
+<link href="logo_256.png" rel="icon" sizes="256x256" type="image/png"/>
+<link href="logo_512.png" rel="apple-touch-icon" sizes="512x512"/>
+<!-- 🔹 Manifest per Android (shortcut con icona corretta) -->
+<link href="manifest.json" rel="manifest"/>
+<!-- ============================
        BLOCCO: Stili CSS inline (prima parte)
        ============================ -->
-
-         <style>
+<style>
 
 /* ============================
    BLOCCO: Blocco anti-selezione universale
@@ -1062,173 +1054,183 @@ video#logo-btn {
 }
 
 
+
+/* ============================
+   PATCH: Scroll completo su modale desktop + linea radar su galleria
+   ============================ */
+@media (min-width: 769px) {
+  #modal {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #modal-content {
+    flex: 1 1 auto;
+    overflow-y: auto !important;
+    max-height: 70vh !important;
+    padding-right: 8px;
+  }
+
+  #gallery-view {
+    max-height: 60vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  #gallery-view::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, #00a6ff 50%, transparent);
+    background-size: 200% auto;
+    animation: radarLine 2s linear infinite;
+    z-index: 10;
+  }
+
+  @keyframes radarLine {
+    0%   { background-position: 0% center; }
+    100% { background-position: 100% center; }
+  }
+}
 </style>
 </head>
-
 <body>
-
-
 <!-- ============================
      BLOCCO: Preloader invisibile
      Elemento segnaposto per caricare immagini/media dietro le quinte senza mostrarli all'utente
      ============================ -->
 <div id="media-preloader" style="display:none;"></div>
-
 <!-- ============================
      BLOCCO: Glow destro decorativo
      Elemento estetico fisso che aggiunge luminosità al lato destro della UI
      ============================ -->
 <div id="right-glow"></div>
-
 <!-- ============================
      BLOCCO: Avviso orientamento dispositivo
      Overlay che appare su smartphone/tablet se lo schermo è in orizzontale: forza visualizzazione verticale
      ============================ -->
 <div id="orientation-warning">
-  <div class="orientation-content">
-    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="#00a6ff">
-      <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
+<div class="orientation-content">
+<svg fill="#00a6ff" height="120" viewbox="0 0 24 24" width="120" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
                4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
                12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
-               12h2v-2H5v2z"/>
-    </svg>
-    <p>Ruota il telefono in verticale per vedere il sito</p>
-  </div>
+               12h2v-2H5v2z"></path>
+</svg>
+<p>Ruota il telefono in verticale per vedere il sito</p>
 </div>
-
+</div>
 <!-- ============================
      BLOCCO: Sidebar principale (menu sinistro)
      Contiene logo e voci di menu, visibile a sinistra su desktop e in fullscreen su mobile
      ============================ -->
 <div id="sidebar">
-  <div id="sidebar-content">
-
-    <!-- ============================
+<div id="sidebar-content">
+<!-- ============================
          BLOCCO: Logo cliccabile sidebar
          Ritorna al menu principale quando cliccato
          ============================ -->
-    <div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
-       <img src="logo.png" alt="Logo">
-    </div>
-
-    <!-- ============================
+<div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
+<img alt="Logo" src="logo.png"/>
+</div>
+<!-- ============================
          BLOCCO: Menu principale
          Voci principali con onclick per aprire modale o sotto-menu
          ============================ -->
-    <div class="menu-list">
-      <div class="menu-item" onclick="apri(0)">Chi siamo</div>
-      <div class="menu-item" onclick="toggleSubmenu('servizi')">I nostri servizi</div>
-      <div class="menu-item" onclick="apri(1)">Portfolio</div>
-      <div class="menu-item" onclick="toggleSubmenu('showroom')">Showroom</div>
-      <div class="menu-item" onclick="apri(2)">Preventivi e Contatti</div>
-
-      <!-- ============================
+<div class="menu-list">
+<div class="menu-item" onclick="apri(0)">Chi siamo</div>
+<div class="menu-item" onclick="toggleSubmenu('servizi')">I nostri servizi</div>
+<div class="menu-item" onclick="apri(1)">Portfolio</div>
+<div class="menu-item" onclick="toggleSubmenu('showroom')">Showroom</div>
+<div class="menu-item" onclick="apri(2)">Preventivi e Contatti</div>
+<!-- ============================
            BLOCCO: Submenu "I nostri servizi"
            Appare solo dopo il click; include sottosezioni come Noleggio, Progettazione, ecc.
            ============================ -->
-      <div id="submenu-servizi" style="display:none; flex-direction: column; align-items: center; width: 100%;">
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('service')">Service</div>
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('antincendio')">Sicurezza Antincendio</div>
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('progettazione')">Soluzioni su misura</div>
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Assistenza Riparazioni</div>
-
-        <!-- Voce per tornare al menu principale -->
-        <div class="menu-item sotto-servizio" onclick="ripristinaMenuPrincipale()"
-             style="color: #6A0DAD; border-color: #6A0DAD;">
+<div id="submenu-servizi" style="display:none; flex-direction: column; align-items: center; width: 100%;">
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('service')">Service</div>
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('antincendio')">Sicurezza Antincendio</div>
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('progettazione')">Soluzioni su misura</div>
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
+<div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Assistenza Riparazioni</div>
+<!-- Voce per tornare al menu principale -->
+<div class="menu-item sotto-servizio" onclick="ripristinaMenuPrincipale()" style="color: #6A0DAD; border-color: #6A0DAD;">
           Menu principale
         </div>
-      </div>
-
-      <!-- ============================
+</div>
+<!-- ============================
            BLOCCO: Submenu Showroom
            Galleria multimediale suddivisa per settore (Service, Antincendio)
            ============================ -->
-      <div id="submenu-showroom" style="display:none; flex-direction: column; align-items: center; width: 100%;">
-        <div class="menu-item sotto-showroom" onclick="apriShowroom('service')">Service e Spettacolo</div>
-        <div class="menu-item sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza Antincendio</div>
-
-        <!-- Voce per tornare al menu principale -->
-        <div class="menu-item sotto-showroom" onclick="ripristinaMenuPrincipale()"
-             style="color: #6A0DAD; border-color: #6A0DAD;">
+<div id="submenu-showroom" style="display:none; flex-direction: column; align-items: center; width: 100%;">
+<div class="menu-item sotto-showroom" onclick="apriShowroom('service')">Service e Spettacolo</div>
+<div class="menu-item sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza Antincendio</div>
+<!-- Voce per tornare al menu principale -->
+<div class="menu-item sotto-showroom" onclick="ripristinaMenuPrincipale()" style="color: #6A0DAD; border-color: #6A0DAD;">
           Menu principale
         </div>
-      </div>
-
-    </div> <!-- fine .menu-list -->
-  </div> <!-- fine #sidebar-content -->
+</div>
+</div> <!-- fine .menu-list -->
+</div> <!-- fine #sidebar-content -->
 </div> <!-- fine #sidebar -->
-
-
 <!-- ============================
      BLOCCO: Area principale del sito
      Contiene il logo centrale, watermark, modale, galleria e vista fullscreen
      ============================ -->
 <div id="main">
-
-  <!-- ============================
+<!-- ============================
        BLOCCO: Logo centrale animato
        Logo al centro dello schermo, animato con effetto "pulse"
        ============================ -->
-  <img src="logo.png" id="logo-btn" alt="Logo">
-
-  <!-- ============================
+<img alt="Logo" id="logo-btn" src="logo.png"/>
+<!-- ============================
        BLOCCO: Watermark inferiore centrale
        Appare in basso al centro come logo trasparente
        ============================ -->
-  <div id="watermark-logo">
-    <img src="logo.png" alt="Watermark Logo">
-  </div>
-
-  <!-- ============================
+<div id="watermark-logo">
+<img alt="Watermark Logo" src="logo.png"/>
+</div>
+<!-- ============================
        BLOCCO: Bloccatore clic sotto la modale
        Layer invisibile che impedisce click durante l'apertura del popup
        ============================ -->
-  <div id="modal-blocker"></div>
-
-  <!-- ============================
+<div id="modal-blocker"></div>
+<!-- ============================
        BLOCCO: Modale contenuti dinamici
        Contenitore principale per testo, portfolio e form contatto
        ============================ -->
-  <div id="modal" class="modal">
-  <!-- Pulsante di chiusura in alto a destra -->
-
-  <button class="modal-close" onclick="closeModalOnly()">×</button>
-
-
-    
-    <!-- Contenuto dinamico interno -->
-    <div id="modal-content">
-      <h2>Caricamento...</h2>
-    </div>
-  </div>
-
-  <!-- ============================
+<div class="modal" id="modal">
+<!-- Pulsante di chiusura in alto a destra -->
+<button class="modal-close" onclick="closeModalOnly()">×</button>
+<!-- Contenuto dinamico interno -->
+<div id="modal-content">
+<h2>Caricamento...</h2>
+</div>
+</div>
+<!-- ============================
        BLOCCO: Contenitore galleria multimediale
        Appare solo quando si entra nella sezione showroom
        ============================ -->
-  <div id="gallery-view" style="display: none; width: 100%; height: 100%; overflow-y: auto;">
-    <div class="gallery-container" id="gallery-container"></div>
-  </div>
-
-  <!-- ============================
+<div id="gallery-view" style="display: none; width: 100%; height: 100%; overflow-y: auto;">
+<div class="gallery-container" id="gallery-container"></div>
+</div>
+<!-- ============================
        BLOCCO: Vista fullscreen per media
        Overlay a schermo intero per immagini o video cliccati dalla galleria
        ============================ -->
-  <div class="fullscreen-view" id="fullscreen-view">
-    <div class="fullscreen-content" id="fullscreen-content"></div>
-  </div>
-
+<div class="fullscreen-view" id="fullscreen-view">
+<div class="fullscreen-content" id="fullscreen-content"></div>
+</div>
 </div> <!-- fine #main -->
-
 <!-- ============================
      BLOCCO: Preload container video
      Serve a precaricare video senza mostrarli nel DOM
      ============================ -->
 <div id="video-preload-container" style="display:none;"></div>
-
-
-
 <script>
 
 // ============================
@@ -2453,7 +2455,6 @@ function closeModalOnly() {
 
 
 </script>
-
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
 const preloadVideoCache = [];
@@ -2502,8 +2503,6 @@ async function preloadVideoFiles(videoList, maxConcurrency = 3) {
   await Promise.all(results);
 }
 </script>
-
-
 <script>
 // 🔧 AVVIO: Precaricamento video automatico all'avvio della pagina
 window.addEventListener('DOMContentLoaded', async () => {
@@ -2529,6 +2528,5 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 </script>
-
 </body>
 </html>
