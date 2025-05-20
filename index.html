@@ -2048,6 +2048,9 @@ function apriShowroom(tipo) {
       modalContent.innerHTML = '';
       modalContent.appendChild(galleryView);
       galleryView.style.display = 'block';
+      galleryView.classList.add("auto-scroll-hide");
+      galleryView.classList.remove("auto-scroll-show");
+
 
       // 5) fade-in
       modal.classList.remove('fade-out');
