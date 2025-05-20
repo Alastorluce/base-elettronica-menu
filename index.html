@@ -1062,15 +1062,6 @@ video#logo-btn {
 }
 
 
-
-.fade-in {
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
-.fade-in.loaded {
-  opacity: 1;
-}
-
 </style>
 </head>
 
@@ -2464,27 +2455,34 @@ function closeModalOnly() {
 </script>
 
 <script>
-// 🔧 SCRIPT GLOBALE: Precaricamento video intelligente (max 3 stream)
+// 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
+const preloadVideoCache = [];
+
+async function checkFileExists(url) {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 async function preloadVideoFiles(videoList, maxConcurrency = 3) {
-  const preloadContainer = document.getElementById('video-preload-container');
   const active = new Set();
 
   async function loadVideo(url) {
-    return new Promise((resolve) => {
-      fetch(url, { method: 'HEAD' })
-        .then(response => {
-          const contentLength = response.headers.get('Content-Length');
-          if (!contentLength || parseInt(contentLength) < 10000) return resolve(); // ignora se file troppo piccolo o inesistente
+    return new Promise(async (resolve) => {
+      if (!(await checkFileExists(url))) return resolve();
 
-          const video = document.createElement('video');
-          video.src = url;
-          video.preload = 'metadata';
-          video.style.display = 'none';
-          video.onloadedmetadata = () => resolve();
-          video.onerror = () => resolve();
-          preloadContainer.appendChild(video);
-        })
-        .catch(() => resolve());
+      const video = document.createElement('video');
+      video.src = url;
+      video.preload = 'metadata';
+      video.style.display = 'none';
+      video.onloadedmetadata = () => resolve();
+      video.onerror = () => resolve();
+
+      preloadVideoCache.push(video); // memorizza il video per uso futuro
+      resolve();
     });
   }
 
@@ -2503,6 +2501,33 @@ async function preloadVideoFiles(videoList, maxConcurrency = 3) {
 
   await Promise.all(results);
 }
+</script>
+
+
+<script>
+// 🔧 AVVIO: Precaricamento video automatico all'avvio della pagina
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const config = window.mediaConfig || {};
+    const allVideos = [];
+
+    for (const tipo in config) {
+      if (config[tipo].video) {
+        const cfg = config[tipo].video;
+        for (let i = cfg.from; i <= cfg.to; i++) {
+          for (const ext of cfg.exts) {
+            allVideos.push(`${config[tipo].folder}${cfg.prefix}${i}.${ext}`);
+          }
+        }
+      }
+    }
+
+    await preloadVideoFiles(allVideos, 3);
+    console.log("✔️ Preload video completato");
+  } catch (e) {
+    console.warn("❌ Errore nel preload video:", e);
+  }
+});
 </script>
 
 </body>
