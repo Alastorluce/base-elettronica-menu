@@ -1206,7 +1206,7 @@ html, body {
   pointer-events: auto;
 }
 
-#modal::after {
+#modal.gallery-mode::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -1532,7 +1532,8 @@ function showModalWithScroll() {
   });
 
   modal.classList.remove('fade-out');
-  modal.classList.add('show');
+  modal.classList.add('gallery-mode');
+      modal.classList.add('show');
   isTransitioning = false;
 
   initScrollOn(modal);
@@ -2184,6 +2185,7 @@ function apriShowroom(tipo) {
 
       // 5) fade-in
       modal.classList.remove('fade-out');
+      modal.classList.add('gallery-mode');
       modal.classList.add('show');
 
       // 6) sblocco i click dopo la transizione
@@ -2467,7 +2469,8 @@ document.addEventListener('submit', function (e) {
 
     // Mostra il messaggio per 3s, poi torna alla home
     modal.classList.remove('fade-out');
-    modal.classList.add('show');
+    modal.classList.add('gallery-mode');
+      modal.classList.add('show');
 
     setTimeout(() => {
       modal.classList.remove('show');
@@ -2496,7 +2499,8 @@ let welcomeTimeout = setTimeout(() => {
 
   modalContent.innerHTML = contenutoHome;             // testo messaggio di benvenuto
   blocker.style.display = 'block';                    // blocca il click sotto
-  modal.classList.add('show');                        // mostra la modale
+  modal.classList.add('gallery-mode');
+      modal.classList.add('show');                        // mostra la modale
 
   // Timeout automatico: chiude dopo 8s se non interrotto
   autoHide = setTimeout(() => {
