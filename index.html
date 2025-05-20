@@ -579,7 +579,7 @@ body {
 
   #modal {
     width: 90vw;
-    max-height: 90vh;
+    max-height: 80vh;
     padding: 1em;
     box-shadow: none;
     z-index: 1000;
@@ -1081,21 +1081,34 @@ video#logo-btn {
 </style>
 
 <style>
-/* 🔧 Galleria modale desktop: preview visibili, scroll solo se necessario */
+/* 🔧 Estensione verticale modale solo su desktop */
 @media screen and (min-width: 1024px) {
+  #modal {
+    height: 98vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #modal-content {
+    max-height: 96vh;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
   #modal.show .gallery-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
     max-height: 90vh;
     overflow-y: auto;
     padding: 10px;
-    margin: 0 auto;
-    max-width: 1200px;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
   }
+
   #modal.show .gallery-container::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    display: none;
   }
 }
 </style>
