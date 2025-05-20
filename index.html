@@ -1110,22 +1110,19 @@ video#logo-btn {
 /* ============================
    BLOCCO: Radar fisso e fullscreen mobile
    ============================ */
-/* ============================
-   BLOCCO: Radar come overlay globale fuori dalla modale
-   ============================ */
 #gallery-radar-line {
   position: fixed;
   bottom: 0;
   left: 0;
-  height: 4px;
   width: 100vw;
+  height: 4px;
   background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
   background-size: 300%;
   background-repeat: repeat-x;
   animation: radarLine 8s linear infinite;
   display: none;
   opacity: 1;
-  z-index: 999999;
+  z-index: 12000;
   transition: opacity 0.4s ease-in-out;
   pointer-events: none;
 }
@@ -1331,11 +1328,11 @@ html, body {
        BLOCCO: Modale contenuti dinamici
        Contenitore principale per testo, portfolio e form contatto
        ============================ -->
-<div class="modal" id="modal" style=";position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999">
+<div class="modal" id="modal">
 <!-- Pulsante di chiusura in alto a destra -->
 <button class="modal-close" onclick="closeModalOnly()">×</button>
 <!-- Contenuto dinamico interno -->
-<div id="modal-content" style=";position:relative">
+<div id="modal-content">
 <h2>Caricamento...</h2>
 </div>
 </div>
