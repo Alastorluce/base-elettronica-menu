@@ -1122,8 +1122,9 @@ video#logo-btn {
   animation: radarLine 8s linear infinite;
   display: none;
   opacity: 1;
-  z-index: 1001;
+  z-index: 1000;
   transition: opacity 0.4s ease-in-out;
+  pointer-events: none;
 }
 
 @keyframes radarLine {
@@ -1220,8 +1221,7 @@ html, body {
 }
 .video-hide-controls {
   pointer-events: auto;
-}
-</style>
+}</style>
 </head>
 <body>
 <!-- ============================
@@ -1334,8 +1334,8 @@ html, body {
 <!-- Contenuto dinamico interno -->
 <div id="modal-content" style=";position:relative">
 <h2>Caricamento...</h2>
-<div id="gallery-radar-line"></div></div>
 </div>
+<div id="gallery-radar-line"></div></div>
 <!-- ============================
        BLOCCO: Contenitore galleria multimediale
        Appare solo quando si entra nella sezione showroom
