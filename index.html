@@ -192,7 +192,7 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background: #000;
-  z-index: 9999;
+  z-index: 99999;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -1106,105 +1106,6 @@ video#logo-btn {
 }
 
 }
-
-
-
-/* ============================
-   BLOCCO: Vista fullscreen per immagini/video
-   Overlay che copre tutto lo schermo per ingrandire i media
-   ============================ */
-.fullscreen-view {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 11000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.fullscreen-view.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.fullscreen-content {
-  max-width: 90%;
-  max-height: 90%;
-  position: relative;
-}
-
-.fullscreen-content img,
-.fullscreen-content video {
-  max-width: 100%;
-  max-height: 90vh;
-  display: block;
-  border-radius: 4px;
-}
-
-
-/* ============================
-   BLOCCO: Pulsante di chiusura fullscreen (identico modale mobile)
-   ============================ */
-.close-fullscreen {
-  position: fixed;
-  top: 20px;            /* Posiziona chiaramente in alto a destra */
-  right: 20px;          /* Ben distante dai bordi */
-  width: 40px;
-  height: 40px;
-  font-size: 30px;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.05);
-  color: transparent;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 12000;        /* Z-index alto per stare sopra fullscreen */
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-  line-height: 40px;
-  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5),
-              inset -2px -2px 6px rgba(255,255,255,0.1);
-  transition: transform 0.2s ease-in-out, opacity 0.2s ease;
-}
-
-.close-fullscreen:hover {
-  transform: scale(1.1);
-}
-
-/* ============================
-   BLOCCO: Radar line galleria dinamica (JS driven)
-   ============================ */
-#gallery-radar-line {
-  height: 4px;
-  width: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    transparent 20%,
-    #00a6ff 50%,
-    transparent 80%,
-    transparent 100%
-  );
-  background-size: 300%;
-  background-repeat: repeat-x;
-  animation: radarLine 10s linear infinite;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 999;
-  display: none;
-  opacity: 1;
-  transition: opacity 0.4s ease-in-out;
-}
 </style>
 </head>
 <body>
@@ -1326,7 +1227,7 @@ video#logo-btn {
        ============================ -->
 <div id="gallery-view" style="display: none; width: 100%; height: 100%; overflow-y: auto;">
 <div class="gallery-container" id="gallery-container"></div>
-</div><div id="gallery-radar-line"></div>
+</div>
 <!-- ============================
        BLOCCO: Vista fullscreen per media
        Overlay a schermo intero per immagini o video cliccati dalla galleria
@@ -1346,7 +1247,24 @@ video#logo-btn {
 // BLOCCO: Verifica esistenza immagine/video
 // ============================
 
+function checkImage(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(url);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
 
+function checkVideo(url) {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.oncanplaythrough = () => resolve(url);
+    video.onerror = () => resolve(null);
+    video.src = url;
+  });
+}
 
 
 // ============================
@@ -2549,28 +2467,6 @@ function closeModalOnly() {
 
 
 
-
-// ============================
-// BLOCCO: Radar Line Scroll Dynamic Visibility
-// ============================
-function aggiornaRadarLineScroll() {
-  const view = document.getElementById('gallery-view');
-  const radar = document.getElementById('gallery-radar-line');
-  if (!view || !radar) return;
-
-  const needsScroll = view.scrollHeight > view.clientHeight + 2;
-  radar.style.display = needsScroll ? 'block' : 'none';
-
-  view.removeEventListener('scroll', onScrollCheckRadar);
-  view.addEventListener('scroll', onScrollCheckRadar);
-}
-
-function onScrollCheckRadar() {
-  const view = document.getElementById('gallery-view');
-  const radar = document.getElementById('gallery-radar-line');
-  const scrollAtEnd = Math.abs(view.scrollTop + view.clientHeight - view.scrollHeight) < 4;
-  radar.style.opacity = scrollAtEnd ? '0' : '1';
-}
 </script>
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
@@ -2643,54 +2539,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   } catch (e) {
     console.warn("❌ Errore nel preload video:", e);
   }
-});
-
-
-// ============================
-// BLOCCO: Preload immagini e video (solo se esistenti)
-// ============================
-
-function preloadImageIfExists(url) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      document.getElementById('media-preloader').appendChild(img);
-      resolve(url);
-    };
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
-}
-
-function preloadVideoIfExists(url) {
-  return new Promise(resolve => {
-    const video = document.createElement('video');
-    video.src = url;
-    video.preload = 'auto';
-    video.muted = true;
-    video.playsInline = true;
-    video.onloadeddata = () => {
-      document.getElementById('media-preloader').appendChild(video);
-      resolve(url);
-    };
-    video.onerror = () => resolve(null);
-  });
-}
-
-function preloadGalleryMedia(tipo) {
-  const folderPath = tipo === 'service'
-    ? 'media/Service_e_Spettacolo/'
-    : 'media/Sicurezza_Antincendio/';
-  for (let i = 1; i <= 100; i++) {
-    preloadImageIfExists(folderPath + 'img' + i + '.jpg');
-    preloadImageIfExists(folderPath + 'img' + i + '.png');
-    preloadVideoIfExists(folderPath + 'vd' + i + '.mp4');
-  }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  preloadGalleryMedia('service');
-  preloadGalleryMedia('antincendio');
 });
 </script>
 </body>
