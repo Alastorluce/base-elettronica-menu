@@ -1062,6 +1062,15 @@ video#logo-btn {
 }
 
 
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+.fade-in.loaded {
+  opacity: 1;
+}
+
 </style>
 </head>
 
@@ -2453,5 +2462,48 @@ function closeModalOnly() {
 
 
 </script>
+
+<script>
+// 🔧 SCRIPT GLOBALE: Precaricamento video intelligente (max 3 stream)
+async function preloadVideoFiles(videoList, maxConcurrency = 3) {
+  const preloadContainer = document.getElementById('video-preload-container');
+  const active = new Set();
+
+  async function loadVideo(url) {
+    return new Promise((resolve) => {
+      fetch(url, { method: 'HEAD' })
+        .then(response => {
+          const contentLength = response.headers.get('Content-Length');
+          if (!contentLength || parseInt(contentLength) < 10000) return resolve(); // ignora se file troppo piccolo o inesistente
+
+          const video = document.createElement('video');
+          video.src = url;
+          video.preload = 'metadata';
+          video.style.display = 'none';
+          video.onloadedmetadata = () => resolve();
+          video.onerror = () => resolve();
+          preloadContainer.appendChild(video);
+        })
+        .catch(() => resolve());
+    });
+  }
+
+  const queue = [...videoList];
+  const results = [];
+
+  while (queue.length > 0) {
+    while (active.size < maxConcurrency && queue.length > 0) {
+      const url = queue.shift();
+      const promise = loadVideo(url).then(() => active.delete(promise));
+      active.add(promise);
+      results.push(promise);
+    }
+    await Promise.race(active);
+  }
+
+  await Promise.all(results);
+}
+</script>
+
 </body>
 </html>
