@@ -1179,6 +1179,32 @@ video#logo-btn {
 .close-fullscreen:hover {
   transform: scale(1.1);
 }
+
+/* ============================
+   BLOCCO: Radar line galleria dinamica (JS driven)
+   ============================ */
+#gallery-radar-line {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 20%,
+    #00a6ff 50%,
+    transparent 80%,
+    transparent 100%
+  );
+  background-size: 300%;
+  background-repeat: repeat-x;
+  animation: radarLine 10s linear infinite;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  display: none;
+  opacity: 1;
+  transition: opacity 0.4s ease-in-out;
+}
 </style>
 </head>
 <body>
@@ -1300,7 +1326,7 @@ video#logo-btn {
        ============================ -->
 <div id="gallery-view" style="display: none; width: 100%; height: 100%; overflow-y: auto;">
 <div class="gallery-container" id="gallery-container"></div>
-</div>
+</div><div id="gallery-radar-line"></div>
 <!-- ============================
        BLOCCO: Vista fullscreen per media
        Overlay a schermo intero per immagini o video cliccati dalla galleria
@@ -2522,6 +2548,29 @@ function closeModalOnly() {
 }
 
 
+
+
+// ============================
+// BLOCCO: Radar Line Scroll Dynamic Visibility
+// ============================
+function aggiornaRadarLineScroll() {
+  const view = document.getElementById('gallery-view');
+  const radar = document.getElementById('gallery-radar-line');
+  if (!view || !radar) return;
+
+  const needsScroll = view.scrollHeight > view.clientHeight + 2;
+  radar.style.display = needsScroll ? 'block' : 'none';
+
+  view.removeEventListener('scroll', onScrollCheckRadar);
+  view.addEventListener('scroll', onScrollCheckRadar);
+}
+
+function onScrollCheckRadar() {
+  const view = document.getElementById('gallery-view');
+  const radar = document.getElementById('gallery-radar-line');
+  const scrollAtEnd = Math.abs(view.scrollTop + view.clientHeight - view.scrollHeight) < 4;
+  radar.style.opacity = scrollAtEnd ? '0' : '1';
+}
 </script>
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
