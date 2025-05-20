@@ -1206,26 +1206,7 @@ html, body {
   pointer-events: auto;
 }
 
-#modal.gallery-mode::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
-  background-size: 300%;
-  background-repeat: repeat-x;
-  animation: radarLine 6s linear infinite;
-  z-index: 5;
-  opacity: 0.8;
-  pointer-events: none;
-}
 
-@keyframes radarLine {
-  0%   { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
-}
 </style>
 </head>
 <body>
