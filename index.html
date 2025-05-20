@@ -1190,9 +1190,9 @@ html, body {
 }
 
 /* ============================
-   BLOCCO: Radar glow sotto la modale gallery
+   BLOCCO: Radar nella modale gallery (basso esterno)
    ============================ */
-#modal-radar-line {
+#gallery-modal-radar {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -1201,11 +1201,12 @@ html, body {
   background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
   background-size: 300%;
   background-repeat: repeat-x;
-  animation: radarLine 8s linear infinite;
-  z-index: 5;
+  animation: radarLineModal 8s linear infinite;
+  z-index: 1000;
+  opacity: 1;
 }
 
-@keyframes radarLine {
+@keyframes radarLineModal {
   0%   { background-position: 100% 0; }
   100% { background-position: -100% 0; }
 }
@@ -1323,7 +1324,7 @@ html, body {
 <div id="modal-content">
 <h2>Caricamento...</h2>
 </div>
-<div id="modal-radar-line"></div></div>
+<div id="gallery-modal-radar"></div></div>
 <!-- ============================
        BLOCCO: Contenitore galleria multimediale
        Appare solo quando si entra nella sezione showroom
