@@ -1055,73 +1055,8 @@ video#logo-btn {
 
 
 
-/* ============================
-   PATCH: Scroll completo su modale desktop + linea radar su galleria
-   ============================ */
-@media (min-width: 769px) {
-  #modal {
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
 
-  #modal-content {
-    flex: 1 1 auto;
-    overflow-y: auto !important;
-    max-height: 70vh !important;
-    padding-right: 8px;
-  }
-
-  #gallery-view {
-    max-height: 60vh;
-    overflow-y: auto;
-    position: relative;
-  }
-
-  #gallery-view::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    transparent 20%,
-    #00a6ff 50%,
-    transparent 80%,
-    transparent 100%
-  );
-  background-size: 300%;
-  background-repeat: repeat-x;
-  animation: radarLine 16s linear infinite;
-  z-index: 10;
-}
-
-
-  
-  100% { background-position: -200% 0; }
-}
-
-}
-
-/* ============================
-   BLOCCO: Radar fisso e fullscreen mobile
-   ============================ */
-
-
-
-  100% { background-position: -100% 0; }
-}
-
-:root {
-  --vh: 1vh;
-}
-html, body {
-  height: calc(var(--vh, 1vh) * 100);
-  overflow: hidden;
-}
+ 
 
 
 /* ============================
