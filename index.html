@@ -1111,7 +1111,7 @@ video#logo-btn {
    BLOCCO: Radar fisso e fullscreen mobile
    ============================ */
 #gallery-radar-line {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   height: 4px;
@@ -1122,7 +1122,7 @@ video#logo-btn {
   animation: radarLine 8s linear infinite;
   display: none;
   opacity: 1;
-  z-index: 9999;
+  z-index: 1001;
   transition: opacity 0.4s ease-in-out;
 }
 
@@ -1209,6 +1209,17 @@ html, body {
 
 .close-fullscreen:hover {
   transform: scale(1.1);
+}
+
+/* ============================
+   BLOCCO: Video - Comandi invisibili ma attivi
+   ============================ */
+.video-hide-controls::-webkit-media-controls {
+  display: none !important;
+  opacity: 0 !important;
+}
+.video-hide-controls {
+  pointer-events: auto;
 }
 </style>
 </head>
@@ -1321,9 +1332,9 @@ html, body {
 <!-- Pulsante di chiusura in alto a destra -->
 <button class="modal-close" onclick="closeModalOnly()">×</button>
 <!-- Contenuto dinamico interno -->
-<div id="modal-content">
+<div id="modal-content" style=";position:relative">
 <h2>Caricamento...</h2>
-</div>
+<div id="gallery-radar-line"></div></div>
 </div>
 <!-- ============================
        BLOCCO: Contenitore galleria multimediale
@@ -1331,7 +1342,7 @@ html, body {
        ============================ -->
 <div id="gallery-view" style="display: none; width: 100%; height: 100%; overflow-y: auto;">
 <div class="gallery-container" id="gallery-container"></div>
-</div><div id="gallery-radar-line"></div>
+</div>
 <!-- ============================
        BLOCCO: Vista fullscreen per media
        Overlay a schermo intero per immagini o video cliccati dalla galleria
@@ -2571,6 +2582,14 @@ function closeModalOnly() {
 
 
 
+
+// ============================
+// BLOCCO: Comandi video invisibili ma attivi (bypass restrizioni browser mobile)
+// ============================
+function nascondiComandiVideo(video) {
+  video.classList.add('video-hide-controls');
+  video.controls = true;
+}
 </script>
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
