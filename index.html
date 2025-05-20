@@ -1078,29 +1078,11 @@ video#logo-btn {
     position: relative;
   }
 
-  #gallery-view::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    transparent 20%,
-    #00a6ff 50%,
-    transparent 80%,
-    transparent 100%
-  );
-  background-size: 300%;
-  background-repeat: repeat-x;
-  animation: radarLine 16s linear infinite;
-  z-index: 10;
-}
-
-
   
+
+
+  @keyframes radarLine {
+  0%   { background-position: 100% 0; }
   100% { background-position: -200% 0; }
 }
 
@@ -1111,7 +1093,8 @@ video#logo-btn {
    ============================ */
 
 
-
+@keyframes radarLine {
+  0%   { background-position: 100% 0; }
   100% { background-position: -100% 0; }
 }
 
