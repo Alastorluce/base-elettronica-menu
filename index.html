@@ -1081,17 +1081,21 @@ video#logo-btn {
 </style>
 
 <style>
-/* 🔧 Scroll attivato dopo 12 preview nella modale galleria - solo su desktop */
+/* 🔧 Galleria modale desktop: preview visibili, scroll solo se necessario */
 @media screen and (min-width: 1024px) {
   #modal.show .gallery-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-    max-height: 70vh;
+    max-height: 75vh;
     overflow-y: auto;
     padding: 10px;
     margin: 0 auto;
     max-width: 1200px;
+    scrollbar-width: none; /* Firefox */
+  }
+  #modal.show .gallery-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
   }
 }
 </style>
@@ -2561,27 +2565,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.warn("❌ Errore nel preload video:", e);
   }
 });
-</script>
-
-
-<script>
-// 🔧 Protezione auto-scroll benvenuto: si ferma se il messaggio è chiuso
-let autoScrollInterval = null;
-
-function startAutoScroll(target) {
-  clearInterval(autoScrollInterval);
-  autoScrollInterval = setInterval(() => {
-    if (!document.getElementById('welcome-modal')?.classList.contains('show')) {
-      clearInterval(autoScrollInterval);
-      return;
-    }
-    target.scrollTop += 1;
-  }, 30);
-}
-
-function stopAutoScroll() {
-  clearInterval(autoScrollInterval);
-}
 </script>
 
 </body>
