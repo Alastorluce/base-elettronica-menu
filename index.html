@@ -1110,19 +1110,22 @@ video#logo-btn {
 /* ============================
    BLOCCO: Radar fisso e fullscreen mobile
    ============================ */
+/* ============================
+   BLOCCO: Radar come overlay globale fuori dalla modale
+   ============================ */
 #gallery-radar-line {
   position: fixed;
   bottom: 0;
   left: 0;
   height: 4px;
-  width: 100%;
+  width: 100vw;
   background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
   background-size: 300%;
   background-repeat: repeat-x;
   animation: radarLine 8s linear infinite;
   display: none;
   opacity: 1;
-  z-index: 99999;
+  z-index: 999999;
   transition: opacity 0.4s ease-in-out;
   pointer-events: none;
 }
@@ -1335,7 +1338,7 @@ html, body {
 <div id="modal-content" style=";position:relative">
 <h2>Caricamento...</h2>
 </div>
-<div id="gallery-radar-line"></div></div>
+</div>
 <!-- ============================
        BLOCCO: Contenitore galleria multimediale
        Appare solo quando si entra nella sezione showroom
@@ -2664,5 +2667,5 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 </script>
-</body>
+<div id="gallery-radar-line"></div></body>
 </html>
