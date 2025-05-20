@@ -1100,8 +1100,7 @@ video#logo-btn {
 }
 
 
-  @keyframes radarLine {
-  0%   { background-position: 100% 0; }
+  
   100% { background-position: -200% 0; }
 }
 
@@ -1110,25 +1109,9 @@ video#logo-btn {
 /* ============================
    BLOCCO: Radar fisso e fullscreen mobile
    ============================ */
-#gallery-radar-line {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100vw;
-  background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
-  background-size: 300%;
-  background-repeat: repeat-x;
-  animation: radarLine 8s linear infinite;
-  display: none;
-  opacity: 1;
-  z-index: 9999999;
-  pointer-events: none;
-  transition: opacity 0.4s ease-in-out;
-}
 
-@keyframes radarLine {
-  0%   { background-position: 100% 0; }
+
+
   100% { background-position: -100% 0; }
 }
 
@@ -1221,7 +1204,29 @@ html, body {
 }
 .video-hide-controls {
   pointer-events: auto;
-}</style>
+}
+
+#modal::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
+  background-size: 300%;
+  background-repeat: repeat-x;
+  animation: radarLine 6s linear infinite;
+  z-index: 5;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+@keyframes radarLine {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+</style>
 </head>
 <body>
 <!-- ============================
@@ -2664,5 +2669,5 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 </script>
-<div id="gallery-radar-line"></div></body>
+</body>
 </html>
