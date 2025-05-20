@@ -200,7 +200,7 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background: #000;
-  z-index: 9999;
+  z-index: 99999;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -667,59 +667,6 @@ body {
   }
 }
 
-/* ============================
-   BLOCCO: Effetto radar glow per pulsanti "X"
-   ============================ */
-
-.modal-close,
-.close-fullscreen {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  font-size: 30px;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 1001;
-  line-height: 40px;
-  text-align: center;
-  overflow: hidden; /* necessario per gradient animato */
-  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5),
-              inset -2px -2px 6px rgba(255,255,255,0.1);
-}
-
-.modal-close::before,
-.close-fullscreen::before {
-  content: '×';
-  display: block;
-  height: 100%;
-  width: 100%;
-  color: transparent;
-  background-image: linear-gradient(
-    90deg,
-    #000000 0%,
-    #222222 45%,
-    #41008b 50%,
-    #222222 55%,
-    #000000 80%
-  );
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: radarTextScan 4s linear infinite;
-}
-
-/* Rimuove il testo visibile diretto */
-.modal-close,
-.close-fullscreen {
-  color: transparent !important;
-}
-
 
 /* ============================
    BLOCCO: Stile lista a punti
@@ -1073,7 +1020,7 @@ video#logo-btn {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 11000;
+  z-index: 1000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -1100,37 +1047,19 @@ video#logo-btn {
 
 
 /* ============================
-   BLOCCO: Pulsante di chiusura fullscreen (identico modale mobile)
+   BLOCCO: Bottone di chiusura fullscreen
+   “X” per chiudere la vista a schermo intero
    ============================ */
 .close-fullscreen {
-  position: fixed;
-  top: 20px;            /* Posiziona chiaramente in alto a destra */
-  right: 20px;          /* Ben distante dai bordi */
-  width: 40px;
-  height: 40px;
-  font-size: 30px;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.05);
-  color: transparent;
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background-color: transparent;
+  color: white;
   border: none;
-  border-radius: 50%;
+  font-size: 24px;
   cursor: pointer;
-  z-index: 12000;        /* Z-index alto per stare sopra fullscreen */
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-  line-height: 40px;
-  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5),
-              inset -2px -2px 6px rgba(255,255,255,0.1);
-  transition: transform 0.2s ease-in-out, opacity 0.2s ease;
 }
-
-.close-fullscreen:hover {
-  transform: scale(1.1);
-}
-
-
 
 
 </style>
@@ -1301,53 +1230,7 @@ video#logo-btn {
 
 
 <script>
-// ============================
-// BLOCCO: Configurazione Gallery
-// Carica il file media_manifest.json e memorizza in mediaConfig
-// ============================
-let mediaConfig = null;
 
-fetch('media_manifest.json')
-  .then(response => response.json())
-  .then(cfg => {
-    mediaConfig = cfg;
-    // Pre-carica TUTTI i media in background
-    ['service', 'antincendio'].forEach(tipo => preloadTipo(tipo));
-  })
-  .catch(err => console.error('Errore caricamento media_manifest.json:', err));
-
-// ============================
-// BLOCCO: preloadTipo(tipo)
-// Preload di immagini (.jpg, .png) e video (.mp4) definiti in mediaConfig
-// ============================
-function preloadTipo(tipo) {
-  const cfg = mediaConfig[tipo];
-  const container = document.getElementById('video-preload-container');
-
-  // — Preload immagini
-  for (let i = cfg.image.from; i <= cfg.image.to; i++) {
-    cfg.image.exts.forEach(ext => {
-      const img = new Image();
-      img.decoding = "async";
-      img.loading = "eager"; // forza il browser a caricarle subito
-      img.src = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
-    });
-  }
-
-  // — Preload video: solo i primi 2 con preload='auto', gli altri con metadata
-  for (let i = cfg.video.from; i <= cfg.video.to; i++) {
-    cfg.video.exts.forEach(ext => {
-      const video = document.createElement('video');
-
-      // Preload aggressivo solo sui primi 2 video
-      video.preload = (i - cfg.video.from < 2) ? 'auto' : 'metadata';
-
-      video.muted   = true;
-      video.src     = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
-      container.appendChild(video);
-    });
-  }
-}
 // ============================
 // BLOCCO: Verifica esistenza immagine/video
 // ============================
@@ -1364,33 +1247,9 @@ function checkImage(url) {
 function checkVideo(url) {
   return new Promise((resolve) => {
     const video = document.createElement('video');
-    let resolved = false;
-
-    video.preload = 'auto';
-    video.muted = true;
-
-    video.oncanplaythrough = () => {
-      if (!resolved) {
-        resolved = true;
-        resolve(url);
-      }
-    };
-
-    video.onerror = () => {
-      if (!resolved) {
-        resolved = true;
-        resolve(null);
-      }
-    };
-
-    // Timeout di sicurezza (5 secondi)
-    setTimeout(() => {
-      if (!resolved) {
-        resolved = true;
-        resolve(null);
-      }
-    }, 5000);
-
+    video.preload = 'metadata';
+    video.oncanplaythrough = () => resolve(url);
+    video.onerror = () => resolve(null);
     video.src = url;
   });
 }
@@ -2102,9 +1961,9 @@ function apriSubservizio(tipo) {
 
 // ============================
 // BLOCCO: apriShowroom(tipo)
-// Crea e mostra la gallery usando mediaConfig con verifica effettiva dei file
+// Visualizza la galleria multimediale solo con immagini/video realmente esistenti - con Promise.all e fallback jpg/png
 // ============================
-async function apriShowroom(tipo) {
+function apriShowroom(tipo) {
   if (isTransitioning) return;
   isTransitioning = true;
 
@@ -2115,94 +1974,88 @@ async function apriShowroom(tipo) {
   }
 
   // 2) dopo 0.6s (fade-out) costruisco e mostro la gallery
-  setTimeout(async () => {
-    const galleryView      = document.getElementById('gallery-view');
+  setTimeout(() => {
+    const galleryView = document.getElementById('gallery-view');
     const galleryContainer = document.getElementById('gallery-container');
 
     // svuoto sempre il container
     galleryContainer.innerHTML = '';
 
-    // prendo la configurazione (folder, range, estensioni) dal JSON già caricato
-    const cfg = mediaConfig[tipo];
+    // scelgo la cartella giusta
+    const folderPath = tipo === 'service'
+      ? 'media/Service_e_Spettacolo/'
+      : 'media/Sicurezza_Antincendio/';
 
-    const promises = [];
+    // helper per HEAD asincrona
+    const checkFile = url => new Promise(res => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('HEAD', url, true);
+      xhr.onload  = () => res(xhr.status >= 200 && xhr.status < 400 ? url : null);
+      xhr.onerror = () => res(null);
+      xhr.send();
+    });
 
-    // ============================
-    // BLOCCO: Generazione anteprime immagini con verifica file
-    // ============================
-    for (let i = cfg.image.from; i <= cfg.image.to; i++) {
-      for (const ext of cfg.image.exts) {
-        const url = `${cfg.folder}${cfg.image.prefix}${i}.${ext}`;
-        promises.push(
-          checkImage(url).then(exists => {
-            if (exists) {
-              const item = document.createElement('div');
-              item.className = 'gallery-item';
-
-              const img = document.createElement('img');
-              img.src = url;
-              item.appendChild(img);
-
-              item.addEventListener('click', () =>
-                openFullscreen({ type: 'image', src: url })
-              );
-              galleryContainer.appendChild(item);
-            }
-          })
+    // costruisco la lista completa di immagini + video
+    async function buildFileList() {
+      const p = [];
+      for (let i = 1; i <= 100; i++) {
+        const jpg = `${folderPath}img${i}.jpg`;
+        const png = `${folderPath}img${i}.png`;
+        p.push(
+          Promise.all([checkFile(jpg), checkFile(png)])
+            .then(([j, q]) => j ? {type:'image',src:j}
+                               : q ? {type:'image',src:q}
+                                   : null)
+        );
+        const vid = `${folderPath}vd${i}.mp4`;
+        p.push(
+          checkFile(vid).then(u => u ? {type:'video',src:u} : null)
         );
       }
+      return (await Promise.all(p)).filter(x => x);
     }
 
-    // ============================
-    // BLOCCO: Generazione anteprime video con verifica file
-    // ============================
-    for (let i = cfg.video.from; i <= cfg.video.to; i++) {
-      for (const ext of cfg.video.exts) {
-        const url = `${cfg.folder}${cfg.video.prefix}${i}.${ext}`;
-        promises.push(
-          checkVideo(url).then(exists => {
-            if (exists) {
-              const item = document.createElement('div');
-              item.className = 'gallery-item';
+    // 3) popolo la galleria
+    buildFileList().then(mediaFiles => {
+      mediaFiles.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
 
-              const vid = document.createElement('video');
-              vid.muted       = true;
-              vid.loop        = true;
-              vid.autoplay    = true;
-              vid.playsInline = true;
-              vid.preload     = 'metadata';
-              vid.src         = url;
-              vid.style.objectFit = 'cover';
-
-              item.appendChild(vid);
-              item.addEventListener('click', () =>
-                openFullscreen({ type: 'video', src: url })
-              );
-              galleryContainer.appendChild(item);
-            }
-          })
-        );
-      }
-    }
-
-    // Attendo che TUTTI i file siano stati verificati prima di mostrare la gallery
-    await Promise.all(promises);
-
-    // ============================
-    // BLOCCO: Iniezione e animazione della modale
-    // ============================
-    modalContent.innerHTML = '';
-    modalContent.appendChild(galleryView);
-    galleryView.style.display = 'block';
-    modal.classList.remove('fade-out');
-    modal.classList.add('show');
-
-    // 3) al termine della transizione riabilito i click
-    setTimeout(() => { isTransitioning = false; }, 600);
-  }, 600);
+        if (file.type === 'image') {
+          const img = document.createElement('img');
+          img.src = file.src;
+          item.appendChild(img);
+        } else {
+  const video = document.createElement('video');
+  video.src          = file.src;
+  video.muted        = true;           // necessario per autoplay silenzioso
+  video.loop         = true;
+  video.autoplay     = true;           // parte immediatamente
+  video.playsInline  = true;           // su iOS/Android
+  video.preload      = 'auto';         // scarica qualche fotogramma
+  video.style.objectFit = 'cover';     // mantiene il tuo stile
+  item.appendChild(video);
 }
 
 
+        item.addEventListener('click', () => openFullscreen(file));
+        galleryContainer.appendChild(item);
+      });
+
+      // 4) inietto la gallery nella modale
+      modalContent.innerHTML = '';
+      modalContent.appendChild(galleryView);
+      galleryView.style.display = 'block';
+
+      // 5) fade-in
+      modal.classList.remove('fade-out');
+      modal.classList.add('show');
+
+      // 6) sblocco i click dopo la transizione
+      setTimeout(() => { isTransitioning = false; }, 600);
+    });
+  }, 600);
+}
 
 
 
@@ -2259,15 +2112,12 @@ fullscreenContent.appendChild(wm);
   // Inserisce video in autoplay silenzioso
   const video = document.createElement('video');
   video.src         = file.src;
-  video.muted       = true;        // silenzioso → sblocca autoplay
-  video.autoplay    = true;        // parte automaticamente
-  video.playsInline = true;        // evita forzature fullscreen su mobile
-  video.loop        = true;        // per loop continuo
-  video.controls    = false;       // <-- CONTROLLI NASCOSTI
-  video.preload     = 'auto';      // caricamento automatico
-
-  // Evita interazioni del mouse col video
-  video.style.pointerEvents = 'none';
+  video.muted       = true;           // silenzioso → sblocca autoplay
+  video.autoplay    = true;           // parte automaticamente
+  video.playsInline = true;           // evita forzature di fullscreen su iOS/Android
+  video.loop        = false;          // o true se vuoi il loop anche in fullscreen
+  video.controls    = true;           // mantieni i controlli utente
+  video.preload     = 'auto';         // scarica i primi fotogrammi
 
   fullscreenContent.appendChild(video);
 
@@ -2298,21 +2148,6 @@ fullscreenContent.appendChild(wm);
   // Attiva l’overlay fullscreen
   fullscreenView.classList.add('active');
 
-  // ============================
-// BLOCCO: Attiva fullscreen nativo su mobile landscape
-// Se il device è mobile e in orizzontale, attiva il fullscreen nativo del browser
-// ============================
-if (
-  /Mobi|Android/i.test(navigator.userAgent) &&
-  window.innerWidth > window.innerHeight // orientamento orizzontale
-) {
-  const requestFull = fullscreenView.requestFullscreen ||
-                      fullscreenView.webkitRequestFullscreen ||
-                      fullscreenView.msRequestFullscreen;
-
-  if (requestFull) requestFull.call(fullscreenView);
-}
-
   // Permette la chiusura cliccando sullo sfondo esterno
   fullscreenView.addEventListener('click', (e) => {
     if (e.target === fullscreenView) {
@@ -2321,11 +2156,6 @@ if (
   });
 }
 
-
-
-
-
-  
 // ============================
 // BLOCCO: closeFullscreen()
 // Chiude la visualizzazione a schermo intero e ferma il video se presente
@@ -2339,23 +2169,8 @@ function closeFullscreen() {
   if (video) {
     video.pause();
   }
-
-  // ============================
-  // BLOCCO: Esci da fullscreen nativo se attivo (solo mobile)
-  // ============================
-  if (
-    (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) &&
-    window.matchMedia('(max-width: 768px)').matches
-  ) {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
-  }
 }
+
 // ============================
 // BLOCCO: attivaSlideshow()
 // Funzione placeholder per slideshow: definita ma non ancora implementata
