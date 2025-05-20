@@ -200,7 +200,7 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background: #000;
-  z-index: 99999;
+  z-index: 9999;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -1020,7 +1020,7 @@ video#logo-btn {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 11000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -1047,18 +1047,34 @@ video#logo-btn {
 
 
 /* ============================
-   BLOCCO: Bottone di chiusura fullscreen
-   “X” per chiudere la vista a schermo intero
+   BLOCCO: Pulsante di chiusura fullscreen (identico modale mobile)
    ============================ */
 .close-fullscreen {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background-color: transparent;
-  color: white;
+  position: fixed;
+  top: 20px;            /* Posiziona chiaramente in alto a destra */
+  right: 20px;          /* Ben distante dai bordi */
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.05);
+  color: transparent;
   border: none;
-  font-size: 24px;
+  border-radius: 50%;
   cursor: pointer;
+  z-index: 12000;        /* Z-index alto per stare sopra fullscreen */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  line-height: 40px;
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5),
+              inset -2px -2px 6px rgba(255,255,255,0.1);
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease;
+}
+
+.close-fullscreen:hover {
+  transform: scale(1.1);
 }
 
 
