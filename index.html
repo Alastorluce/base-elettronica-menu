@@ -1247,24 +1247,7 @@ video#logo-btn {
 // BLOCCO: Verifica esistenza immagine/video
 // ============================
 
-function checkImage(url) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(url);
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
-}
 
-function checkVideo(url) {
-  return new Promise((resolve) => {
-    const video = document.createElement('video');
-    video.preload = 'metadata';
-    video.oncanplaythrough = () => resolve(url);
-    video.onerror = () => resolve(null);
-    video.src = url;
-  });
-}
 
 
 // ============================
@@ -2466,7 +2449,6 @@ function closeModalOnly() {
 }
 
 
-
 </script>
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
@@ -2539,6 +2521,54 @@ window.addEventListener('DOMContentLoaded', async () => {
   } catch (e) {
     console.warn("❌ Errore nel preload video:", e);
   }
+});
+
+
+// ============================
+// BLOCCO: Preload immagini e video (solo se esistenti)
+// ============================
+
+function preloadImageIfExists(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      document.getElementById('media-preloader').appendChild(img);
+      resolve(url);
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
+function preloadVideoIfExists(url) {
+  return new Promise(resolve => {
+    const video = document.createElement('video');
+    video.src = url;
+    video.preload = 'auto';
+    video.muted = true;
+    video.playsInline = true;
+    video.onloadeddata = () => {
+      document.getElementById('media-preloader').appendChild(video);
+      resolve(url);
+    };
+    video.onerror = () => resolve(null);
+  });
+}
+
+function preloadGalleryMedia(tipo) {
+  const folderPath = tipo === 'service'
+    ? 'media/Service_e_Spettacolo/'
+    : 'media/Sicurezza_Antincendio/';
+  for (let i = 1; i <= 100; i++) {
+    preloadImageIfExists(folderPath + 'img' + i + '.jpg');
+    preloadImageIfExists(folderPath + 'img' + i + '.png');
+    preloadVideoIfExists(folderPath + 'vd' + i + '.mp4');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  preloadGalleryMedia('service');
+  preloadGalleryMedia('antincendio');
 });
 </script>
 </body>
