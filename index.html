@@ -1190,15 +1190,15 @@ html, body {
   background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
   background-size: 400%;
   background-repeat: repeat-x;
-  animation: radarLineModal 12s linear infinite;
+  animation: radarLineModal 16s linear infinite;
   z-index: 1000;
   opacity: 1;
 }
 
 @keyframes radarLineModal {
-  0%   { background-position: 100% 0; }
-  80%  { background-position: -300% 0; }
-  100% { background-position: -300% 0; }  /* Pausa finale */
+  0%    { background-position: 100% 0; }
+  81.25% { background-position: -300% 0; }
+  100%  { background-position: -300% 0; } /* Pausa di 3 secondi */
 }
 
 /* ============================
