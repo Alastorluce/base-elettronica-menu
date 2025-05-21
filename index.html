@@ -1231,6 +1231,19 @@ html, body {
 .gallery-item video.fade-out {
   opacity: 0;
 }
+
+/* Pressed and transition override for smoother, slower button pressing */
+.menu-item,
+.menu-item.sotto-servizio,
+.menu-item.sotto-showroom {
+  transition: transform 2s ease, box-shadow 0.8s ease, opacity 0.8s ease;
+}
+.menu-item.pressed,
+.menu-item.sotto-servizio.pressed,
+.menu-item.sotto-showroom.pressed {
+  transition: transform 2s ease, box-shadow 0.8s ease;
+}
+
 </style>
 </head>
 <body>
@@ -1293,9 +1306,7 @@ html, body {
 <div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
 <div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Assistenza Riparazioni</div>
 <!-- Voce per tornare al menu principale -->
-<div class="menu-item sotto-servizio" onclick="ripristinaMenuPrincipale()" style="color: #6A0DAD; border-color: #6A0DAD;">
-          Menu principale
-        </div>
+
 </div>
 <!-- ============================
            BLOCCO: Submenu Showroom
@@ -1305,9 +1316,7 @@ html, body {
 <div class="menu-item sotto-showroom" onclick="apriShowroom('service')">Service e Spettacolo</div>
 <div class="menu-item sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza Antincendio</div>
 <!-- Voce per tornare al menu principale -->
-<div class="menu-item sotto-showroom" onclick="ripristinaMenuPrincipale()" style="color: #6A0DAD; border-color: #6A0DAD;">
-          Menu principale
-        </div>
+
 </div>
 </div> <!-- fine .menu-list -->
 </div> <!-- fine #sidebar-content -->
@@ -1739,6 +1748,7 @@ function toggleSubmenu(tipo) {
   onMain = false;
 
   const logo = document.getElementById('sidebar-logo');
+  logo.querySelector('img').src = 'logo_home.png';
   const submenuServizi = document.getElementById('submenu-servizi');
   const submenuShowroom = document.getElementById('submenu-showroom');
   const menuItems = document.querySelectorAll('.menu-list > .menu-item');
@@ -2853,4 +2863,17 @@ document.addEventListener("DOMContentLoaded", () => {
   box-shadow: 0 0 15px #00ffcc, inset 0 0 10px #00c0ff;
   transition: box-shadow 0.5s ease;
 }
+
+/* Pressed and transition override for smoother, slower button pressing */
+.menu-item,
+.menu-item.sotto-servizio,
+.menu-item.sotto-showroom {
+  transition: transform 2s ease, box-shadow 0.8s ease, opacity 0.8s ease;
+}
+.menu-item.pressed,
+.menu-item.sotto-servizio.pressed,
+.menu-item.sotto-showroom.pressed {
+  transition: transform 2s ease, box-shadow 0.8s ease;
+}
+
 </style>
