@@ -1056,7 +1056,7 @@ video#logo-btn {
 
 
 /* ============================
-   PATCH: Scroll completo su modale desktop + linea radar su galleria
+   PATCH: Scroll completo su modale desktop
    ============================ */
 @media (min-width: 769px) {
   #modal {
@@ -1079,33 +1079,6 @@ video#logo-btn {
   }
 
   
-
-
-  @keyframes radarLine {
-  0%   { background-position: 100% 0; }
-  100% { background-position: -200% 0; }
-}
-
-}
-
-/* ============================
-   BLOCCO: Radar fisso e fullscreen mobile
-   ============================ */
-
-
-@keyframes radarLine {
-  0%   { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
-}
-
-:root {
-  --vh: 1vh;
-}
-html, body {
-  height: calc(var(--vh, 1vh) * 100);
-  overflow: hidden;
-}
-
 
 /* ============================
    BLOCCO: Vista fullscreen per immagini/video
