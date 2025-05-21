@@ -1210,6 +1210,23 @@ html, body {
   0%   { background-position: 100% 0; }
   100% { background-position: -100% 0; }
 }
+
+/* ============================
+   BLOCCO: Dissolvenza morbida fine loop video mobile
+   ============================ */
+.gallery-item video {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  background-color: black;
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
+}
+
+.gallery-item video.fade-out {
+  opacity: 0;
+}
 </style>
 </head>
 <body>
@@ -2579,6 +2596,33 @@ function nascondiComandiVideo(video) {
   video.classList.add('video-hide-controls');
   video.controls = true;
 }
+
+// ============================
+// BLOCCO: Dissolvenza fine loop video
+// ============================
+function applicaDissolvenzaVideoLoop() {
+  const videos = document.querySelectorAll('.gallery-item video');
+
+  videos.forEach(video => {
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.autoplay = true;
+    video.loop = false;
+
+    video.addEventListener('ended', () => {
+      video.classList.add('fade-out');
+      setTimeout(() => {
+        video.currentTime = 0;
+        video.classList.remove('fade-out');
+        video.play();
+      }, 500); // fade duration
+    });
+  });
+}
+
+// Attiviamo dopo caricamento DOM
+document.addEventListener('DOMContentLoaded', applicaDissolvenzaVideoLoop);
 </script>
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
