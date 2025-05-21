@@ -1920,11 +1920,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('pointerdown', () => item.classList.add('pressed'));
-    item.addEventListener('pointerup', () => item.classList.remove('pressed'));
-    item.addEventListener('pointercancel', () => item.classList.remove('pressed'));
-    item.addEventListener('touchend', () => item.classList.remove('pressed'));
-    item.addEventListener('touchcancel', () => item.classList.remove('pressed'));
+    item.addEventListener('pointerdown', () => {
+      item.classList.add('pressed');
+      setTimeout(() => {
+        item.classList.remove('pressed');
+      }, 2000); // effetto gommoso completo anche per clic brevi
+    });
+    item
+    item
+    item
+    item
 
   document.querySelectorAll('.menu-item').forEach(item => {
     item.addEventListener('pointerdown', () => {
@@ -1958,8 +1963,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.querySelectorAll('.menu-item').forEach(item => {
     item.addEventListener('mousedown', () => item.classList.add('pressed'));
-    item.addEventListener('mouseup', () => item.classList.remove('pressed'));
-    item.addEventListener('mouseleave', () => item.classList.remove('pressed'));
+    item
+    item
   });
 
   document.addEventListener('keydown', (e) => {
@@ -2395,11 +2400,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('pointerdown', () => item.classList.add('pressed'));
-    item.addEventListener('pointerup', () => item.classList.remove('pressed'));
-    item.addEventListener('pointercancel', () => item.classList.remove('pressed'));
-    item.addEventListener('touchend', () => item.classList.remove('pressed'));
-    item.addEventListener('touchcancel', () => item.classList.remove('pressed'));
+    item.addEventListener('pointerdown', () => {
+      item.classList.add('pressed');
+      setTimeout(() => {
+        item.classList.remove('pressed');
+      }, 2000); // effetto gommoso completo anche per clic brevi
+    });
+    item
+    item
+    item
+    item
 
   document.querySelectorAll('.menu-item').forEach(item => {
     item.addEventListener('pointerdown', () => {
