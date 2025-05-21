@@ -406,7 +406,7 @@ body {
    ============================ */
 #logo-btn {
   width: 350px;
-  max-width: 90vw;
+  max-width: 70vw;
   height: auto;
   object-fit: contain;
   animation: pulse 2s infinite ease-in-out;
@@ -508,8 +508,8 @@ body {
     font-size: 1em;
     padding: 0.6em 0.8em;
     margin: 0.3em auto;
-    width: 90vw;
-    max-width: 90vw;
+    width: 70vw;
+    max-width: 70vw;
     min-height: 45px;
     opacity: 0;
     transform: translateX(-100%);
@@ -570,7 +570,7 @@ body {
   }
 
   #modal {
-    width: 90vw;
+    width: 70vw;
     max-height: 80vh;
     padding: 1em;
     box-shadow: none;
@@ -854,231 +854,10 @@ ul.custom-list li > strong {
 .menu-item.sotto-servizio.pressed,
 .menu-item.sotto-showroom.pressed {
   transform: translateX(0) scale(0.90) !important;
-  box-shadow: inset 0 0 5px #00a6ff !important;
+  box-shadow: 0 0 12px #00a6ff, inset 0 0 10px #00a6ff !important;
+  transition: transform 0.8s ease, box-shadow 0.8s ease;
 }
 
-
-/* ============================
-   BLOCCO: Allineamento testi nella modale
-   Centra tutti gli elementi testuali all'interno della modale
-   ============================ */
-#modal-content,
-#modal-content h2,
-#modal-content h3,
-#modal-content p,
-#modal-content ul {
-  text-align: center;
-}
-
-/* Mantiene l'allineamento a sinistra per le liste */
-#modal-content ul li {
-  text-align: left;
-}
-
-
-/* ============================
-   BLOCCO: Scroll dinamico per modale
-   Nasconde le scrollbar quando non attivo lo scroll automatico
-   ============================ */
-.auto-scroll-hide {
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE10+ */
-}
-.auto-scroll-hide::-webkit-scrollbar {
-  width: 0;                       /* Chrome, Safari, Opera */
-}
-
-.auto-scroll-show {
-  scrollbar-width: auto;
-}
-.auto-scroll-show::-webkit-scrollbar {
-  width: 2px;
-}
-
-
-/* ============================
-   BLOCCO: Scrollbar condizionale modale
-   Appare solo quando la classe .auto-scroll-show è attiva
-   ============================ */
-#modal-content {
-  scrollbar-width: none;
-}
-#modal-content::-webkit-scrollbar {
-  width: 0;
-}
-
-.auto-scroll-show #modal-content {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,166,255,0.8) transparent;
-}
-.auto-scroll-show #modal-content::-webkit-scrollbar {
-  width: 2px;
-}
-.auto-scroll-show #modal-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-.auto-scroll-show #modal-content::-webkit-scrollbar-thumb {
-  background-color: rgba(0,166,255,0.8);
-  border-radius: 2px;
-}
-.auto-scroll-show #modal-content::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0,255,179,0.8);
-}
-
-
-/* ============================
-   BLOCCO: Video logo in background (fullscreen)
-   Espande il logo video in modalità fullscreen sullo sfondo
-   ============================ */
-video#logo-btn {
-  object-fit: cover;
-  width: 100vw !important;
-  height: 100vh !important;
-  max-width: 100%;
-  max-height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: none !important;
-  z-index: 1;
-}
-
-
-/* ============================
-   BLOCCO: Galleria immagini e video
-   Struttura in griglia responsiva per visualizzare media con preview
-   ============================ */
-.gallery-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
-  padding: 20px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.gallery-item {
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  aspect-ratio: 16/9;
-}
-
-.gallery-item:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-}
-
-.gallery-item img,
-.gallery-item video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-
-/* ============================
-   BLOCCO: Indicatore per i video in galleria
-   Badge che segnala se un elemento è un video
-   ============================ */
-.video-indicator {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-}
-
-
-/* ============================
-   BLOCCO: Vista fullscreen per immagini/video
-   Overlay che copre tutto lo schermo per ingrandire i media
-   ============================ */
-.fullscreen-view {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.fullscreen-view.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.fullscreen-content {
-  max-width: 90%;
-  max-height: 90%;
-  position: relative;
-}
-
-.fullscreen-content img,
-.fullscreen-content video {
-  max-width: 100%;
-  max-height: 90vh;
-  display: block;
-  border-radius: 4px;
-}
-
-
-/* ============================
-   BLOCCO: Bottone di chiusura fullscreen
-   “X” per chiudere la vista a schermo intero
-   ============================ */
-.close-fullscreen {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background-color: transparent;
-  color: white;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-
-
-/* ============================
-   PATCH: Scroll completo su modale desktop + linea radar su galleria
-   ============================ */
-@media (min-width: 769px) {
-  #modal {
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  #modal-content {
-    flex: 1 1 auto;
-    overflow-y: auto !important;
-    max-height: 70vh !important;
-    padding-right: 8px;
-  }
-
-  #gallery-view {
-    max-height: 60vh;
-    overflow-y: auto;
-    position: relative;
-  }
-
-}
 
 /* ============================
    BLOCCO: Radar fisso e fullscreen mobile
@@ -1256,7 +1035,7 @@ html, body {
          Ritorna al menu principale quando cliccato
          ============================ -->
 <div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
-<img alt="Logo" src="logo.png"/>
+<img alt="Logo" src="logo_home.png"/>
 </div>
 <!-- ============================
          BLOCCO: Menu principale
@@ -1279,9 +1058,6 @@ html, body {
 <div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
 <div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Assistenza Riparazioni</div>
 <!-- Voce per tornare al menu principale -->
-<div class="menu-item sotto-servizio" onclick="ripristinaMenuPrincipale()" style="color: #6A0DAD; border-color: #6A0DAD;">
-          Menu principale
-        </div>
 </div>
 <!-- ============================
            BLOCCO: Submenu Showroom
@@ -1291,9 +1067,6 @@ html, body {
 <div class="menu-item sotto-showroom" onclick="apriShowroom('service')">Service e Spettacolo</div>
 <div class="menu-item sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza Antincendio</div>
 <!-- Voce per tornare al menu principale -->
-<div class="menu-item sotto-showroom" onclick="ripristinaMenuPrincipale()" style="color: #6A0DAD; border-color: #6A0DAD;">
-          Menu principale
-        </div>
 </div>
 </div> <!-- fine .menu-list -->
 </div> <!-- fine #sidebar-content -->
@@ -1883,6 +1656,48 @@ function ripristinaMenuPrincipale() {
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('sidebar').classList.add('animated');
 
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.classList.remove('attivo');
+        el.style.opacity = '0.35';
+      });
+      item.classList.add('attivo');
+      item.style.opacity = '1';
+    });
+  });
+
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => item.classList.add('pressed'));
+    item.addEventListener('pointerup', () => item.classList.remove('pressed'));
+    item.addEventListener('pointercancel', () => item.classList.remove('pressed'));
+    item.addEventListener('touchend', () => item.classList.remove('pressed'));
+    item.addEventListener('touchcancel', () => item.classList.remove('pressed'));
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.style.opacity = '0.4';
+      });
+      item.style.opacity = '1';
+    });
+
+    const resetOpacity = () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.style.opacity = '';
+      });
+    };
+
+    item.addEventListener('pointerup', resetOpacity);
+    item.addEventListener('pointercancel', resetOpacity);
+    item.addEventListener('touchend', resetOpacity);
+    item.addEventListener('touchcancel', resetOpacity);
+  });
+
+  });
+
+
   document.querySelectorAll('.menu-item').forEach(el => {
     const delay = (Math.random() * 3).toFixed(2) + 's';
     const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
@@ -2315,6 +2130,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // === 1) Attiva l'animazione della sidebar iniziale ===
   document.getElementById('sidebar').classList.add('animated');
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.classList.remove('attivo');
+        el.style.opacity = '0.35';
+      });
+      item.classList.add('attivo');
+      item.style.opacity = '1';
+    });
+  });
+
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => item.classList.add('pressed'));
+    item.addEventListener('pointerup', () => item.classList.remove('pressed'));
+    item.addEventListener('pointercancel', () => item.classList.remove('pressed'));
+    item.addEventListener('touchend', () => item.classList.remove('pressed'));
+    item.addEventListener('touchcancel', () => item.classList.remove('pressed'));
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.style.opacity = '0.4';
+      });
+      item.style.opacity = '1';
+    });
+
+    const resetOpacity = () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.style.opacity = '';
+      });
+    };
+
+    item.addEventListener('pointerup', resetOpacity);
+    item.addEventListener('pointercancel', resetOpacity);
+    item.addEventListener('touchend', resetOpacity);
+    item.addEventListener('touchcancel', resetOpacity);
+  });
+
+  });
+
 
   // === 2) Assegna animazione outline personalizzata a ogni menu-item ===
   document.querySelectorAll('.menu-item').forEach(el => {
@@ -2749,3 +2606,10 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
+<style>
+.menu-item.attivo {
+  box-shadow: 0 0 15px #00ffcc, inset 0 0 10px #00c0ff;
+  transition: box-shadow 0.5s ease;
+}
+</style>
