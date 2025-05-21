@@ -1227,21 +1227,6 @@ html, body {
 .gallery-item video.fade-out {
   opacity: 0;
 }
-
-/* ============================
-   BLOCCO: Fake Fullscreen Verticale Mobile
-   ============================ */
-.video-fake-fullscreen {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  width: 100vw !important;
-  height: 100vh !important;
-  z-index: 9999;
-  object-fit: cover;
-  background-color: black;
-  pointer-events: none;
-}
 </style>
 </head>
 <body>
@@ -2638,41 +2623,6 @@ function applicaDissolvenzaVideoLoop() {
 
 // Attiviamo dopo caricamento DOM
 document.addEventListener('DOMContentLoaded', applicaDissolvenzaVideoLoop);
-
-// ============================
-// BLOCCO: Fake Fullscreen Verticale per Galleria Mobile
-// ============================
-function attivaFakeFullscreenMobile() {
-  const isPortrait = window.innerHeight > window.innerWidth;
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  const galleryVisibile = document.getElementById('gallery-view')?.style.display !== 'none';
-
-  if (isMobile && isPortrait && galleryVisibile) {
-    const videos = document.querySelectorAll('#gallery-view video');
-    videos.forEach(video => {
-      video.classList.add('video-fake-fullscreen');
-    });
-
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-
-    const hideElement = id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    };
-
-    ['sidebar', 'logo-btn', 'watermark-logo'].forEach(hideElement);
-  }
-}
-
-// Attiva al cambio orientamento e al load
-window.addEventListener('orientationchange', () => {
-  setTimeout(attivaFakeFullscreenMobile, 300);
-});
-window.addEventListener('resize', () => {
-  setTimeout(attivaFakeFullscreenMobile, 300);
-});
-document.addEventListener('DOMContentLoaded', attivaFakeFullscreenMobile);
 </script>
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
