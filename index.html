@@ -857,8 +857,6 @@ ul.custom-list li > strong {
   box-shadow: 0 0 12px #00a6ff, inset 0 0 10px #00a6ff !important;
   transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-}
 
 .menu-item,
 .menu-item.sotto-servizio,
@@ -1244,6 +1242,12 @@ html, body {
   transition: transform 2s ease, box-shadow 0.8s ease;
 }
 
+
+/* Fade-in morbido del logo senza rompere il CSS */
+.fade-in-logo {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out !important;
+}
 </style>
 </head>
 <body>
@@ -1306,7 +1310,6 @@ html, body {
 <div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
 <div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Assistenza Riparazioni</div>
 <!-- Voce per tornare al menu principale -->
-
 </div>
 <!-- ============================
            BLOCCO: Submenu Showroom
@@ -1316,7 +1319,6 @@ html, body {
 <div class="menu-item sotto-showroom" onclick="apriShowroom('service')">Service e Spettacolo</div>
 <div class="menu-item sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza Antincendio</div>
 <!-- Voce per tornare al menu principale -->
-
 </div>
 </div> <!-- fine .menu-list -->
 </div> <!-- fine #sidebar-content -->
@@ -1387,7 +1389,15 @@ function checkImage(url) {
     img.onload = () => resolve(url);
     img.onerror = () => resolve(null);
     img.src = url;
+  
+  // ✅ FIX: Ripristina allineamento centrato dei pulsanti del menu principale
+  document.querySelectorAll('.menu-item').forEach(el => {
+    el.style.justifyContent = 'center';
+    el.style.alignItems = 'center';
+    el.style.textAlign = 'center';
   });
+
+});
 }
 
 function checkVideo(url) {
@@ -1747,8 +1757,22 @@ function toggleSubmenu(tipo) {
   isTransitioning = true;
   onMain = false;
 
-  const logo = document.getElementById('sidebar-logo');
-  logo.querySelector('img').src = 'logo_home.png';
+const logo = document.getElementById('sidebar-logo');  // solo una volta
+const logoImg = logo.querySelector('img');
+
+logoImg.classList.add('fade-in-logo');
+logoImg.style.opacity = '0';
+
+logoImg.addEventListener('load', function handler() {
+  logoImg.style.opacity = '1';
+  logoImg.classList.remove('fade-in-logo');
+  logoImg.removeEventListener('load', handler);
+});
+
+setTimeout(() => {
+  logoImg.src = 'logo_home.png';
+}, 30);
+
   const submenuServizi = document.getElementById('submenu-servizi');
   const submenuShowroom = document.getElementById('submenu-showroom');
   const menuItems = document.querySelectorAll('.menu-list > .menu-item');
@@ -1890,6 +1914,13 @@ function ripristinaMenuPrincipale() {
 
     main.style.opacity     = '1';
     smallLogo.style.opacity = '1';
+    // ✅ Forza il riallineamento del testo nei tasti del menu principale
+document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+  el.style.display = 'flex';
+  el.style.justifyContent = 'center';
+  el.style.alignItems = 'center';
+  el.style.textAlign = 'center';
+});
 
     // 6) Fine transizione: riabilito le interazioni
     setTimeout(() => {
@@ -2805,7 +2836,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 </script>
-
 <script>
 // ============================
 // BLOCCO: Preview Video a Segmenti Randomici con Fade Controllato
@@ -2867,7 +2897,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
-
 <style>
 .menu-item.attivo {
   box-shadow: 0 0 15px #00ffcc, inset 0 0 10px #00c0ff;
