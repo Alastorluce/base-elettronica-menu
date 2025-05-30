@@ -1392,7 +1392,28 @@ html, body {
 }
 
 </style>
-</head>
+<style>
+#orientation-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: #000000ee;
+  color: white;
+  z-index: 99999;
+  text-align: center;
+}
+@media (min-width: 769px) {
+  #orientation-warning {
+    display: none !important;
+  }
+}
+</style></head>
 <body>
 <!-- ============================
      BLOCCO: Preloader invisibile
@@ -3123,11 +3144,30 @@ document.querySelectorAll('.menu-item').forEach(btn => {
   });
 });      
 </script>
-  <!-- ============================
+<!-- ============================
      BLOCCO: Preload invisibile del logo alternativo
      Evita glitch al primo caricamento del submenu cambiando logo
      ============================ -->
-<img src="logo_home.png" style="display:none;" alt="Preload logo dinamico" />
-       
+<img alt="Preload logo dinamico" src="logo_home.png" style="display:none;"/>
+
+<script>
+function checkOrientation() {
+  const warning = document.getElementById('orientation-warning');
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  const isLandscape = window.innerWidth > window.innerHeight;
+
+  if (isMobile && isLandscape) {
+    warning.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  } else {
+    warning.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+</script>
 </body>
 </html>
