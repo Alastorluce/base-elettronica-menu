@@ -1,37 +1,29 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
-
-  <!-- ============================
+<!-- ============================
        BLOCCO: Configurazioni base HEAD
        ============================ -->
-
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- Responsivo su dispositivi mobili -->
-  <title>Base Elettronica Service - Menu</title>
-
-  <!-- Font elegante arrotondato per UI -->
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
-
-  <!-- ============================
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><!-- Responsivo su dispositivi mobili -->
+<title>Base Elettronica Service - Menu</title>
+<!-- Font elegante arrotondato per UI -->
+<link href="https://fonts.googleapis.com/css?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<!-- ============================
        BLOCCO: Favicon e icone mobile
        ============================ -->
-
-  <!-- 🔹 Icona desktop / favicon per tutti i browser -->
-  <link rel="icon" type="image/x-icon" href="logo_multires.ico">
-
-  <!-- 🔹 Icona PNG moderna per browser e retina -->
-  <link rel="icon" type="image/png" sizes="256x256" href="logo_256.png">
-  <link rel="apple-touch-icon" sizes="512x512" href="logo_512.png">
-
-  <!-- 🔹 Manifest per Android (shortcut con icona corretta) -->
-  <link rel="manifest" href="manifest.json">
-
-  <!-- ============================
+<!-- 🔹 Icona desktop / favicon per tutti i browser -->
+<link href="logo_multires.ico" rel="icon" type="image/x-icon"/>
+<!-- 🔹 Icona PNG moderna per browser e retina -->
+<link href="logo_256.png" rel="icon" sizes="256x256" type="image/png"/>
+<link href="logo_512.png" rel="apple-touch-icon" sizes="512x512"/>
+<!-- 🔹 Manifest per Android (shortcut con icona corretta) -->
+<link href="manifest.json" rel="manifest"/>
+<!-- ============================
        BLOCCO: Stili CSS inline (prima parte)
        ============================ -->
-
-         <style>
+<style>
 
 /* ============================
    BLOCCO: Blocco anti-selezione universale
@@ -84,6 +76,20 @@ body {
 @keyframes pulse {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   50%      { transform: translate(-50%, -50%) scale(1.1); }
+}
+@keyframes fadeOutUniforme {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.fade-out-uniforme {
+  animation: fadeOutUniforme 0.3s ease-in-out forwards !important;
 }
 
 /* ============================ *
@@ -200,7 +206,7 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background: #000;
-  z-index: 99999;
+  z-index: 9999;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -265,9 +271,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* ✅ posiziona tutto in alto */
   height: 100%;
   width: 100%;
+  padding-top: 50px; /* spazio iniziale per distanza controllata del logo */
+  box-sizing: border-box;
 }
 
 
@@ -275,13 +283,17 @@ body {
    BLOCCO: Logo della sidebar
    Mostra un logo nella parte alta della sidebar con effetti hover/click e transizioni di opacità
    ============================ */
+/* ============================
+   BLOCCO: Logo della sidebar
+   Mostra un logo nella parte alta della sidebar con effetto pressione identico ai tasti
+   ============================ */
 #sidebar-logo {
   margin-bottom: 2em;
-  width: 180px;                /* larghezza costante */
+  width: 180px;
   height: auto;
   cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.5s ease-in-out;
-  opacity: 1;                  /* visibile all’avvio */
+  transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.8s ease;
+  opacity: 1;
 }
 
 #sidebar-logo img {
@@ -289,13 +301,14 @@ body {
   height: auto;
   display: block;
   filter: brightness(90%) saturate(0%) contrast(150%) invert(10%);
-  transition: transform 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1); /* stessa curva dei tasti */
 }
 
-/* All'attivazione (click), il logo scala al 83% */
+/* Effetto pressione gommoso come i menu-item */
 #sidebar-logo:active img {
   transform: scale(0.83);
 }
+
 
 /* All’hover, il logo si ingrandisce leggermente */
 #sidebar-logo:hover {
@@ -330,6 +343,16 @@ body {
 }
 
 
+#submenu-servizi,
+#submenu-showroom {
+  position: absolute;
+  top: 275px; /* allineato verticalmente ai primi bottoni */
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+
 /* ============================
    BLOCCO: Voci di menu
    Definisce stile, effetto hover e animazioni di entrata delle voci principali e dei sotto-menu
@@ -349,9 +372,14 @@ body {
   text-align: center;
   width: 60%;
   font-size: 0.9em;
-  opacity: 0;
+  opacity: 1;
   transform: translateX(-100%);
   animation: slideIn 0.5s ease-out forwards;
+}
+.menu-item.fade-out-fast {
+  opacity: 0 !important;
+  transform: translateX(-50%) !important;
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
 /* ============================
@@ -414,7 +442,7 @@ body {
    ============================ */
 #logo-btn {
   width: 350px;
-  max-width: 90vw;
+  max-width: 70vw;
   height: auto;
   object-fit: contain;
   animation: pulse 2s infinite ease-in-out;
@@ -516,8 +544,8 @@ body {
     font-size: 1em;
     padding: 0.6em 0.8em;
     margin: 0.3em auto;
-    width: 90vw;
-    max-width: 90vw;
+    width: 70vw;
+    max-width: 70vw;
     min-height: 45px;
     opacity: 0;
     transform: translateX(-100%);
@@ -579,8 +607,8 @@ body {
 
   #modal {
     width: 90vw;
-    max-height: 80vh;
-    padding: 1em;
+    max-height:  85vh;
+    padding:  1.2em;
     box-shadow: none;
     z-index: 1000;
   }
@@ -858,12 +886,14 @@ ul.custom-list li > strong {
    BLOCCO: Effetto pressione (pressed)
    Applica un effetto di schiacciamento al click per feedback visivo
    ============================ */
-.menu-item.pressed,
-.menu-item.sotto-servizio.pressed,
-.menu-item.sotto-showroom.pressed {
-  transform: translateX(0) scale(0.90) !important;
-  box-shadow: inset 0 0 5px #00a6ff !important;
+
+
+.menu-item,
+.menu-item.sotto-servizio,
+.menu-item.sotto-showroom {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
+.menu-item.sotto-servizio.pressed,
 
 
 /* ============================
@@ -1062,173 +1092,434 @@ video#logo-btn {
 }
 
 
+
+/* ============================
+   PATCH: Scroll completo su modale desktop + linea radar su galleria
+   ============================ */
+@media (min-width: 769px) {
+  #modal {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #modal-content {
+    flex: 1 1 auto;
+    overflow-y: auto !important;
+    max-height: 70vh !important;
+    padding-right: 8px;
+  }
+
+  #gallery-view {
+    max-height: 60vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+}
+
+/* ============================
+   BLOCCO: Radar fisso e fullscreen mobile
+   ============================ */
+
+
+
+
+:root {
+  --vh: 1vh;
+}
+html, body {
+  height: calc(var(--vh, 1vh) * 100);
+  overflow: hidden;
+}
+
+
+/* ============================
+   BLOCCO: Vista fullscreen per immagini/video
+   Overlay che copre tutto lo schermo per ingrandire i media
+   ============================ */
+.fullscreen-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.fullscreen-view.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fullscreen-content {
+  max-width: 90%;
+  max-height: 90%;
+  position: relative;
+}
+
+.fullscreen-content img,
+.fullscreen-content video {
+  max-width: 100%;
+  max-height: 90vh;
+  display: block;
+  border-radius: 4px;
+}
+
+
+/* ============================
+   BLOCCO: Pulsante di chiusura fullscreen (identico modale mobile)
+   ============================ */
+.close-fullscreen {
+  position: fixed;
+  top: 20px;            /* Posiziona chiaramente in alto a destra */
+  right: 20px;          /* Ben distante dai bordi */
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.05);
+  color: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 12000;        /* Z-index alto per stare sopra fullscreen */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  line-height: 40px;
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5),
+              inset -2px -2px 6px rgba(255,255,255,0.1);
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease;
+}
+
+.close-fullscreen:hover {
+  transform: scale(1.1);
+}
+
+/* ============================
+   BLOCCO: Video - Comandi invisibili ma attivi
+   ============================ */
+.video-hide-controls::-webkit-media-controls {
+  display: none !important;
+  opacity: 0 !important;
+}
+.video-hide-controls {
+  pointer-events: auto;
+}
+
+/* ============================
+   BLOCCO: Radar nella modale gallery (basso esterno)
+   ============================ */
+#gallery-modal-radar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
+  background-size: 300%;
+  background-repeat: no-repeat;
+  animation: radarLineModal 10s linear infinite;
+  z-index: 1000;
+  opacity: 1;
+}
+
+@keyframes radarLineModal {
+  0%    { background-position: 100% 0; }
+  95% { background-position: -200% 0; }  /* 13s di movimento */
+  100%  { background-position: -200% 0; }   /* 3s di pausa visiva */
+}
+
+/* ============================
+   BLOCCO: Dissolvenza morbida fine loop video mobile
+   ============================ */
+.gallery-item video {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  background-color: black;
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
+}
+
+.gallery-item video.fade-out {
+  opacity: 0;
+}
+
+
+/* ============================
+   BLOCCO: Effetto pressione tasti menu (gommoso)
+   Applica transizioni fluide e scala il tasto alla pressione, identico al logo.
+   ============================ */
+
+/* Pressed and transition override for smoother, slower button pressing */
+.menu-item,
+.menu-item.sotto-servizio,
+.menu-item.sotto-showroom {
+  transition: transform 0.25s cubic-bezier(0.25,0.1,0.25,1), 
+              box-shadow 0.4s cubic-bezier(0.25,0.1,0.25,1), 
+              opacity 0.8s ease;
+}
+
+/* Effetto pressione "gommoso" identico al logo (pressione reale) */
+.menu-item:active,
+.menu-item.sotto-servizio:active,
+.menu-item.sotto-showroom:active {
+  transform: scale(0.83);
+}
+
+/* Fade-in morbido del logo senza rompere il CSS */
+.fade-in-logo {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out !important;
+}
+
+.menu-item.attivo {
+  box-shadow: 0 0 15px #00ffcc, inset 0 0 10px #00c0ff;
+  transition: box-shadow 0.5s ease;
+}
+
+
+
+
+
+
+/* ============================
+   BLOCCO: Compatibilità struttura con .menu-wrapper e layout rifinito
+   ============================ */
+.menu-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease-in-out;
+  width: 60%;
+  margin: 0 auto 1em auto;
+}
+.menu-wrapper:active {
+  transform: scale(0.83);
+}
+
+.menu-wrapper .menu-item {
+  width: 100%;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(0, 166, 255, 0.4);
+  color: #00a6ff;
+  padding: 0.6em 1em;
+  border-radius: 6px;
+  cursor: pointer;
+  will-change: transform, box-shadow;
+  transition: transform 0.4s cubic-bezier(0.25,0.1,0.25,1),
+              box-shadow 0.4s cubic-bezier(0.25,0.1,0.25,1);
+  text-shadow: 1px 0.5px 1px #1900ff;
+  text-align: center;
+  font-size: 0.95em;
+  opacity: 0;
+  transform: translateX(-100%);
+  animation: slideIn 0.5s ease-out forwards;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-list > .menu-wrapper:nth-of-type(1) .menu-principale { animation-delay: 0s; }
+.menu-list > .menu-wrapper:nth-of-type(2) .menu-principale { animation-delay: 0.2s; }
+.menu-list > .menu-wrapper:nth-of-type(3) .menu-principale { animation-delay: 0.4s; }
+.menu-list > .menu-wrapper:nth-of-type(4) .menu-principale { animation-delay: 0.6s; }
+.menu-list > .menu-wrapper:nth-of-type(5) .menu-principale { animation-delay: 0.8s; }
+
+#submenu-servizi > .menu-wrapper:nth-of-type(1) .sotto-servizio { animation-delay: 0s; }
+#submenu-servizi > .menu-wrapper:nth-of-type(2) .sotto-servizio { animation-delay: 0.2s; }
+#submenu-servizi > .menu-wrapper:nth-of-type(3) .sotto-servizio { animation-delay: 0.4s; }
+#submenu-servizi > .menu-wrapper:nth-of-type(4) .sotto-servizio { animation-delay: 0.6s; }
+#submenu-servizi > .menu-wrapper:nth-of-type(5) .sotto-servizio { animation-delay: 0.8s; }
+#submenu-servizi > .menu-wrapper:nth-of-type(6) .sotto-servizio { animation-delay: 1s; }
+
+#submenu-showroom > .menu-wrapper:nth-of-type(1) .sotto-showroom { animation-delay: 0s; }
+#submenu-showroom > .menu-wrapper:nth-of-type(2) .sotto-showroom { animation-delay: 0.2s; }
+#submenu-showroom > .menu-wrapper:nth-of-type(3) .sotto-showroom { animation-delay: 0.4s; }
+
+@media (max-width: 768px) {
+  .menu-wrapper {
+    width: 70vw;
+    max-width: 70vw;
+    margin: 0.5em auto;
+  }
+  .menu-wrapper .menu-item {
+    font-size: 1em;
+    padding: 0.6em;
+    min-height: 45px;
+    width: 100%;
+  }
+}
+
+       #orientation-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  z-index: 99999;
+  background: #000000ee;
+  color: white;
+  font-size: 1.5em;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#orientation-warning .orientation-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 769px) {
+  #orientation-warning {
+    display: none !important; /* Nasconde sempre su desktop */
+  }
+}
+
 </style>
 </head>
-
 <body>
-
-
 <!-- ============================
      BLOCCO: Preloader invisibile
      Elemento segnaposto per caricare immagini/media dietro le quinte senza mostrarli all'utente
      ============================ -->
 <div id="media-preloader" style="display:none;"></div>
-
 <!-- ============================
      BLOCCO: Glow destro decorativo
      Elemento estetico fisso che aggiunge luminosità al lato destro della UI
      ============================ -->
 <div id="right-glow"></div>
-
 <!-- ============================
      BLOCCO: Avviso orientamento dispositivo
      Overlay che appare su smartphone/tablet se lo schermo è in orizzontale: forza visualizzazione verticale
      ============================ -->
 <div id="orientation-warning">
-  <div class="orientation-content">
-    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="#00a6ff">
-      <path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
+<div class="orientation-content">
+<svg fill="#00a6ff" height="120" viewbox="0 0 24 24" width="120" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 15h2V7h-2v8zm0 4h2v-2h-2v2zm-4-8h2V3h-2v8zm0
                4h2v-2h-2v2zM9 9h2V7H9v2zm0 4h2v-2H9v2zm0-8h2V3H9v2zm0
                12h2v-2H9v2zm-4-4h2v-2H5v2zm0-4h2V7H5v2zm0-4h2V3H5v2zm0
-               12h2v-2H5v2z"/>
-    </svg>
-    <p>Ruota il telefono in verticale per vedere il sito</p>
-  </div>
+               12h2v-2H5v2z"></path>
+</svg>
+<p>Ruota il telefono in verticale per vedere il sito</p>
 </div>
-
+</div>
 <!-- ============================
      BLOCCO: Sidebar principale (menu sinistro)
      Contiene logo e voci di menu, visibile a sinistra su desktop e in fullscreen su mobile
      ============================ -->
 <div id="sidebar">
-  <div id="sidebar-content">
-
-    <!-- ============================
+<div id="sidebar-content">
+<!-- ============================
          BLOCCO: Logo cliccabile sidebar
          Ritorna al menu principale quando cliccato
          ============================ -->
-    <div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
-       <img src="logo.png" alt="Logo">
-    </div>
-
-    <!-- ============================
+<div id="sidebar-logo" onclick="ripristinaMenuPrincipale()">
+<img alt="Logo" src="logo.png"/>
+</div>
+<!-- ============================
          BLOCCO: Menu principale
          Voci principali con onclick per aprire modale o sotto-menu
          ============================ -->
-    <div class="menu-list">
-      <div class="menu-item" onclick="apri(0)">Chi siamo</div>
-      <div class="menu-item" onclick="toggleSubmenu('servizi')">I nostri servizi</div>
-      <div class="menu-item" onclick="apri(1)">Portfolio</div>
-      <div class="menu-item" onclick="toggleSubmenu('showroom')">Showroom</div>
-      <div class="menu-item" onclick="apri(2)">Preventivi e Contatti</div>
-
-      <!-- ============================
+<div class="menu-list">
+<div class="menu-wrapper"><div class="menu-item menu-principale" onclick="apri(0)">Chi siamo</div></div>
+<div class="menu-wrapper"><div class="menu-item menu-principale" onclick="toggleSubmenu('servizi')">I nostri servizi</div></div>
+<div class="menu-wrapper"><div class="menu-item menu-principale" onclick="apri(1)">Portfolio</div></div>
+<div class="menu-wrapper"><div class="menu-item menu-principale" onclick="toggleSubmenu('showroom')">Showroom</div></div>
+<div class="menu-wrapper"><div class="menu-item menu-principale" onclick="apri(2)">Preventivi e Contatti</div></div>
+<!-- ============================
            BLOCCO: Submenu "I nostri servizi"
            Appare solo dopo il click; include sottosezioni come Noleggio, Progettazione, ecc.
            ============================ -->
-      <div id="submenu-servizi" style="display:none; flex-direction: column; align-items: center; width: 100%;">
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('service')">Service</div>
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('antincendio')">Sicurezza Antincendio</div>
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('progettazione')">Soluzioni su misura</div>
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div>
-        <div class="menu-item sotto-servizio" onclick="apriSubservizio('assistenza')">Assistenza Riparazioni</div>
-
-        <!-- Voce per tornare al menu principale -->
-        <div class="menu-item sotto-servizio" onclick="ripristinaMenuPrincipale()"
-             style="color: #6A0DAD; border-color: #6A0DAD;">
-          Menu principale
-        </div>
-      </div>
-
-      <!-- ============================
+<div id="submenu-servizi" style="display:none; flex-direction: column; align-items: center; width: 100%;">
+<div class="menu-wrapper"><div class="menu-item sotto-servizio sotto-servizio" onclick="apriSubservizio('service')">Service</div></div>
+<div class="menu-wrapper"><div class="menu-item sotto-servizio sotto-servizio" onclick="apriSubservizio('antincendio')">Sicurezza Antincendio</div></div>
+<div class="menu-wrapper"><div class="menu-item sotto-servizio sotto-servizio" onclick="apriSubservizio('progettazione')">Soluzioni su misura</div></div>
+<div class="menu-wrapper"><div class="menu-item sotto-servizio sotto-servizio" onclick="apriSubservizio('noleggio')">Noleggio</div></div>
+<div class="menu-wrapper"><div class="menu-item sotto-servizio sotto-servizio" onclick="apriSubservizio('assistenza')">Assistenza Riparazioni</div></div>
+<!-- Voce per tornare al menu principale -->
+</div>
+<!-- ============================
            BLOCCO: Submenu Showroom
            Galleria multimediale suddivisa per settore (Service, Antincendio)
            ============================ -->
-      <div id="submenu-showroom" style="display:none; flex-direction: column; align-items: center; width: 100%;">
-        <div class="menu-item sotto-showroom" onclick="apriShowroom('service')">Service e Spettacolo</div>
-        <div class="menu-item sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza Antincendio</div>
-
-        <!-- Voce per tornare al menu principale -->
-        <div class="menu-item sotto-showroom" onclick="ripristinaMenuPrincipale()"
-             style="color: #6A0DAD; border-color: #6A0DAD;">
-          Menu principale
-        </div>
-      </div>
-
-    </div> <!-- fine .menu-list -->
-  </div> <!-- fine #sidebar-content -->
+<div id="submenu-showroom" style="display:none; flex-direction: column; align-items: center; width: 100%;">
+<div class="menu-wrapper"><div class="menu-item sotto-showroom sotto-showroom" onclick="apriShowroom('service')">Service e Spettacolo</div></div>
+<div class="menu-wrapper"><div class="menu-item sotto-showroom sotto-showroom" onclick="apriShowroom('antincendio')">Sicurezza Antincendio</div></div>
+<!-- Voce per tornare al menu principale -->
+</div>
+</div> <!-- fine .menu-list -->
+</div> <!-- fine #sidebar-content -->
 </div> <!-- fine #sidebar -->
-
-
 <!-- ============================
      BLOCCO: Area principale del sito
      Contiene il logo centrale, watermark, modale, galleria e vista fullscreen
      ============================ -->
 <div id="main">
-
-  <!-- ============================
+<!-- ============================
        BLOCCO: Logo centrale animato
        Logo al centro dello schermo, animato con effetto "pulse"
        ============================ -->
-  <img src="logo.png" id="logo-btn" alt="Logo">
-
-  <!-- ============================
+<img alt="Logo" id="logo-btn" src="logo.png"/>
+<!-- ============================
        BLOCCO: Watermark inferiore centrale
        Appare in basso al centro come logo trasparente
        ============================ -->
-  <div id="watermark-logo">
-    <img src="logo.png" alt="Watermark Logo">
-  </div>
-
-  <!-- ============================
+<div id="watermark-logo">
+<img alt="Watermark Logo" src="logo.png"/>
+</div>
+<!-- ============================
        BLOCCO: Bloccatore clic sotto la modale
        Layer invisibile che impedisce click durante l'apertura del popup
        ============================ -->
-  <div id="modal-blocker"></div>
-
-  <!-- ============================
+<div id="modal-blocker"></div>
+<!-- ============================
        BLOCCO: Modale contenuti dinamici
        Contenitore principale per testo, portfolio e form contatto
        ============================ -->
-  <div id="modal" class="modal">
-  <!-- Pulsante di chiusura in alto a destra -->
-
-  <button class="modal-close" onclick="closeModalOnly()">×</button>
-
-
-    
-    <!-- Contenuto dinamico interno -->
-    <div id="modal-content">
-      <h2>Caricamento...</h2>
-    </div>
-  </div>
-
-  <!-- ============================
+<div class="modal" id="modal">
+<!-- Pulsante di chiusura in alto a destra -->
+<button class="modal-close" onclick="closeModalOnly()">×</button>
+<!-- Contenuto dinamico interno -->
+<div id="modal-content">
+<h2>Caricamento...</h2>
+</div>
+<div id="gallery-modal-radar"></div></div>
+<!-- ============================
        BLOCCO: Contenitore galleria multimediale
        Appare solo quando si entra nella sezione showroom
        ============================ -->
-  <div id="gallery-view" style="display: none; width: 100%; height: 100%; overflow-y: auto;">
-    <div class="gallery-container" id="gallery-container"></div>
-  </div>
-
-  <!-- ============================
+<div id="gallery-view" style="display: none; width: 100%; height: 100%; overflow-y: auto;">
+<div class="gallery-container" id="gallery-container"></div>
+</div>
+<!-- ============================
        BLOCCO: Vista fullscreen per media
        Overlay a schermo intero per immagini o video cliccati dalla galleria
        ============================ -->
-  <div class="fullscreen-view" id="fullscreen-view">
-    <div class="fullscreen-content" id="fullscreen-content"></div>
-  </div>
-
+<div class="fullscreen-view" id="fullscreen-view">
+<div class="fullscreen-content" id="fullscreen-content"></div>
+</div>
 </div> <!-- fine #main -->
-
 <!-- ============================
      BLOCCO: Preload container video
      Serve a precaricare video senza mostrarli nel DOM
      ============================ -->
 <div id="video-preload-container" style="display:none;"></div>
-
-
-
 <script>
 
 // ============================
@@ -1241,7 +1532,15 @@ function checkImage(url) {
     img.onload = () => resolve(url);
     img.onerror = () => resolve(null);
     img.src = url;
+  
+  // ✅ FIX: Ripristina allineamento centrato dei pulsanti del menu principale
+  document.querySelectorAll('.menu-item').forEach(el => {
+    el.style.justifyContent = 'center';
+    el.style.alignItems = 'center';
+    el.style.textAlign = 'center';
   });
+
+});
 }
 
 function checkVideo(url) {
@@ -1506,6 +1805,55 @@ const contenuti = [
 // ============================
 // BLOCCO: contenutoHome
 // Messaggio di benvenuto mostrato nella modale iniziale all’apertura del sito
+
+
+
+// ============================
+// BLOCCO: welcomeTimeout
+// Mostra un messaggio di benvenuto nella modale appena caricato il sito
+// Con timeout automatico o chiusura manuale via click
+// ============================
+let welcomeShown = false;
+
+function showWelcomeMessage() {
+  if (welcomeShown) return;
+  welcomeShown = true;
+
+  const blocker = document.getElementById('modal-blocker');
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modal-content');
+
+  // Assicurati che nessun altro contenuto sia visibile
+  modal.classList.remove('show', 'fade-out');
+  modalContent.innerHTML = contenutoHome;
+
+  // Mostra la modale di benvenuto
+  blocker.style.display = 'block';
+  modal.classList.add('show');
+
+  // Chiudi automaticamente dopo 8 secondi
+  const autoHide = setTimeout(() => {
+    if (modal.classList.contains('show') && modalContent.innerHTML === contenutoHome) {
+      modal.classList.remove('show');
+      blocker.style.display = 'none';
+    }
+  }, 8000);
+
+  // Chiudi al click
+  const hideOnClick = () => {
+    clearTimeout(autoHide);
+    modal.classList.remove('show');
+    blocker.style.display = 'none';
+    document.removeEventListener('click', hideOnClick, true);
+  };
+
+  blocker.addEventListener('click', hideOnClick, true);
+}
+
+// Mostra il messaggio dopo un breve ritardo
+setTimeout(showWelcomeMessage, 500);
+
+
 // ============================
 const contenutoHome = `
   <div style="text-align: center; max-width: 700px; margin: 50px auto;"> <!-- Contenitore principale centrato -->
@@ -1541,83 +1889,91 @@ let currentSubmenu = null;
  * Gestisce apertura e chiusura con animazioni
  * ============================
  */
+
 function apri(index) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  const blocker = document.getElementById('modal-blocker');
-  if (typeof autoHide !== 'undefined' && autoHide !== null) {
-    clearTimeout(autoHide);
-    autoHide = null;
-  }
+  const contenuto = contenuti[index];
 
-  if (blocker.style.display === 'block') {
-    blocker.style.display = 'none';
-  }
-
-  document.getElementById('gallery-view').style.display = 'none';
-
-  const fineTransizione = () => { isTransitioning = false; };
-
-  if (currentIndex === index) {
-    modal.classList.remove('show');
+  // Se la modale è già visibile, applica fade-out prima di cambiare contenuto
+  if (modal.classList.contains('show')) {
     modal.classList.add('fade-out');
+
     setTimeout(() => {
       modal.classList.remove('fade-out');
-      modalContent.innerHTML = '';
-      currentIndex = null;
-      fineTransizione();
-    }, 600);
-    return;
-  }
+      modalContent.innerHTML = contenuto;
 
-  currentIndex = index;
+      // Forza il reflow per assicurare transizione corretta
+      void modal.offsetWidth;
 
-  if (modal.classList.contains('show')) {
-    modal.classList.remove('show');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-      modalContent.innerHTML = contenuti[index];
-      showModalWithScroll();
-      fineTransizione();
-    }, 600);
+      modal.classList.add('show');
+
+      // Inizializza auto-scroll
+      initScrollOn(modal);
+      initScrollOn(modalContent);
+
+      isTransitioning = false;
+    }, 400); // ⏱️ durata coerente con il CSS: 0.4s
   } else {
-    modalContent.innerHTML = contenuti[index];
-    showModalWithScroll();
-    fineTransizione();
+    // Prima apertura della modale: nessun fade-out
+    modalContent.innerHTML = contenuto;
+    modal.style.display = 'block';
+    modal.classList.add('show');
+
+    initScrollOn(modal);
+    initScrollOn(modalContent);
+
+    isTransitioning = false;
   }
 }
 
 
+
+
+  
 /**
  * ============================
  * BLOCCO: toggleSubmenu(tipo)
- * Mostra il sottomenu (servizi o showroom) con animazione
- * Nasconde le voci principali e fa apparire le sotto-voci
+ * Gestisce il passaggio tra il menu principale e i sottomenu "Servizi" o "Showroom".
+ * Nasconde i tasti principali, mostra il relativo sottomenu con animazioni, e aggiorna il logo dinamicamente.
+ * 
+ * @param {string} tipo - 'servizi' oppure 'showroom'
  * ============================
  */
 function toggleSubmenu(tipo) {
+  // 🔒 Evita interazioni multiple contemporanee
   if (isTransitioning) return;
   isTransitioning = true;
-  onMain = false;
+  onMain = false;  // Disattiva lo stato "menu principale"
 
+  // 🎯 Elementi di riferimento nel DOM
   const logo = document.getElementById('sidebar-logo');
+  const logoImg = logo.querySelector('img');
+
   const submenuServizi = document.getElementById('submenu-servizi');
   const submenuShowroom = document.getElementById('submenu-showroom');
-  const menuItems = document.querySelectorAll('.menu-list > .menu-item');
+  const menuItems = document.querySelectorAll('.menu-list > .menu-wrapper .menu-item');
 
+  // 🚫 Nasconde le voci del menu principale (non appartenenti ai sottomenu)
+  // Nasconde gli item principali
+  menuItems.forEach(el => {
+    if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+      el.style.display = 'none';
+      el.classList.remove('animated');
+    }
+  });
+
+
+  // 📷 Nasconde l'eventuale galleria aperta
   document.getElementById('gallery-view').style.display = 'none';
 
+  // 🌫️ Nasconde il logo della sidebar temporaneamente
   logo.style.opacity = '0';
 
+  // ⏱️ Dopo un breve delay, mostra il sottomenu richiesto
   setTimeout(() => {
-    menuItems.forEach(el => {
-      if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
-        el.style.display = 'none';
-        el.classList.remove('animated');
-      }
-    });
-
+    // 🎚️ Visualizza solo il sottomenu corrispondente al tipo selezionato
     if (tipo === 'servizi') {
       submenuShowroom.style.display = 'none';
       submenuServizi.style.display = 'flex';
@@ -1628,21 +1984,35 @@ function toggleSubmenu(tipo) {
       currentSubmenu = 'showroom';
     }
 
-    setTimeout(() => {
-      const activeSubmenu = tipo === 'servizi' ? submenuServizi : submenuShowroom;
-      activeSubmenu.querySelectorAll('.menu-item').forEach((el, i) => {
-        el.classList.remove('animated');
-        el.style.animation = 'none';
-        void el.offsetWidth;
-        el.style.animation = '';
-        el.classList.add('animated');
-      });
-    }, 30);
+    // ▶️ Forza le animazioni di entrata per i tasti del sottomenu
+    const activeSubmenu = tipo === 'servizi' ? submenuServizi : submenuShowroom;
+    activeSubmenu.querySelectorAll('.menu-item').forEach((el, i) => {
+      el.classList.remove('animated');     // Rimuove lo stato animato precedente
+      el.style.animation = 'none';         // Disabilita temporaneamente l’animazione
+      void el.offsetWidth;                 // 🔁 Forza il reflow (trucco per riavviare animazione)
+      el.style.animation = '';             // Ripristina animazione
+      el.classList.add('animated');        // Ritriggera l’effetto visivo
+    });
 
+    // 🔁 Carica dinamicamente il nuovo logo della sidebar dopo le animazioni
+    logoImg.addEventListener('load', function handler() {
+      logoImg.style.opacity = '1';
+      logoImg.classList.remove('fade-in-logo');
+      logoImg.removeEventListener('load', handler);  // Cleanup listener
+    });
+
+    // 🎞️ Applica effetto di fade-in al logo nuovo
+    logoImg.classList.add('fade-in-logo');
+    logoImg.style.opacity = '0';
+    logoImg.src = 'logo_home.png';
+
+    // ✅ Riappare il logo dopo la transizione
     logo.style.opacity = '1';
     isTransitioning = false;
-  }, 500);
+  }, 500); // ⏳ Tempo per lasciare spazio all’uscita del menu principale
 }
+
+
 
 
 /**
@@ -1678,78 +2048,123 @@ function ripristinaMenuPrincipale() {
     return;
   }
 
-  // Riattivo subito il logo centrale (non aspetto il preload)
-  centralLogo.style.display = 'block';
+  // ✅ Fai sparire i tasti del submenu con animazione fade-out veloce
+  const serviziItems = submenuServizi.querySelectorAll('.menu-wrapper .menu-item');
+  const showroomItems = submenuShowroom.querySelectorAll('.menu-wrapper .menu-item');
 
-  smallLogo.style.opacity = '0';
-  main.style.opacity     = '0';
+  for (let i = 0; i < serviziItems.length; i++) {
+    serviziItems[i].classList.add('fade-out-fast');
+  }
+  for (let i = 0; i < showroomItems.length; i++) {
+    showroomItems[i].classList.add('fade-out-fast');
+  }
 
+  // ⏳ Dopo la dissolvenza, nasconde i sottomenu e prosegue con il reset
   setTimeout(() => {
-    // 1) Stoppo eventuale slideshow
-    if (slideshowInterval) {
-      clearInterval(slideshowInterval);
-      slideshowInterval = null;
-    }
-    slideshowAttivo = false;
-
-    watermark.style.display      = 'none';
-    document.body.style.overflow = '';
-
-    // 2) Se la modale era aperta, la chiudo e sposto la gallery-view fuori
-    if (modalElem.classList.contains('show')) {
-      modalElem.classList.remove('show');
-      modalElem.classList.add('fade-out');
-
-      setTimeout(() => {
-        // Sposto gallery-view sotto #main se all'interno della modale
-        if (modalContent.contains(galleryView)) {
-          modalContent.removeChild(galleryView);
-          main.appendChild(galleryView);
-        }
-        modalElem.classList.remove('fade-out');
-        modalContent.innerHTML = '';
-        currentIndex = null;
-      }, 600);
-    }
-
-    // 3) Hide gallery-view e sub-menu
-    galleryView.style.display     = 'none';
-    submenuServizi.style.display  = 'none';
+    submenuServizi.style.display = 'none';
     submenuShowroom.style.display = 'none';
 
-    // 4) Rimetto visibili le voci principali
-    document.querySelectorAll('.menu-list > .menu-item')
-            .forEach(el => el.style.display = 'flex');
-    sidebar.style.display = '';
+    for (let i = 0; i < serviziItems.length; i++) {
+      serviziItems[i].classList.remove('fade-out-fast');
+    }
+    for (let i = 0; i < showroomItems.length; i++) {
+      showroomItems[i].classList.remove('fade-out-fast');
+    }
 
-    // 5) Reset e pulse logo centrale
-    centralLogo.classList.remove('loaded-img','loading','pulse');
-    centralLogo.style.transition = 'none';
-    centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
-    centralLogo.style.opacity    = '0';
-    centralLogo.style.visibility = 'hidden';
+    // Riattivo subito il logo centrale (non aspetto il preload)
+    centralLogo.style.display = 'block';
+    smallLogo.style.opacity = '0';
+    main.style.opacity = '0';
 
-    const preload = new Image();
-    preload.src = 'logo.png';
-    preload.onload = () => {
-      centralLogo.src = preload.src;
-      void centralLogo.offsetWidth;
-      centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
-      centralLogo.style.visibility = 'visible';
-      centralLogo.style.opacity    = '1';
-      centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
-      setTimeout(() => centralLogo.classList.add('pulse'), 600);
-    };
+    // Cambio logo solo dopo la transizione
+    const smallLogoImg = smallLogo.querySelector('img');
+    smallLogoImg.classList.add('fade-in-logo');
+    smallLogoImg.style.opacity = '0';
 
-    main.style.opacity     = '1';
-    smallLogo.style.opacity = '1';
+    smallLogoImg.addEventListener('load', function handler() {
+      smallLogoImg.style.opacity = '1';
+      smallLogoImg.classList.remove('fade-in-logo');
+      smallLogoImg.removeEventListener('load', handler);
+    });
 
-    // 6) Fine transizione: riabilito le interazioni
     setTimeout(() => {
-      isTransitioning = false;
-    }, 700);
+      smallLogoImg.src = 'logo.png';
+    }, 500);
 
-  }, 500);
+    setTimeout(() => {
+      // 1) Stop slideshow
+      if (slideshowInterval) {
+        clearInterval(slideshowInterval);
+        slideshowInterval = null;
+      }
+      slideshowAttivo = false;
+
+      // 2) Chiudi modale se aperta
+      watermark.style.display = 'none';
+      document.body.style.overflow = '';
+
+      if (modalElem.classList.contains('show')) {
+        modalElem.classList.remove('show');
+        modalElem.classList.add('fade-out');
+
+        setTimeout(() => {
+          if (modalContent.contains(galleryView)) {
+            modalContent.removeChild(galleryView);
+            main.appendChild(galleryView);
+          }
+          modalElem.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+        }, 600);
+      }
+
+      // 3) Nascondi galleria
+      galleryView.style.display = 'none';
+
+      // 4) Mostra menu principale
+      document.querySelectorAll('.menu-list > .menu-wrapper .menu-item')
+        .forEach(el => el.style.display = 'flex');
+
+      sidebar.style.display = '';
+
+      // 5) Reset centrale logo
+      centralLogo.classList.remove('loaded-img', 'loading', 'pulse');
+      centralLogo.style.transition = 'none';
+      centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
+      centralLogo.style.opacity = '0';
+      centralLogo.style.visibility = 'hidden';
+
+      const preload = new Image();
+      preload.src = 'logo.png';
+      preload.onload = () => {
+        centralLogo.src = preload.src;
+        void centralLogo.offsetWidth;
+        centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
+        centralLogo.style.visibility = 'visible';
+        centralLogo.style.opacity = '1';
+        centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
+        setTimeout(() => centralLogo.classList.add('pulse'), 600);
+      };
+
+      main.style.opacity = '1';
+      smallLogo.style.opacity = '1';
+
+      // Riallineamento testo nei tasti
+      document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+        el.style.display = 'flex';
+        el.style.justifyContent = 'center';
+        el.style.alignItems = 'center';
+        el.style.textAlign = 'center';
+      });
+
+      // 6) Fine transizione
+      setTimeout(() => {
+        isTransitioning = false;
+      }, 700);
+
+    }, 500); // fine setTimeout post-transizione submenu
+
+  }, 400); // fine delay per fade-out submenu
 }
 
 
@@ -1758,8 +2173,43 @@ function ripristinaMenuPrincipale() {
 // Avvia effetti, listener, e comportamenti dinamici all’avvio del sito
 // ============================
 document.addEventListener('DOMContentLoaded', function() {
+  // Anima la sidebar all'avvio
   document.getElementById('sidebar').classList.add('animated');
 
+  // Gestione tasto attivo (highlight selezione)
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.classList.remove('attivo');
+        el.style.opacity = '0.35';
+      });
+      item.classList.add('attivo');
+      item.style.opacity = '1';
+    });
+  });
+
+  // Gestione reset opacità su rilascio (touch/mobile)
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.style.opacity = '0.4';
+      });
+      item.style.opacity = '1';
+    });
+
+    const resetOpacity = () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.style.opacity = '';
+      });
+    };
+
+    item.addEventListener('pointerup', resetOpacity);
+    item.addEventListener('pointercancel', resetOpacity);
+    item.addEventListener('touchend', resetOpacity);
+    item.addEventListener('touchcancel', resetOpacity);
+  });
+
+  // Imposta i parametri di animazione (ritardo e durata) per i tasti menu
   document.querySelectorAll('.menu-item').forEach(el => {
     const delay = (Math.random() * 3).toFixed(2) + 's';
     const speed = (5 + Math.random() * 1.5).toFixed(2) + 's';
@@ -1767,20 +2217,25 @@ document.addEventListener('DOMContentLoaded', function() {
     el.style.setProperty('--duration', speed);
   });
 
+
+  // BLOCCO: Pulizia transform inline dopo animazione ingresso tasti menu
   document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('mousedown', () => item.classList.add('pressed'));
-    item.addEventListener('mouseup', () => item.classList.remove('pressed'));
-    item.addEventListener('mouseleave', () => item.classList.remove('pressed'));
+    item.addEventListener('animationend', () => {
+      item.style.transform = '';
+    });
   });
 
+  // ESC chiude il fullscreen
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeFullscreen();
   });
 
+  // Logo centrale: ritorna al menu principale
   const logoBtn = document.getElementById('logo-btn');
   logoBtn.style.cursor = 'pointer';
   logoBtn.addEventListener('click', ripristinaMenuPrincipale);
 });
+
 
 
 
@@ -2046,6 +2501,9 @@ function apriShowroom(tipo) {
       modalContent.innerHTML = '';
       modalContent.appendChild(galleryView);
       galleryView.style.display = 'block';
+      galleryView.classList.add("auto-scroll-hide");
+      galleryView.classList.remove("auto-scroll-show");
+
 
       // 5) fade-in
       modal.classList.remove('fade-out');
@@ -2190,6 +2648,43 @@ document.addEventListener('DOMContentLoaded', function () {
   // === 1) Attiva l'animazione della sidebar iniziale ===
   document.getElementById('sidebar').classList.add('animated');
 
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.classList.remove('attivo');
+        el.style.opacity = '0.35';
+      });
+      item.classList.add('attivo');
+      item.style.opacity = '1';
+    });
+  });
+
+
+ 
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.style.opacity = '0.4';
+      });
+      item.style.opacity = '1';
+    });
+
+    const resetOpacity = () => {
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.style.opacity = '';
+      });
+    };
+
+    item.addEventListener('pointerup', resetOpacity);
+    item.addEventListener('pointercancel', resetOpacity);
+    item.addEventListener('touchend', resetOpacity);
+    item.addEventListener('touchcancel', resetOpacity);
+  });
+
+  });
+
+
   // === 2) Assegna animazione outline personalizzata a ogni menu-item ===
   document.querySelectorAll('.menu-item').forEach(el => {
     const delay = (Math.random() * 3).toFixed(2) + 's';           // delay casuale tra 0 e 3s
@@ -2198,18 +2693,7 @@ document.addEventListener('DOMContentLoaded', function () {
     el.style.setProperty('--duration', speed);
   });
 
-  // === 3) Gestione pressione pulsanti: effetto 'pressed' al click ===
-  document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('mousedown', function () {
-      this.classList.add('pressed');
-    });
-    item.addEventListener('mouseup', function () {
-      this.classList.remove('pressed');
-    });
-    item.addEventListener('mouseleave', function () {
-      this.classList.remove('pressed');
-    });
-  });
+  
 
   // === 4) ESC chiude fullscreen view ===
   document.addEventListener('keydown', (e) => {
@@ -2257,19 +2741,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // ============================
   document.querySelectorAll('.menu-item').forEach(el => {
     el.addEventListener('pointerdown', () => {
-      el.classList.add('pressed');
     });
     el.addEventListener('pointerup', () => {
-      setTimeout(() => el.classList.remove('pressed'), 300); // ritardo per effetto visivo
     });
     el.addEventListener('pointerleave', () => {
-      el.classList.remove('pressed');
     });
     el.addEventListener('pointercancel', () => {
-      el.classList.remove('pressed');
     });
   });
-});
+
 
 
 // ============================
@@ -2292,17 +2772,26 @@ document.getElementById('modal').addEventListener('click', function (e) {
 // BLOCCO: orientationchange (mobile)
 // Mostra o nasconde l’avviso se il dispositivo è ruotato in orizzontale
 // ============================
-window.addEventListener('orientationchange', function () {
+function checkOrientation() {
   const warning = document.getElementById('orientation-warning');
-
-  if (window.orientation === 90 || window.orientation === -90) {
-    // Schermo in landscape → mostra avviso
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  const isLandscape = window.innerWidth > window.innerHeight;
+       
+  if (isMobile && isLandscape) {
     warning.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   } else {
-    // Schermo in verticale → nasconde avviso
     warning.style.display = 'none';
+    document.body.style.overflow = '';
   }
-});
+}
+
+// ✅ Al caricamento iniziale
+window.addEventListener('DOMContentLoaded', checkOrientation);
+// ✅ Ogni volta che cambia orientamento o dimensione
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+
 
 
 // ============================
@@ -2452,8 +2941,42 @@ function closeModalOnly() {
 
 
 
-</script>
 
+// ============================
+// BLOCCO: Comandi video invisibili ma attivi (bypass restrizioni browser mobile)
+// ============================
+function nascondiComandiVideo(video) {
+  video.classList.add('video-hide-controls');
+  video.controls = true;
+}
+
+// ============================
+// BLOCCO: Dissolvenza fine loop video
+// ============================
+function applicaDissolvenzaVideoLoop() {
+  const videos = document.querySelectorAll('.gallery-item video');
+
+  videos.forEach(video => {
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.autoplay = true;
+    video.loop = false;
+
+    video.addEventListener('ended', () => {
+      video.classList.add('fade-out');
+      setTimeout(() => {
+        video.currentTime = 0;
+        video.classList.remove('fade-out');
+        video.play();
+      }, 500); // fade duration
+    });
+  });
+}
+
+// Attiviamo dopo caricamento DOM
+document.addEventListener('DOMContentLoaded', applicaDissolvenzaVideoLoop);
+</script>
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
 const preloadVideoCache = [];
@@ -2502,8 +3025,6 @@ async function preloadVideoFiles(videoList, maxConcurrency = 3) {
   await Promise.all(results);
 }
 </script>
-
-
 <script>
 // 🔧 AVVIO: Precaricamento video automatico all'avvio della pagina
 window.addEventListener('DOMContentLoaded', async () => {
@@ -2529,6 +3050,84 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 </script>
+<script>
+// ============================
+// BLOCCO: Preview Video a Segmenti Randomici con Fade Controllato
+// ============================
 
+function setupSegmentedPreview(video, segmentDuration = 3, fadeDuration = 0.5, waitBeforeNext = 1000) {
+  if (!video) return;
+
+  video.muted = true;
+  video.playsInline = true;
+  video.loop = false;
+  video.classList.add('video-hide-controls');
+
+  let startTime = 0;
+  let timeoutFade = null;
+  let waiting = false;
+
+  const startRandomSegment = () => {
+    if (video.readyState < 2 || video.duration <= segmentDuration + 1) {
+      setTimeout(startRandomSegment, 1000);
+      return;
+    }
+
+    const maxStart = video.duration - segmentDuration;
+    startTime = Math.random() * maxStart;
+    video.currentTime = startTime;
+    video.classList.remove('fade-out');
+    video.play();
+  };
+
+  video.addEventListener('timeupdate', () => {
+    if (waiting) return;
+    if (video.currentTime - startTime >= segmentDuration) {
+      waiting = true;
+      video.pause();
+      video.classList.add('fade-out');
+
+      clearTimeout(timeoutFade);
+      timeoutFade = setTimeout(() => {
+        waiting = false;
+        startRandomSegment();
+      }, waitBeforeNext);
+    }
+  });
+
+  if (video.readyState >= 2) {
+    startRandomSegment();
+  } else {
+    video.addEventListener('loadedmetadata', startRandomSegment, { once: true });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const previews = document.querySelectorAll('.gallery-item video');
+  previews.forEach(video => {
+    setupSegmentedPreview(video, 3, 0.5, 1000);
+  });
+});
+
+ // ============================
+// BLOCCO: Simulazione click su touchend (mobile fix)
+// Garantisce che anche una pressione prolungata attivi il click
+// ============================
+document.querySelectorAll('.menu-item').forEach(btn => {
+  btn.addEventListener('touchend', function(e) {
+    // Se il bottone ha già la funzione onclick definita
+    if (typeof btn.onclick === 'function') {
+      e.preventDefault(); // ⚠️ Impedisce doppio tap o selezione
+      btn.click();        // 👆 Simula un vero click
+    }
+  });
+});      
+</script>
+  <!-- ============================
+     BLOCCO: Preload invisibile del logo alternativo
+     Evita glitch al primo caricamento del submenu cambiando logo
+     ============================ -->
+<img src="logo_home.png" style="display:none;" alt="Preload logo dinamico" />
+       
 </body>
 </html>
