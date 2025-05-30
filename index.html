@@ -2751,7 +2751,8 @@ document.getElementById('modal').addEventListener('click', function (e) {
 function checkOrientation() {
   const warning = document.getElementById('orientation-warning');
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-  const isLandscape = window.innerWidth > window.innerHeight;
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+
        
   if (isMobile && isLandscape) {
     warning.style.display = 'flex';
