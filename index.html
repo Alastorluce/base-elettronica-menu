@@ -1275,17 +1275,6 @@ html, body {
 
 
 
-
-/* ============================
-   BLOCCO: Simulazione pressione forzata con classe .premuto
-   ============================ */
-.menu-item.premuto,
-.menu-item.sotto-servizio.premuto,
-.menu-item.sotto-showroom.premuto {
-  transform: scale(0.83) !important;
-  transition: transform 0.1s ease-out !important;
-}
-
 /* ============================
    BLOCCO: Compatibilità struttura con .menu-wrapper e layout rifinito
    ============================ */
@@ -2884,20 +2873,6 @@ function applicaDissolvenzaVideoLoop() {
 
 // Attiviamo dopo caricamento DOM
 document.addEventListener('DOMContentLoaded', applicaDissolvenzaVideoLoop);
-
-// ============================
-// BLOCCO: Effetto pressione simulata su click leggero
-// Aggiunge classe 'premuto' per forzare la pressione visiva per 150ms
-// ============================
-document.querySelectorAll('.menu-item').forEach(item => {
-  item.addEventListener('click', () => {
-    item.classList.add('premuto');
-    setTimeout(() => {
-      item.classList.remove('premuto');
-    }, 150);
-  });
-});
-
 </script>
 <script>
 // 🔧 SCRIPT GLOBALE OTTIMIZZATO: Precaricamento video sicuro e asincrono
@@ -2946,20 +2921,6 @@ async function preloadVideoFiles(videoList, maxConcurrency = 3) {
 
   await Promise.all(results);
 }
-
-// ============================
-// BLOCCO: Effetto pressione simulata su click leggero
-// Aggiunge classe 'premuto' per forzare la pressione visiva per 150ms
-// ============================
-document.querySelectorAll('.menu-item').forEach(item => {
-  item.addEventListener('click', () => {
-    item.classList.add('premuto');
-    setTimeout(() => {
-      item.classList.remove('premuto');
-    }, 150);
-  });
-});
-
 </script>
 <script>
 // 🔧 AVVIO: Precaricamento video automatico all'avvio della pagina
@@ -2985,20 +2946,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.warn("❌ Errore nel preload video:", e);
   }
 });
-
-// ============================
-// BLOCCO: Effetto pressione simulata su click leggero
-// Aggiunge classe 'premuto' per forzare la pressione visiva per 150ms
-// ============================
-document.querySelectorAll('.menu-item').forEach(item => {
-  item.addEventListener('click', () => {
-    item.classList.add('premuto');
-    setTimeout(() => {
-      item.classList.remove('premuto');
-    }, 150);
-  });
-});
-
 </script>
 <script>
 // ============================
@@ -3058,20 +3005,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupSegmentedPreview(video, 3, 0.5, 1000);
   });
 });
-
-// ============================
-// BLOCCO: Effetto pressione simulata su click leggero
-// Aggiunge classe 'premuto' per forzare la pressione visiva per 150ms
-// ============================
-document.querySelectorAll('.menu-item').forEach(item => {
-  item.addEventListener('click', () => {
-    item.classList.add('premuto');
-    setTimeout(() => {
-      item.classList.remove('premuto');
-    }, 150);
-  });
-});
-
 </script>
 </body>
 </html>
