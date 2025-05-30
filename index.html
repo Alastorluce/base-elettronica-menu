@@ -2525,7 +2525,11 @@ function apriShowroom(tipo) {
 
       // 5) fade-in
       modal.classList.remove('fade-out');
-      modal.classList.add('show');
+
+if (modalContent.innerHTML.trim() !== "") {
+  modal.classList.add('show');
+}
+
 
       // 6) sblocco i click dopo la transizione
       setTimeout(() => { isTransitioning = false; }, 600);
