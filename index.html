@@ -2968,6 +2968,8 @@ function closeModalOnly() {
 
     // 3) Pulisci il contenuto e resetta stati
     modal.classList.remove('fade-out');
+    modal.classList.remove('show');
+    modal.style.display = 'none';  // 🔹 NASCONDE fisicamente la modale
     modalContent.innerHTML = '';
     currentIndex = null;
 
@@ -2975,6 +2977,7 @@ function closeModalOnly() {
     isTransitioning = false;
   }, 600);
 }
+
 
 
 
