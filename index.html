@@ -2862,24 +2862,25 @@ let welcomeTimeout = setTimeout(() => {
 (function () {
   function checkOrientation() {
     const w = document.getElementById('orientation-warning');
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    const isLandscape = window.innerWidth > window.innerHeight;
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    
+    // più affidabile di innerWidth
+    const isLandscape = window.matchMedia("(orientation: landscape)").matches;
 
     if (isMobile && isLandscape) {
-      // Landscape su mobile → mostra avviso
       w.style.display = 'flex';
-      document.body.style.overflow = 'hidden'; // blocca lo scroll sotto
+      document.body.style.overflow = 'hidden';
     } else {
       w.style.display = 'none';
-      document.body.style.overflow = ''; // riabilita lo scroll
+      document.body.style.overflow = '';
     }
   }
-// Avvio immediato + ricollegato ad ogni evento di resize/orientamento
+
   window.addEventListener('load', checkOrientation);
-  window.addEventListener('resize', checkOrientation);
-  window.addEventListener('orientationchange', checkOrientation);
-  
+  window.addEventListener('resize', () => setTimeout(checkOrientation, 100));
+  window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
 })();
+
 
 
 /**
