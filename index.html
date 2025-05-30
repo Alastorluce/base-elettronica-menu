@@ -1392,29 +1392,8 @@ html, body {
 }
 
 </style>
-<style>
-#orientation-warning {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: #000000ee; color: white;
-  display: none;
-  z-index: 99999;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-@media (min-width: 768px) {
-  #orientation-warning { display: none !important; }
-}
-</style></head>
+</head>
 <body>
-<div id="orientation-warning">
-<div class="orientation-content">
-<p>Ruota il telefono in verticale per vedere il sito</p>
-</div>
-</div>
-
 <!-- ============================
      BLOCCO: Preloader invisibile
      Elemento segnaposto per caricare immagini/media dietro le quinte senza mostrarli all'utente
@@ -3144,22 +3123,11 @@ document.querySelectorAll('.menu-item').forEach(btn => {
   });
 });      
 </script>
-<!-- ============================
+  <!-- ============================
      BLOCCO: Preload invisibile del logo alternativo
      Evita glitch al primo caricamento del submenu cambiando logo
      ============================ -->
-<img alt="Preload logo dinamico" src="logo_home.png" style="display:none;"/>
-
-<script>
-function checkOrientation() {
-  const warning = document.getElementById('orientation-warning');
-  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-  const isLandscape = window.innerWidth > window.innerHeight;
-  warning.style.display = (isMobile && isLandscape) ? 'flex' : 'none';
-}
-window.addEventListener('DOMContentLoaded', checkOrientation);
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
-</script>
+<img src="logo_home.png" style="display:none;" alt="Preload logo dinamico" />
+       
 </body>
 </html>
