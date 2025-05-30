@@ -2747,6 +2747,8 @@ function checkOrientation() {
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   const isLandscape = window.innerWidth > window.innerHeight;
 
+  checkOrientation(); // 👈 aggiunto qui!
+       
   if (isMobile && isLandscape) {
     warning.style.display = 'flex';
     document.body.style.overflow = 'hidden';
