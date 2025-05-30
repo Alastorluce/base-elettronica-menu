@@ -77,20 +77,6 @@ body {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   50%      { transform: translate(-50%, -50%) scale(1.1); }
 }
-@keyframes fadeOutUniforme {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-.fade-out-uniforme {
-  animation: fadeOutUniforme 0.3s ease-in-out forwards !important;
-}
 
 /* ============================ *
      * MODAL PRINCIPALE             *
@@ -271,11 +257,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* ✅ posiziona tutto in alto */
+  justify-content: center;
   height: 100%;
   width: 100%;
-  padding-top: 50px; /* spazio iniziale per distanza controllata del logo */
-  box-sizing: border-box;
 }
 
 
@@ -283,17 +267,13 @@ body {
    BLOCCO: Logo della sidebar
    Mostra un logo nella parte alta della sidebar con effetti hover/click e transizioni di opacità
    ============================ */
-/* ============================
-   BLOCCO: Logo della sidebar
-   Mostra un logo nella parte alta della sidebar con effetto pressione identico ai tasti
-   ============================ */
 #sidebar-logo {
   margin-bottom: 2em;
-  width: 180px;
+  width: 180px;                /* larghezza costante */
   height: auto;
   cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.8s ease;
-  opacity: 1;
+  transition: transform 0.3s ease, opacity 0.5s ease-in-out;
+  opacity: 1;                  /* visibile all’avvio */
 }
 
 #sidebar-logo img {
@@ -301,14 +281,13 @@ body {
   height: auto;
   display: block;
   filter: brightness(90%) saturate(0%) contrast(150%) invert(10%);
-  transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1); /* stessa curva dei tasti */
+  transition: transform 0.25s ease;
 }
 
-/* Effetto pressione gommoso come i menu-item */
+/* All'attivazione (click), il logo scala al 83% */
 #sidebar-logo:active img {
   transform: scale(0.83);
 }
-
 
 /* All’hover, il logo si ingrandisce leggermente */
 #sidebar-logo:hover {
@@ -343,16 +322,6 @@ body {
 }
 
 
-#submenu-servizi,
-#submenu-showroom {
-  position: absolute;
-  top: 275px; /* allineato verticalmente ai primi bottoni */
-  left: 0;
-  width: 100%;
-  z-index: 10;
-}
-
-
 /* ============================
    BLOCCO: Voci di menu
    Definisce stile, effetto hover e animazioni di entrata delle voci principali e dei sotto-menu
@@ -372,14 +341,9 @@ body {
   text-align: center;
   width: 60%;
   font-size: 0.9em;
-  opacity: 1;
+  opacity: 0;
   transform: translateX(-100%);
   animation: slideIn 0.5s ease-out forwards;
-}
-.menu-item.fade-out-fast {
-  opacity: 0 !important;
-  transform: translateX(-50%) !important;
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
 /* ============================
@@ -1361,36 +1325,6 @@ html, body {
     width: 100%;
   }
 }
-
-       #orientation-warning {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: none;
-  z-index: 99999;
-  background: #000000ee;
-  color: white;
-  font-size: 1.5em;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-#orientation-warning .orientation-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-@media (min-width: 769px) {
-  #orientation-warning {
-    display: none !important; /* Nasconde sempre su desktop */
-  }
-}
-
 </style>
 </head>
 <body>
@@ -1895,85 +1829,62 @@ function apri(index) {
   isTransitioning = true;
 
   const contenuto = contenuti[index];
+  modalContent.innerHTML = contenuto;
 
-  // Se la modale è già visibile, applica fade-out prima di cambiare contenuto
-  if (modal.classList.contains('show')) {
-    modal.classList.add('fade-out');
+  modal.style.display = 'block';
+  modal.classList.add('show');
 
-    setTimeout(() => {
-      modal.classList.remove('fade-out');
-      modalContent.innerHTML = contenuto;
+  // Inizializza auto-scroll per i contenuti della modale
+  initScrollOn(modal);
+  initScrollOn(modalContent);
 
-      // Forza il reflow per assicurare transizione corretta
-      void modal.offsetWidth;
-
-      modal.classList.add('show');
-
-      // Inizializza auto-scroll
-      initScrollOn(modal);
-      initScrollOn(modalContent);
-
-      isTransitioning = false;
-    }, 400); // ⏱️ durata coerente con il CSS: 0.4s
-  } else {
-    // Prima apertura della modale: nessun fade-out
-    modalContent.innerHTML = contenuto;
-    modal.style.display = 'block';
-    modal.classList.add('show');
-
-    initScrollOn(modal);
-    initScrollOn(modalContent);
-
-    isTransitioning = false;
-  }
+  isTransitioning = false;
 }
-
-
-
-
-  
-/**
- * ============================
- * BLOCCO: toggleSubmenu(tipo)
- * Gestisce il passaggio tra il menu principale e i sottomenu "Servizi" o "Showroom".
- * Nasconde i tasti principali, mostra il relativo sottomenu con animazioni, e aggiorna il logo dinamicamente.
- * 
- * @param {string} tipo - 'servizi' oppure 'showroom'
- * ============================
- */
 function toggleSubmenu(tipo) {
-  // 🔒 Evita interazioni multiple contemporanee
   if (isTransitioning) return;
   isTransitioning = true;
-  onMain = false;  // Disattiva lo stato "menu principale"
+  onMain = false;
 
-  // 🎯 Elementi di riferimento nel DOM
-  const logo = document.getElementById('sidebar-logo');
-  const logoImg = logo.querySelector('img');
+const logo = document.getElementById('sidebar-logo');  // solo una volta
+const logoImg = logo.querySelector('img');
+
+logoImg.classList.add('fade-in-logo');
+logoImg.style.opacity = '0';
+
+logoImg.addEventListener('load', function handler() {
+  logoImg.style.opacity = '1';
+  logoImg.classList.remove('fade-in-logo');
+  logoImg.removeEventListener('load', handler);
+});
+
+setTimeout(() => {
+  logoImg.src = 'logo_home.png';
+}, 30);
 
   const submenuServizi = document.getElementById('submenu-servizi');
   const submenuShowroom = document.getElementById('submenu-showroom');
   const menuItems = document.querySelectorAll('.menu-list > .menu-wrapper .menu-item');
 
-  // 🚫 Nasconde le voci del menu principale (non appartenenti ai sottomenu)
-  // Nasconde gli item principali
-  menuItems.forEach(el => {
-    if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
-      el.style.display = 'none';
-      el.classList.remove('animated');
-    }
-  });
+menuItems.forEach(el => {
+  if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+    el.style.display = 'none';
+    el.classList.remove('animated');
+  }
+});
 
 
-  // 📷 Nasconde l'eventuale galleria aperta
   document.getElementById('gallery-view').style.display = 'none';
 
-  // 🌫️ Nasconde il logo della sidebar temporaneamente
   logo.style.opacity = '0';
 
-  // ⏱️ Dopo un breve delay, mostra il sottomenu richiesto
   setTimeout(() => {
-    // 🎚️ Visualizza solo il sottomenu corrispondente al tipo selezionato
+    menuItems.forEach(el => {
+      if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+        el.style.display = 'none';
+        el.classList.remove('animated');
+      }
+    });
+
     if (tipo === 'servizi') {
       submenuShowroom.style.display = 'none';
       submenuServizi.style.display = 'flex';
@@ -1984,35 +1895,21 @@ function toggleSubmenu(tipo) {
       currentSubmenu = 'showroom';
     }
 
-    // ▶️ Forza le animazioni di entrata per i tasti del sottomenu
-    const activeSubmenu = tipo === 'servizi' ? submenuServizi : submenuShowroom;
-    activeSubmenu.querySelectorAll('.menu-item').forEach((el, i) => {
-      el.classList.remove('animated');     // Rimuove lo stato animato precedente
-      el.style.animation = 'none';         // Disabilita temporaneamente l’animazione
-      void el.offsetWidth;                 // 🔁 Forza il reflow (trucco per riavviare animazione)
-      el.style.animation = '';             // Ripristina animazione
-      el.classList.add('animated');        // Ritriggera l’effetto visivo
-    });
+    setTimeout(() => {
+      const activeSubmenu = tipo === 'servizi' ? submenuServizi : submenuShowroom;
+      activeSubmenu.querySelectorAll('.menu-item').forEach((el, i) => {
+        el.classList.remove('animated');
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = '';
+        el.classList.add('animated');
+      });
+    }, 30);
 
-    // 🔁 Carica dinamicamente il nuovo logo della sidebar dopo le animazioni
-    logoImg.addEventListener('load', function handler() {
-      logoImg.style.opacity = '1';
-      logoImg.classList.remove('fade-in-logo');
-      logoImg.removeEventListener('load', handler);  // Cleanup listener
-    });
-
-    // 🎞️ Applica effetto di fade-in al logo nuovo
-    logoImg.classList.add('fade-in-logo');
-    logoImg.style.opacity = '0';
-    logoImg.src = 'logo_home.png';
-
-    // ✅ Riappare il logo dopo la transizione
     logo.style.opacity = '1';
     isTransitioning = false;
-  }, 500); // ⏳ Tempo per lasciare spazio all’uscita del menu principale
+  }, 500);
 }
-
-
 
 
 /**
@@ -2048,123 +1945,88 @@ function ripristinaMenuPrincipale() {
     return;
   }
 
-  // ✅ Fai sparire i tasti del submenu con animazione fade-out veloce
-  const serviziItems = submenuServizi.querySelectorAll('.menu-wrapper .menu-item');
-  const showroomItems = submenuShowroom.querySelectorAll('.menu-wrapper .menu-item');
+  // Riattivo subito il logo centrale (non aspetto il preload)
+  centralLogo.style.display = 'block';
 
-  for (let i = 0; i < serviziItems.length; i++) {
-    serviziItems[i].classList.add('fade-out-fast');
-  }
-  for (let i = 0; i < showroomItems.length; i++) {
-    showroomItems[i].classList.add('fade-out-fast');
-  }
+  smallLogo.style.opacity = '0';
+  main.style.opacity     = '0';
 
-  // ⏳ Dopo la dissolvenza, nasconde i sottomenu e prosegue con il reset
   setTimeout(() => {
-    submenuServizi.style.display = 'none';
+    // 1) Stoppo eventuale slideshow
+    if (slideshowInterval) {
+      clearInterval(slideshowInterval);
+      slideshowInterval = null;
+    }
+    slideshowAttivo = false;
+
+    watermark.style.display      = 'none';
+    document.body.style.overflow = '';
+
+    // 2) Se la modale era aperta, la chiudo e sposto la gallery-view fuori
+    if (modalElem.classList.contains('show')) {
+      modalElem.classList.remove('show');
+      modalElem.classList.add('fade-out');
+
+      setTimeout(() => {
+        // Sposto gallery-view sotto #main se all'interno della modale
+        if (modalContent.contains(galleryView)) {
+          modalContent.removeChild(galleryView);
+          main.appendChild(galleryView);
+        }
+        modalElem.classList.remove('fade-out');
+        modalContent.innerHTML = '';
+        currentIndex = null;
+      }, 600);
+    }
+
+    // 3) Hide gallery-view e sub-menu
+    galleryView.style.display     = 'none';
+    submenuServizi.style.display  = 'none';
     submenuShowroom.style.display = 'none';
 
-    for (let i = 0; i < serviziItems.length; i++) {
-      serviziItems[i].classList.remove('fade-out-fast');
-    }
-    for (let i = 0; i < showroomItems.length; i++) {
-      showroomItems[i].classList.remove('fade-out-fast');
-    }
-
-    // Riattivo subito il logo centrale (non aspetto il preload)
-    centralLogo.style.display = 'block';
-    smallLogo.style.opacity = '0';
-    main.style.opacity = '0';
-
-    // Cambio logo solo dopo la transizione
-    const smallLogoImg = smallLogo.querySelector('img');
-    smallLogoImg.classList.add('fade-in-logo');
-    smallLogoImg.style.opacity = '0';
-
-    smallLogoImg.addEventListener('load', function handler() {
-      smallLogoImg.style.opacity = '1';
-      smallLogoImg.classList.remove('fade-in-logo');
-      smallLogoImg.removeEventListener('load', handler);
-    });
-
-    setTimeout(() => {
-      smallLogoImg.src = 'logo.png';
-    }, 500);
-
-    setTimeout(() => {
-      // 1) Stop slideshow
-      if (slideshowInterval) {
-        clearInterval(slideshowInterval);
-        slideshowInterval = null;
-      }
-      slideshowAttivo = false;
-
-      // 2) Chiudi modale se aperta
-      watermark.style.display = 'none';
-      document.body.style.overflow = '';
-
-      if (modalElem.classList.contains('show')) {
-        modalElem.classList.remove('show');
-        modalElem.classList.add('fade-out');
-
-        setTimeout(() => {
-          if (modalContent.contains(galleryView)) {
-            modalContent.removeChild(galleryView);
-            main.appendChild(galleryView);
-          }
-          modalElem.classList.remove('fade-out');
-          modalContent.innerHTML = '';
-          currentIndex = null;
-        }, 600);
-      }
-
-      // 3) Nascondi galleria
-      galleryView.style.display = 'none';
-
-      // 4) Mostra menu principale
-      document.querySelectorAll('.menu-list > .menu-wrapper .menu-item')
+    // 4) Rimetto visibili le voci principali
+    document.querySelectorAll('.menu-list > .menu-wrapper .menu-item')
         .forEach(el => el.style.display = 'flex');
 
-      sidebar.style.display = '';
 
-      // 5) Reset centrale logo
-      centralLogo.classList.remove('loaded-img', 'loading', 'pulse');
-      centralLogo.style.transition = 'none';
-      centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
-      centralLogo.style.opacity = '0';
-      centralLogo.style.visibility = 'hidden';
 
-      const preload = new Image();
-      preload.src = 'logo.png';
-      preload.onload = () => {
-        centralLogo.src = preload.src;
-        void centralLogo.offsetWidth;
-        centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
-        centralLogo.style.visibility = 'visible';
-        centralLogo.style.opacity = '1';
-        centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
-        setTimeout(() => centralLogo.classList.add('pulse'), 600);
-      };
+    sidebar.style.display = '';
 
-      main.style.opacity = '1';
-      smallLogo.style.opacity = '1';
+    // 5) Reset e pulse logo centrale
+    centralLogo.classList.remove('loaded-img','loading','pulse');
+    centralLogo.style.transition = 'none';
+    centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
+    centralLogo.style.opacity    = '0';
+    centralLogo.style.visibility = 'hidden';
 
-      // Riallineamento testo nei tasti
-      document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
-        el.style.display = 'flex';
-        el.style.justifyContent = 'center';
-        el.style.alignItems = 'center';
-        el.style.textAlign = 'center';
-      });
+    const preload = new Image();
+    preload.src = 'logo.png';
+    preload.onload = () => {
+      centralLogo.src = preload.src;
+      void centralLogo.offsetWidth;
+      centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
+      centralLogo.style.visibility = 'visible';
+      centralLogo.style.opacity    = '1';
+      centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
+      setTimeout(() => centralLogo.classList.add('pulse'), 600);
+    };
 
-      // 6) Fine transizione
-      setTimeout(() => {
-        isTransitioning = false;
-      }, 700);
+    main.style.opacity     = '1';
+    smallLogo.style.opacity = '1';
+    // ✅ Forza il riallineamento del testo nei tasti del menu principale
+document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+  el.style.display = 'flex';
+  el.style.justifyContent = 'center';
+  el.style.alignItems = 'center';
+  el.style.textAlign = 'center';
+});
 
-    }, 500); // fine setTimeout post-transizione submenu
+    // 6) Fine transizione: riabilito le interazioni
+    setTimeout(() => {
+      isTransitioning = false;
+    }, 700);
 
-  }, 400); // fine delay per fade-out submenu
+  }, 500);
 }
 
 
@@ -2772,26 +2634,17 @@ document.getElementById('modal').addEventListener('click', function (e) {
 // BLOCCO: orientationchange (mobile)
 // Mostra o nasconde l’avviso se il dispositivo è ruotato in orizzontale
 // ============================
-function checkOrientation() {
+window.addEventListener('orientationchange', function () {
   const warning = document.getElementById('orientation-warning');
-  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-  const isLandscape = window.innerWidth > window.innerHeight;
-       
-  if (isMobile && isLandscape) {
+
+  if (window.orientation === 90 || window.orientation === -90) {
+    // Schermo in landscape → mostra avviso
     warning.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
   } else {
+    // Schermo in verticale → nasconde avviso
     warning.style.display = 'none';
-    document.body.style.overflow = '';
   }
-}
-
-// ✅ Al caricamento iniziale
-window.addEventListener('DOMContentLoaded', checkOrientation);
-// ✅ Ogni volta che cambia orientamento o dimensione
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
-
+});
 
 
 // ============================
@@ -3108,49 +2961,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupSegmentedPreview(video, 3, 0.5, 1000);
   });
 });
-
- // ============================
-// BLOCCO: Simulazione click su touchend (mobile fix)
-// Garantisce che anche una pressione prolungata attivi il click
-// ============================
-document.querySelectorAll('.menu-item').forEach(btn => {
-  btn.addEventListener('touchend', function(e) {
-    // Se il bottone ha già la funzione onclick definita
-    if (typeof btn.onclick === 'function') {
-      e.preventDefault(); // ⚠️ Impedisce doppio tap o selezione
-      btn.click();        // 👆 Simula un vero click
-    }
-  });
-});      
-
-
-       function checkOrientation() {
-  const warning = document.getElementById('orientation-warning');
-  if (window.innerWidth > window.innerHeight && (/Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent))) {
-    warning.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  } else {
-    warning.style.display = 'none';
-    document.body.style.overflow = '';
-  }
-}
-
-window.addEventListener('load', checkOrientation);
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
-
-// fallback: retry check per 2 secondi
-let tries = 0;
-const interval = setInterval(() => {
-  checkOrientation();
-  if (++tries > 4) clearInterval(interval);
-}, 500);
 </script>
-  <!-- ============================
-     BLOCCO: Preload invisibile del logo alternativo
-     Evita glitch al primo caricamento del submenu cambiando logo
-     ============================ -->
-<img src="logo_home.png" style="display:none;" alt="Preload logo dinamico" />
-       
 </body>
 </html>
