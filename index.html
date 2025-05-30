@@ -2853,7 +2853,10 @@ let welcomeTimeout = setTimeout(() => {
 
 }, 500); // attivazione 0.5s dopo il caricamento
 
-
+// Avvio immediato + ricollegato ad ogni evento di resize/orientamento
+  window.addEventListener('load', checkOrientation);
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', checkOrientation);
 // ============================
 // BLOCCO: checkOrientation()
 // Verifica l’orientamento e la risoluzione ogni volta che la finestra cambia
@@ -2875,10 +2878,7 @@ let welcomeTimeout = setTimeout(() => {
     }
   }
 
-  // Avvio immediato + ricollegato ad ogni evento di resize/orientamento
-  window.addEventListener('load', checkOrientation);
-  window.addEventListener('resize', checkOrientation);
-  window.addEventListener('orientationchange', checkOrientation);
+  
 })();
 
 
