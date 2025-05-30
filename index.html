@@ -2954,11 +2954,9 @@ window.addEventListener('DOMContentLoaded', () => {
 function closeModalOnly() {
   if (!modal.classList.contains('show')) return;
 
-  // 1) Avvia fade-out della modale
   modal.classList.add('fade-out');
 
   setTimeout(() => {
-    // 2) Se dentro la modale c’è ancora la gallery, riportala in #main
     const galleryView = document.getElementById('gallery-view');
     if (modalContent.contains(galleryView)) {
       modalContent.removeChild(galleryView);
@@ -2966,17 +2964,19 @@ function closeModalOnly() {
       galleryView.style.display = 'none';
     }
 
-    // 3) Pulisci il contenuto e resetta stati
     modal.classList.remove('fade-out');
     modal.classList.remove('show');
-    modal.style.display = 'none';  // 🔹 NASCONDE fisicamente la modale
+    modal.style.display = 'none';
     modalContent.innerHTML = '';
     currentIndex = null;
 
-    // 4) Rendi di nuovo cliccabili subito i pulsanti
+    // 🔥 FONDAMENTALE: disattiva blocco dei clic dopo chiusura modale
+    document.getElementById('modal-blocker').style.display = 'none';
+
     isTransitioning = false;
   }, 600);
 }
+
 
 
 
