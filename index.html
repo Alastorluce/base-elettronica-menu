@@ -3048,6 +3048,20 @@ document.addEventListener("DOMContentLoaded", () => {
     setupSegmentedPreview(video, 3, 0.5, 1000);
   });
 });
+
+ // ============================
+// BLOCCO: Simulazione click su touchend (mobile fix)
+// Garantisce che anche una pressione prolungata attivi il click
+// ============================
+document.querySelectorAll('.menu-item').forEach(btn => {
+  btn.addEventListener('touchend', function(e) {
+    // Se il bottone ha già la funzione onclick definita
+    if (typeof btn.onclick === 'function') {
+      e.preventDefault(); // ⚠️ Impedisce doppio tap o selezione
+      btn.click();        // 👆 Simula un vero click
+    }
+  });
+});      
 </script>
 </body>
 </html>
