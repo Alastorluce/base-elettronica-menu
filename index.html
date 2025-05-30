@@ -25,62 +25,6 @@
        ============================ -->
 <style>
 
-#modal {
-  position: relative;
-  width: 90vw;
-  max-width: 700px;
-  max-height: 80vh;
-  margin: auto;
-  padding: 1.2em;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(0, 166, 255, 0.3);
-  backdrop-filter: blur(10px);
-  overflow: hidden;
-  z-index: 1000;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  pointer-events: none;
-}
-
-#modal.show {
-  display: flex;
-  flex-direction: column;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-
-
-#modal-content {
-  overflow-y: auto;
-  max-height: 70vh;
-  padding: 20px;
-  flex: 1 1 auto;
-}
-
-
-#gallery-modal-radar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
-  background-size: 300%;
-  background-repeat: no-repeat;
-  animation: radarLineModal 10s linear infinite;
-  pointer-events: none;
-}
-
-
-
-@keyframes radarLineModal {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-
 /* ============================
    BLOCCO: Blocco anti-selezione universale
    Questo blocco impedisce all'utente di selezionare testo o immagini, migliorando l'estetica e impedendo interazioni indesiderate
@@ -151,6 +95,24 @@ body {
 /* ============================ *
      * MODAL PRINCIPALE             *
      * ============================ */
+    #modal {
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 2em;
+      border-radius: 15px;
+      box-shadow: 0 0 5px rgba(0, 166, 255, 0.3);
+      opacity: 0;
+      pointer-events: none;
+      width: 60%;
+      margin: auto 10px;
+      max-width: 900px;
+      max-height: 70vh;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: opacity 0.6s ease;
+      z-index: 4;
+      position: relative;
+    }
 
     #modal.show {
       opacity: 1;
@@ -166,6 +128,12 @@ body {
       transition: none !important;
     }
 
+    #modal-content {
+      text-align: left;
+      max-width: 800px;
+      overflow-y: auto;
+      max-height: 70vh;
+    }
 
     /* ============================ *
      * MODAL CLOSE BUTTON - MOBILE  *
@@ -504,8 +472,6 @@ body {
   height: 100%;
   z-index: 3;
   background: transparent;
-  pointer-events: none;
-
 }
 
 
@@ -639,6 +605,13 @@ body {
     max-height: 20vh;
   }
 
+  #modal {
+    width: 90vw;
+    max-height:  85vh;
+    padding:  1.2em;
+    box-shadow: none;
+    z-index: 1000;
+  }
 
   /* ============================
      BLOCCO: Bottone di chiusura mobile (la "×")
@@ -721,7 +694,7 @@ body {
     z-index: 10;
   }
 }
-/* Posizionamento di riferimento per il radar */
+
 
 /* ============================
    BLOCCO: Stile lista a punti
@@ -965,10 +938,17 @@ ul.custom-list li > strong {
    BLOCCO: Scrollbar condizionale modale
    Appare solo quando la classe .auto-scroll-show è attiva
    ============================ */
+#modal-content {
+  scrollbar-width: none;
+}
 #modal-content::-webkit-scrollbar {
   width: 0;
 }
 
+.auto-scroll-show #modal-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,166,255,0.8) transparent;
+}
 .auto-scroll-show #modal-content::-webkit-scrollbar {
   width: 2px;
 }
@@ -1117,7 +1097,18 @@ video#logo-btn {
    PATCH: Scroll completo su modale desktop + linea radar su galleria
    ============================ */
 @media (min-width: 769px) {
+  #modal {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
 
+  #modal-content {
+    flex: 1 1 auto;
+    overflow-y: auto !important;
+    max-height: 70vh !important;
+    padding-right: 8px;
+  }
 
   #gallery-view {
     max-height: 60vh;
@@ -1232,16 +1223,15 @@ html, body {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
   height: 4px;
+  width: 100%;
   background: linear-gradient(90deg, transparent 20%, #00a6ff 50%, transparent 80%);
   background-size: 300%;
   background-repeat: no-repeat;
   animation: radarLineModal 10s linear infinite;
-  pointer-events: none;
+  z-index: 1000;
+  opacity: 1;
 }
-
-
 
 @keyframes radarLineModal {
   0%    { background-position: 100% 0; }
@@ -1503,18 +1493,13 @@ html, body {
        Contenitore principale per testo, portfolio e form contatto
        ============================ -->
 <div class="modal" id="modal">
-  <!-- Pulsante di chiusura -->
-  <button class="modal-close" onclick="closeModalOnly()">×</button>
-
-  <!-- Contenuto dinamico -->
-  <div id="modal-content">
-    <h2>Caricamento...</h2>
-  </div>
-
-  <!-- Radar aderente al fondo della modale -->
-  <div id="gallery-modal-radar"></div>
+<!-- Pulsante di chiusura in alto a destra -->
+<button class="modal-close" onclick="closeModalOnly()">×</button>
+<!-- Contenuto dinamico interno -->
+<div id="modal-content">
+<h2>Caricamento...</h2>
 </div>
-
+<div id="gallery-modal-radar"></div></div>
 <!-- ============================
        BLOCCO: Contenitore galleria multimediale
        Appare solo quando si entra nella sezione showroom
@@ -1714,9 +1699,6 @@ function showModalWithScroll() {
   });
 
   modal.classList.remove('fade-out');
-
-  if (modalContent.innerHTML.trim() === "") return;
-
   modal.classList.add('show');
   isTransitioning = false;
 
@@ -1843,18 +1825,11 @@ function showWelcomeMessage() {
 
   // Assicurati che nessun altro contenuto sia visibile
   modal.classList.remove('show', 'fade-out');
-
   modalContent.innerHTML = contenutoHome;
-  modal.classList.add('show'); // fade-in automatico
 
   // Mostra la modale di benvenuto
   blocker.style.display = 'block';
- // Aspetta 20 ms prima di attivare il fade-in
-setTimeout(() => {
-  if (modalContent.innerHTML.trim() === "") return;
-
   modal.classList.add('show');
-}, 50);
 
   // Chiudi automaticamente dopo 8 secondi
   const autoHide = setTimeout(() => {
@@ -1931,7 +1906,6 @@ function apri(index) {
 
       // Forza il reflow per assicurare transizione corretta
       void modal.offsetWidth;
-      if (modalContent.innerHTML.trim() === "") return;
 
       modal.classList.add('show');
 
@@ -1945,8 +1919,6 @@ function apri(index) {
     // Prima apertura della modale: nessun fade-out
     modalContent.innerHTML = contenuto;
     modal.style.display = 'block';
-    if (modalContent.innerHTML.trim() === "") return;
-
     modal.classList.add('show');
 
     initScrollOn(modal);
@@ -2535,8 +2507,6 @@ function apriShowroom(tipo) {
 
       // 5) fade-in
       modal.classList.remove('fade-out');
-      if (modalContent.innerHTML.trim() === "") return;
-
       modal.classList.add('show');
 
       // 6) sblocco i click dopo la transizione
@@ -2851,8 +2821,6 @@ document.addEventListener('submit', function (e) {
 
     // Mostra il messaggio per 3s, poi torna alla home
     modal.classList.remove('fade-out');
-    if (modalContent.innerHTML.trim() === "") return;
-
     modal.classList.add('show');
 
     setTimeout(() => {
@@ -2873,47 +2841,39 @@ document.addEventListener('submit', function (e) {
 // Con timeout automatico o chiusura manuale via click
 // ============================
 
-// ============================
-// BLOCCO: welcomeTimeout
-// Mostra un messaggio di benvenuto nella modale appena caricato il sito
-// Con timeout automatico o chiusura manuale via click
-// ============================
+let autoHide = null; // variabile globale per il timeout
 
-let welcomeTimeout = null; // variabile per timeout automatico benvenuto
-
-window.addEventListener('DOMContentLoaded', () => {
+let welcomeTimeout = setTimeout(() => {
   const blocker = document.getElementById('modal-blocker');        // layer trasparente
   const modal = document.getElementById('modal');                  // modale
   const modalContent = document.getElementById('modal-content');  // contenuto modale
 
-  // Mostra contenuto benvenuto
-  modalContent.innerHTML = contenutoHome;
-  blocker.style.display = 'block';
-  if (modalContent.innerHTML.trim() === "") return;
+  modalContent.innerHTML = contenutoHome;             // testo messaggio di benvenuto
+  blocker.style.display = 'block';                    // blocca il click sotto
+  modal.classList.add('show');                        // mostra la modale
 
-
-  // Timeout automatico: chiudi dopo 8 secondi
-  welcomeTimeout = setTimeout(() => {
-    // Verifica che sia ancora il contenuto del benvenuto
+  // Timeout automatico: chiude dopo 8s se non interrotto
+  autoHide = setTimeout(() => {
     if (modal.classList.contains('show') && modalContent.innerHTML.includes("Base Elettronica Service")) {
       modal.classList.remove('show');
       blocker.style.display = 'none';
     }
-    welcomeTimeout = null;
+    autoHide = null;
   }, 8000);
 
-  // Chiudi se l'utente clicca fuori
+  // Gestione click: se l’utente tocca lo sfondo → chiudi subito
   const hideOnPointerDown = () => {
-    if (welcomeTimeout !== null) {
-      clearTimeout(welcomeTimeout);
-      welcomeTimeout = null;
+    if (autoHide !== null) {
+      clearTimeout(autoHide);
+      autoHide = null;
     }
     modal.classList.remove('show');
     blocker.style.display = 'none';
     document.removeEventListener('pointerdown', hideOnPointerDown, true);
   };
 
-  document.addEventListener('pointerdown', hideOnPointerDown, true)
+  // Aggiunge il listener sul blocco modale
+  blocker.addEventListener('pointerdown', hideOnPointerDown, true);
 
 }, 500); // attivazione 0.5s dopo il caricamento
 
@@ -2956,9 +2916,12 @@ window.addEventListener('DOMContentLoaded', () => {
 function closeModalOnly() {
   if (!modal.classList.contains('show')) return;
 
+  // 1) Avvia fade-out della modale
+  modal.classList.remove('show');
   modal.classList.add('fade-out');
 
   setTimeout(() => {
+    // 2) Se dentro la modale c’è ancora la gallery, riportala in #main
     const galleryView = document.getElementById('gallery-view');
     if (modalContent.contains(galleryView)) {
       modalContent.removeChild(galleryView);
@@ -2966,22 +2929,15 @@ function closeModalOnly() {
       galleryView.style.display = 'none';
     }
 
+    // 3) Pulisci il contenuto e resetta stati
     modal.classList.remove('fade-out');
-    modal.classList.remove('show');
-    modal.style.display = 'none';
     modalContent.innerHTML = '';
     currentIndex = null;
 
-    // ✅ FONDAMENTALE: blocco dei clic disattivato COMPLETAMENTE
-    const blocker = document.getElementById('modal-blocker');
-    blocker.style.pointerEvents = 'none';
-    blocker.style.display = 'none';
-
+    // 4) Rendi di nuovo cliccabili subito i pulsanti
     isTransitioning = false;
   }, 600);
 }
-
-
 
 
 
