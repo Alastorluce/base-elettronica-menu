@@ -2635,7 +2635,15 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 
- 
+ function updateViewportHeightVar() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener('resize', updateViewportHeightVar);
+window.addEventListener('orientationchange', updateViewportHeightVar);
+window.addEventListener('load', updateViewportHeightVar);
+
 
   document.querySelectorAll('.menu-item').forEach(item => {
     item.addEventListener('pointerdown', () => {
