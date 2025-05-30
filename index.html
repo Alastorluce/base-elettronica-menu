@@ -2742,17 +2742,26 @@ document.getElementById('modal').addEventListener('click', function (e) {
 // BLOCCO: orientationchange (mobile)
 // Mostra o nasconde l’avviso se il dispositivo è ruotato in orizzontale
 // ============================
-window.addEventListener('orientationchange', function () {
+function checkOrientation() {
   const warning = document.getElementById('orientation-warning');
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  const isLandscape = window.innerWidth > window.innerHeight;
 
-  if (window.orientation === 90 || window.orientation === -90) {
-    // Schermo in landscape → mostra avviso
+  if (isMobile && isLandscape) {
     warning.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   } else {
-    // Schermo in verticale → nasconde avviso
     warning.style.display = 'none';
+    document.body.style.overflow = '';
   }
-});
+}
+
+// ✅ Al caricamento iniziale
+window.addEventListener('DOMContentLoaded', checkOrientation);
+// ✅ Ogni volta che cambia orientamento o dimensione
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+
 
 
 // ============================
@@ -3092,4 +3101,3 @@ document.querySelectorAll('.menu-item').forEach(btn => {
        
 </body>
 </html>
-
