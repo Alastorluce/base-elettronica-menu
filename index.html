@@ -1846,22 +1846,59 @@ function apri(index) {
   isTransitioning = true;
 
   const contenuto = contenuti[index];
-  modalContent.innerHTML = contenuto;
 
-  modal.style.display = 'block';
-  modal.classList.add('show');
+  // Se la modale è già visibile, applica fade-out prima di cambiare contenuto
+  if (modal.classList.contains('show')) {
+    modal.classList.add('fade-out');
 
-  // Inizializza auto-scroll per i contenuti della modale
-  initScrollOn(modal);
-  initScrollOn(modalContent);
+    setTimeout(() => {
+      modal.classList.remove('fade-out');
+      modalContent.innerHTML = contenuto;
 
-  isTransitioning = false;
+      // Forza il reflow per assicurare transizione corretta
+      void modal.offsetWidth;
+
+      modal.classList.add('show');
+
+      // Inizializza auto-scroll
+      initScrollOn(modal);
+      initScrollOn(modalContent);
+
+      isTransitioning = false;
+    }, 400); // ⏱️ durata coerente con il CSS: 0.4s
+  } else {
+    // Prima apertura della modale: nessun fade-out
+    modalContent.innerHTML = contenuto;
+    modal.style.display = 'block';
+    modal.classList.add('show');
+
+    initScrollOn(modal);
+    initScrollOn(modalContent);
+
+    isTransitioning = false;
+  }
 }
+
+
+
+
+  
+/**
+ * ============================
+ * BLOCCO: toggleSubmenu(tipo)
+ * Gestisce il passaggio tra il menu principale e i sottomenu "Servizi" o "Showroom".
+ * Nasconde i tasti principali, mostra il relativo sottomenu con animazioni, e aggiorna il logo dinamicamente.
+ * 
+ * @param {string} tipo - 'servizi' oppure 'showroom'
+ * ============================
+ */
 function toggleSubmenu(tipo) {
+  // 🔒 Evita interazioni multiple contemporanee
   if (isTransitioning) return;
   isTransitioning = true;
-  onMain = false;
+  onMain = false;  // Disattiva lo stato "menu principale"
 
+  // 🎯 Elementi di riferimento nel DOM
   const logo = document.getElementById('sidebar-logo');
   const logoImg = logo.querySelector('img');
 
@@ -1869,19 +1906,23 @@ function toggleSubmenu(tipo) {
   const submenuShowroom = document.getElementById('submenu-showroom');
   const menuItems = document.querySelectorAll('.menu-list > .menu-wrapper .menu-item');
 
-  // Nasconde gli item principali
+  // 🚫 Nasconde le voci del menu principale (non appartenenti ai sottomenu)
   menuItems.forEach(el => {
     if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
       el.style.display = 'none';
-      el.classList.remove('animated');
+      el.classList.remove('animated');  // Rimuove eventuali animazioni in corso
     }
   });
 
+  // 📷 Nasconde l'eventuale galleria aperta
   document.getElementById('gallery-view').style.display = 'none';
+
+  // 🌫️ Nasconde il logo della sidebar temporaneamente
   logo.style.opacity = '0';
 
+  // ⏱️ Dopo un breve delay, mostra il sottomenu richiesto
   setTimeout(() => {
-    // Mostra il sottomenu corretto
+    // 🎚️ Visualizza solo il sottomenu corrispondente al tipo selezionato
     if (tipo === 'servizi') {
       submenuShowroom.style.display = 'none';
       submenuServizi.style.display = 'flex';
@@ -1892,32 +1933,34 @@ function toggleSubmenu(tipo) {
       currentSubmenu = 'showroom';
     }
 
-    // Avvia le animazioni del submenu
+    // ▶️ Forza le animazioni di entrata per i tasti del sottomenu
     const activeSubmenu = tipo === 'servizi' ? submenuServizi : submenuShowroom;
     activeSubmenu.querySelectorAll('.menu-item').forEach((el, i) => {
-      el.classList.remove('animated');
-      el.style.animation = 'none';
-      void el.offsetWidth;
-      el.style.animation = '';
-      el.classList.add('animated');
+      el.classList.remove('animated');     // Rimuove lo stato animato precedente
+      el.style.animation = 'none';         // Disabilita temporaneamente l’animazione
+      void el.offsetWidth;                 // 🔁 Forza il reflow (trucco per riavviare animazione)
+      el.style.animation = '';             // Ripristina animazione
+      el.classList.add('animated');        // Ritriggera l’effetto visivo
     });
 
-    // ⏳ Solo ora cambio il logo (dopo il menu)
+    // 🔁 Carica dinamicamente il nuovo logo della sidebar dopo le animazioni
     logoImg.addEventListener('load', function handler() {
       logoImg.style.opacity = '1';
       logoImg.classList.remove('fade-in-logo');
-      logoImg.removeEventListener('load', handler);
+      logoImg.removeEventListener('load', handler);  // Cleanup listener
     });
 
+    // 🎞️ Applica effetto di fade-in al logo nuovo
     logoImg.classList.add('fade-in-logo');
     logoImg.style.opacity = '0';
     logoImg.src = 'logo_home.png';
 
-    // Riappare la sidebar con il nuovo logo
+    // ✅ Riappare il logo dopo la transizione
     logo.style.opacity = '1';
     isTransitioning = false;
-  }, 500);
+  }, 500); // ⏳ Tempo per lasciare spazio all’uscita del menu principale
 }
+
 
 
 
