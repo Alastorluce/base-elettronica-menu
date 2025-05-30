@@ -1979,7 +1979,7 @@ function ripristinaMenuPrincipale() {
 
     // Riattivo subito il logo centrale (non aspetto il preload)
     centralLogo.style.display = 'block';
-    smallLogo.style.opacity = '0';
+    smallLogo.classList.add('fade-out');
     main.style.opacity = '0';
 
     // Cambio logo solo dopo la transizione
@@ -1994,8 +1994,9 @@ function ripristinaMenuPrincipale() {
     });
 
     setTimeout(() => {
-      smallLogoImg.src = 'logo.png';
-    }, 500);
+  smallLogoImg.src = 'logo.png';
+  smallLogo.classList.remove('fade-out');
+}, 500);
 
     setTimeout(() => {
       // 1) Stop slideshow
