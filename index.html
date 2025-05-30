@@ -77,6 +77,20 @@ body {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   50%      { transform: translate(-50%, -50%) scale(1.1); }
 }
+@keyframes fadeOutUniforme {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.fade-out-uniforme {
+  animation: fadeOutUniforme 0.3s ease-in-out forwards !important;
+}
 
 /* ============================ *
      * MODAL PRINCIPALE             *
@@ -1913,11 +1927,24 @@ function toggleSubmenu(tipo) {
 
   // 🚫 Nasconde le voci del menu principale (non appartenenti ai sottomenu)
   menuItems.forEach(el => {
+  if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+    el.classList.remove('animated');            // Ferma animazione entrata
+    el.style.animation = 'none';                // Blocco forzato
+    void el.offsetWidth;                        // Forza repaint per sicurezza
+    el.classList.add('fade-out-uniforme');      // Applica fade-out uniforme
+  }
+});
+
+// Dopo il fade-out, li nascondi veramente
+setTimeout(() => {
+  menuItems.forEach(el => {
     if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
       el.style.display = 'none';
-      el.classList.remove('animated');  // Rimuove eventuali animazioni in corso
+      el.classList.remove('fade-out-uniforme'); // Pulizia
     }
   });
+}, 300); // stesso tempo del fade-out
+
 
   // 📷 Nasconde l'eventuale galleria aperta
   document.getElementById('gallery-view').style.display = 'none';
