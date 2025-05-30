@@ -271,20 +271,23 @@ body {
    ============================ */
 #sidebar-logo {
   margin-bottom: 2em;
-  width: 180px;                /* larghezza costante */
+  width: 180px;
   height: auto;
   cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.5s ease-in-out;
-  opacity: 1;                  /* visibile all’avvio */
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.5s ease-in-out;
+  opacity: 1;
 }
+
 
 #sidebar-logo img {
   width: 100%;
   height: auto;
   display: block;
   filter: brightness(90%) saturate(0%) contrast(150%) invert(10%);
-  transition: transform 0.25s ease;
+  #sidebar-logo img {
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
+
 
 /* All'attivazione (click), il logo scala al 83% */
 #sidebar-logo:active img {
