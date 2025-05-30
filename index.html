@@ -504,6 +504,8 @@ body {
   height: 100%;
   z-index: 3;
   background: transparent;
+  pointer-events: none;
+
 }
 
 
@@ -2970,8 +2972,10 @@ function closeModalOnly() {
     modalContent.innerHTML = '';
     currentIndex = null;
 
-    // 🔥 FONDAMENTALE: disattiva blocco dei clic dopo chiusura modale
-    document.getElementById('modal-blocker').style.display = 'none';
+    // ✅ FONDAMENTALE: blocco dei clic disattivato COMPLETAMENTE
+    const blocker = document.getElementById('modal-blocker');
+    blocker.style.pointerEvents = 'none';
+    blocker.style.display = 'none';
 
     isTransitioning = false;
   }, 600);
