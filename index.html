@@ -257,9 +257,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* ✅ posiziona tutto in alto */
   height: 100%;
   width: 100%;
+  padding-top: 50px; /* spazio iniziale per distanza controllata del logo */
+  box-sizing: border-box;
 }
 
 
@@ -322,6 +324,16 @@ body {
 }
 
 
+#submenu-servizi,
+#submenu-showroom {
+  position: absolute;
+  top: 275px; /* allineato verticalmente ai primi bottoni */
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+
 /* ============================
    BLOCCO: Voci di menu
    Definisce stile, effetto hover e animazioni di entrata delle voci principali e dei sotto-menu
@@ -341,9 +353,14 @@ body {
   text-align: center;
   width: 60%;
   font-size: 0.9em;
-  opacity: 0;
+  opacity: 1;
   transform: translateX(-100%);
   animation: slideIn 0.5s ease-out forwards;
+}
+.menu-item.fade-out-fast {
+  opacity: 0 !important;
+  transform: translateX(-50%) !important;
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
 /* ============================
@@ -1845,46 +1862,26 @@ function toggleSubmenu(tipo) {
   isTransitioning = true;
   onMain = false;
 
-const logo = document.getElementById('sidebar-logo');  // solo una volta
-const logoImg = logo.querySelector('img');
-
-logoImg.classList.add('fade-in-logo');
-logoImg.style.opacity = '0';
-
-logoImg.addEventListener('load', function handler() {
-  logoImg.style.opacity = '1';
-  logoImg.classList.remove('fade-in-logo');
-  logoImg.removeEventListener('load', handler);
-});
-
-setTimeout(() => {
-  logoImg.src = 'logo_home.png';
-}, 30);
+  const logo = document.getElementById('sidebar-logo');
+  const logoImg = logo.querySelector('img');
 
   const submenuServizi = document.getElementById('submenu-servizi');
   const submenuShowroom = document.getElementById('submenu-showroom');
   const menuItems = document.querySelectorAll('.menu-list > .menu-wrapper .menu-item');
 
-menuItems.forEach(el => {
-  if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
-    el.style.display = 'none';
-    el.classList.remove('animated');
-  }
-});
-
+  // Nasconde gli item principali
+  menuItems.forEach(el => {
+    if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
+      el.style.display = 'none';
+      el.classList.remove('animated');
+    }
+  });
 
   document.getElementById('gallery-view').style.display = 'none';
-
   logo.style.opacity = '0';
 
   setTimeout(() => {
-    menuItems.forEach(el => {
-      if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
-        el.style.display = 'none';
-        el.classList.remove('animated');
-      }
-    });
-
+    // Mostra il sottomenu corretto
     if (tipo === 'servizi') {
       submenuShowroom.style.display = 'none';
       submenuServizi.style.display = 'flex';
@@ -1895,21 +1892,33 @@ menuItems.forEach(el => {
       currentSubmenu = 'showroom';
     }
 
-    setTimeout(() => {
-      const activeSubmenu = tipo === 'servizi' ? submenuServizi : submenuShowroom;
-      activeSubmenu.querySelectorAll('.menu-item').forEach((el, i) => {
-        el.classList.remove('animated');
-        el.style.animation = 'none';
-        void el.offsetWidth;
-        el.style.animation = '';
-        el.classList.add('animated');
-      });
-    }, 30);
+    // Avvia le animazioni del submenu
+    const activeSubmenu = tipo === 'servizi' ? submenuServizi : submenuShowroom;
+    activeSubmenu.querySelectorAll('.menu-item').forEach((el, i) => {
+      el.classList.remove('animated');
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+      el.classList.add('animated');
+    });
 
+    // ⏳ Solo ora cambio il logo (dopo il menu)
+    logoImg.addEventListener('load', function handler() {
+      logoImg.style.opacity = '1';
+      logoImg.classList.remove('fade-in-logo');
+      logoImg.removeEventListener('load', handler);
+    });
+
+    logoImg.classList.add('fade-in-logo');
+    logoImg.style.opacity = '0';
+    logoImg.src = 'logo_home.png';
+
+    // Riappare la sidebar con il nuovo logo
     logo.style.opacity = '1';
     isTransitioning = false;
   }, 500);
 }
+
 
 
 /**
@@ -1945,88 +1954,123 @@ function ripristinaMenuPrincipale() {
     return;
   }
 
-  // Riattivo subito il logo centrale (non aspetto il preload)
-  centralLogo.style.display = 'block';
+  // ✅ Fai sparire i tasti del submenu con animazione fade-out veloce
+  const serviziItems = submenuServizi.querySelectorAll('.menu-wrapper .menu-item');
+  const showroomItems = submenuShowroom.querySelectorAll('.menu-wrapper .menu-item');
 
-  smallLogo.style.opacity = '0';
-  main.style.opacity     = '0';
+  for (let i = 0; i < serviziItems.length; i++) {
+    serviziItems[i].classList.add('fade-out-fast');
+  }
+  for (let i = 0; i < showroomItems.length; i++) {
+    showroomItems[i].classList.add('fade-out-fast');
+  }
 
+  // ⏳ Dopo la dissolvenza, nasconde i sottomenu e prosegue con il reset
   setTimeout(() => {
-    // 1) Stoppo eventuale slideshow
-    if (slideshowInterval) {
-      clearInterval(slideshowInterval);
-      slideshowInterval = null;
-    }
-    slideshowAttivo = false;
-
-    watermark.style.display      = 'none';
-    document.body.style.overflow = '';
-
-    // 2) Se la modale era aperta, la chiudo e sposto la gallery-view fuori
-    if (modalElem.classList.contains('show')) {
-      modalElem.classList.remove('show');
-      modalElem.classList.add('fade-out');
-
-      setTimeout(() => {
-        // Sposto gallery-view sotto #main se all'interno della modale
-        if (modalContent.contains(galleryView)) {
-          modalContent.removeChild(galleryView);
-          main.appendChild(galleryView);
-        }
-        modalElem.classList.remove('fade-out');
-        modalContent.innerHTML = '';
-        currentIndex = null;
-      }, 600);
-    }
-
-    // 3) Hide gallery-view e sub-menu
-    galleryView.style.display     = 'none';
-    submenuServizi.style.display  = 'none';
+    submenuServizi.style.display = 'none';
     submenuShowroom.style.display = 'none';
 
-    // 4) Rimetto visibili le voci principali
-    document.querySelectorAll('.menu-list > .menu-wrapper .menu-item')
+    for (let i = 0; i < serviziItems.length; i++) {
+      serviziItems[i].classList.remove('fade-out-fast');
+    }
+    for (let i = 0; i < showroomItems.length; i++) {
+      showroomItems[i].classList.remove('fade-out-fast');
+    }
+
+    // Riattivo subito il logo centrale (non aspetto il preload)
+    centralLogo.style.display = 'block';
+    smallLogo.style.opacity = '0';
+    main.style.opacity = '0';
+
+    // Cambio logo solo dopo la transizione
+    const smallLogoImg = smallLogo.querySelector('img');
+    smallLogoImg.classList.add('fade-in-logo');
+    smallLogoImg.style.opacity = '0';
+
+    smallLogoImg.addEventListener('load', function handler() {
+      smallLogoImg.style.opacity = '1';
+      smallLogoImg.classList.remove('fade-in-logo');
+      smallLogoImg.removeEventListener('load', handler);
+    });
+
+    setTimeout(() => {
+      smallLogoImg.src = 'logo.png';
+    }, 500);
+
+    setTimeout(() => {
+      // 1) Stop slideshow
+      if (slideshowInterval) {
+        clearInterval(slideshowInterval);
+        slideshowInterval = null;
+      }
+      slideshowAttivo = false;
+
+      // 2) Chiudi modale se aperta
+      watermark.style.display = 'none';
+      document.body.style.overflow = '';
+
+      if (modalElem.classList.contains('show')) {
+        modalElem.classList.remove('show');
+        modalElem.classList.add('fade-out');
+
+        setTimeout(() => {
+          if (modalContent.contains(galleryView)) {
+            modalContent.removeChild(galleryView);
+            main.appendChild(galleryView);
+          }
+          modalElem.classList.remove('fade-out');
+          modalContent.innerHTML = '';
+          currentIndex = null;
+        }, 600);
+      }
+
+      // 3) Nascondi galleria
+      galleryView.style.display = 'none';
+
+      // 4) Mostra menu principale
+      document.querySelectorAll('.menu-list > .menu-wrapper .menu-item')
         .forEach(el => el.style.display = 'flex');
 
+      sidebar.style.display = '';
 
+      // 5) Reset centrale logo
+      centralLogo.classList.remove('loaded-img', 'loading', 'pulse');
+      centralLogo.style.transition = 'none';
+      centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
+      centralLogo.style.opacity = '0';
+      centralLogo.style.visibility = 'hidden';
 
-    sidebar.style.display = '';
+      const preload = new Image();
+      preload.src = 'logo.png';
+      preload.onload = () => {
+        centralLogo.src = preload.src;
+        void centralLogo.offsetWidth;
+        centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
+        centralLogo.style.visibility = 'visible';
+        centralLogo.style.opacity = '1';
+        centralLogo.style.transform = 'translate(-50%,-50%) scale(2.3)';
+        setTimeout(() => centralLogo.classList.add('pulse'), 600);
+      };
 
-    // 5) Reset e pulse logo centrale
-    centralLogo.classList.remove('loaded-img','loading','pulse');
-    centralLogo.style.transition = 'none';
-    centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
-    centralLogo.style.opacity    = '0';
-    centralLogo.style.visibility = 'hidden';
+      main.style.opacity = '1';
+      smallLogo.style.opacity = '1';
 
-    const preload = new Image();
-    preload.src = 'logo.png';
-    preload.onload = () => {
-      centralLogo.src = preload.src;
-      void centralLogo.offsetWidth;
-      centralLogo.style.transition = 'opacity 0.6s ease-in-out, transform 0.4s ease-in-out';
-      centralLogo.style.visibility = 'visible';
-      centralLogo.style.opacity    = '1';
-      centralLogo.style.transform  = 'translate(-50%,-50%) scale(2.3)';
-      setTimeout(() => centralLogo.classList.add('pulse'), 600);
-    };
+      // Riallineamento testo nei tasti
+      document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
+        el.style.display = 'flex';
+        el.style.justifyContent = 'center';
+        el.style.alignItems = 'center';
+        el.style.textAlign = 'center';
+      });
 
-    main.style.opacity     = '1';
-    smallLogo.style.opacity = '1';
-    // ✅ Forza il riallineamento del testo nei tasti del menu principale
-document.querySelectorAll('.menu-list > .menu-item').forEach(el => {
-  el.style.display = 'flex';
-  el.style.justifyContent = 'center';
-  el.style.alignItems = 'center';
-  el.style.textAlign = 'center';
-});
+      // 6) Fine transizione
+      setTimeout(() => {
+        isTransitioning = false;
+      }, 700);
 
-    // 6) Fine transizione: riabilito le interazioni
-    setTimeout(() => {
-      isTransitioning = false;
-    }, 700);
+    }, 500); // fine setTimeout post-transizione submenu
 
-  }, 500);
+  }, 400); // fine delay per fade-out submenu
 }
 
 
