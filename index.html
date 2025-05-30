@@ -1926,24 +1926,13 @@ function toggleSubmenu(tipo) {
   const menuItems = document.querySelectorAll('.menu-list > .menu-wrapper .menu-item');
 
   // 🚫 Nasconde le voci del menu principale (non appartenenti ai sottomenu)
-  menuItems.forEach(el => {
-  if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
-    el.classList.remove('animated');            // Ferma animazione entrata
-    el.style.animation = 'none';                // Blocco forzato
-    void el.offsetWidth;                        // Forza repaint per sicurezza
-    el.classList.add('fade-out-uniforme');      // Applica fade-out uniforme
-  }
-});
-
-// Dopo il fade-out, li nascondi veramente
-setTimeout(() => {
+  // Nasconde gli item principali
   menuItems.forEach(el => {
     if (!el.closest('#submenu-servizi') && !el.closest('#submenu-showroom')) {
       el.style.display = 'none';
-      el.classList.remove('fade-out-uniforme'); // Pulizia
+      el.classList.remove('animated');
     }
   });
-}, 300); // stesso tempo del fade-out
 
 
   // 📷 Nasconde l'eventuale galleria aperta
