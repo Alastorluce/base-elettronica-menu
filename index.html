@@ -3122,6 +3122,29 @@ document.querySelectorAll('.menu-item').forEach(btn => {
     }
   });
 });      
+
+
+       function checkOrientation() {
+  const warning = document.getElementById('orientation-warning');
+  if (window.innerWidth > window.innerHeight && (/Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent))) {
+    warning.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  } else {
+    warning.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+window.addEventListener('load', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+
+// fallback: retry check per 2 secondi
+let tries = 0;
+const interval = setInterval(() => {
+  checkOrientation();
+  if (++tries > 4) clearInterval(interval);
+}, 500);
 </script>
   <!-- ============================
      BLOCCO: Preload invisibile del logo alternativo
