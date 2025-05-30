@@ -1712,6 +1712,9 @@ function showModalWithScroll() {
   });
 
   modal.classList.remove('fade-out');
+
+  if (modalContent.innerHTML.trim() === "") return;
+
   modal.classList.add('show');
   isTransitioning = false;
 
@@ -1846,6 +1849,8 @@ function showWelcomeMessage() {
   blocker.style.display = 'block';
  // Aspetta 20 ms prima di attivare il fade-in
 setTimeout(() => {
+  if (modalContent.innerHTML.trim() === "") return;
+
   modal.classList.add('show');
 }, 50);
 
@@ -1924,6 +1929,7 @@ function apri(index) {
 
       // Forza il reflow per assicurare transizione corretta
       void modal.offsetWidth;
+      if (modalContent.innerHTML.trim() === "") return;
 
       modal.classList.add('show');
 
@@ -1937,6 +1943,8 @@ function apri(index) {
     // Prima apertura della modale: nessun fade-out
     modalContent.innerHTML = contenuto;
     modal.style.display = 'block';
+    if (modalContent.innerHTML.trim() === "") return;
+
     modal.classList.add('show');
 
     initScrollOn(modal);
@@ -2525,11 +2533,9 @@ function apriShowroom(tipo) {
 
       // 5) fade-in
       modal.classList.remove('fade-out');
+      if (modalContent.innerHTML.trim() === "") return;
 
-if (modalContent.innerHTML.trim() !== "") {
-  modal.classList.add('show');
-}
-
+      modal.classList.add('show');
 
       // 6) sblocco i click dopo la transizione
       setTimeout(() => { isTransitioning = false; }, 600);
@@ -2843,6 +2849,8 @@ document.addEventListener('submit', function (e) {
 
     // Mostra il messaggio per 3s, poi torna alla home
     modal.classList.remove('fade-out');
+    if (modalContent.innerHTML.trim() === "") return;
+
     modal.classList.add('show');
 
     setTimeout(() => {
@@ -2879,7 +2887,8 @@ window.addEventListener('DOMContentLoaded', () => {
   // Mostra contenuto benvenuto
   modalContent.innerHTML = contenutoHome;
   blocker.style.display = 'block';
-  modal.classList.add('show');
+  if (modalContent.innerHTML.trim() === "") return;
+
 
   // Timeout automatico: chiudi dopo 8 secondi
   welcomeTimeout = setTimeout(() => {
